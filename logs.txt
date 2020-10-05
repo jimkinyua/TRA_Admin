@@ -1,0 +1,65 @@
+select sp.service_add ServiceID,s2.ServiceName, sum (distinct sc.amount)Amount
+								from ServiceCharges sc
+								join ServicePlus sp on sp.service_add=sc.ServiceID
+								join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+								join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+								join services s1 on sp.ServiceID=s1.ServiceID
+								join services s2 on sp.service_add=s2.ServiceID
+								and sh.ServiceHeaderID=144727
+								and sp.SubSystemID=3
+								and fy.isCurrentYear=1
+								and sc.SubSystemId=3
+								group by sp.service_add,s1.ServiceName,s2.ServiceName
+----144727---
+select distinct s1.ServiceID,s1.ServiceName ,sc.Amount 
+						            from ApplicationCharges sc 
+						            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+						            join Services s1 on sc.ServiceID=s1.ServiceID 
+						            where sh.ServiceHeaderID=144727
+----144727---
+select  s2.ServiceID,s2.ServiceName ,sc.Amount
+									from ServiceCharges sc 
+									join ServicePlus sp on sp.service_add=sc.ServiceID 
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID 
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID 
+									join services s1 on sp.ServiceID=s1.ServiceID 
+									join services s2 on sp.service_add=s2.ServiceID 
+									and sh.ServiceHeaderID=144727 
+									and fy.isCurrentYear=1 
+									and sc.SubSystemId=3
+----144727---
+set dateformat dmy insert into InvoiceLines (InvoiceHeaderID,ServiceHeaderID,ServiceID,Amount,CreatedBy) 
+											Values(589935,144727,1710,960.00,19)
+----144727---Carrier Charges
+set dateformat dmy insert into InvoiceLines (InvoiceHeaderID,ServiceHeaderID,ServiceID,Amount,CreatedBy) 
+											Values(589935,144727,281,200.00,19)
+----144727---Carrier Charges
+select distinct s1.ServiceID,s1.ServiceName ,sc.Amount 
+						            from ApplicationCharges sc 
+						            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+						            join Services s1 on sc.ServiceID=s1.ServiceID 
+						            where sh.ServiceHeaderID=144727
+----144727---
+select  s2.ServiceID,s2.ServiceName ,sc.Amount
+									from ServiceCharges sc 
+									join ServicePlus sp on sp.service_add=sc.ServiceID 
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID 
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID 
+									join services s1 on sp.ServiceID=s1.ServiceID 
+									join services s2 on sp.service_add=s2.ServiceID 
+									and sh.ServiceHeaderID=98556 
+									and fy.isCurrentYear=1 
+									and sc.SubSystemId=3
+----98556---
+set dateformat dmy insert into InvoiceLines (InvoiceHeaderID,ServiceHeaderID,ServiceID,Amount,CreatedBy) 
+											Values(589936,98556,1696,960.00,19)
+----98556---Carrier Charges
+set dateformat dmy insert into InvoiceLines (InvoiceHeaderID,ServiceHeaderID,ServiceID,Amount,CreatedBy) 
+											Values(589936,98556,281,200.00,19)
+----98556---Carrier Charges
+select distinct s1.ServiceID,s1.ServiceName ,sc.Amount 
+						            from ApplicationCharges sc 
+						            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+						            join Services s1 on sc.ServiceID=s1.ServiceID 
+						            where sh.ServiceHeaderID=98556
+----98556---

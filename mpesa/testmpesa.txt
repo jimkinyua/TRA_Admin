@@ -1,0 +1,1 @@
+http://197.156.135.157:90/ipn.php?id=1&orig=1&dest=1&tstamp=1&text=1&customerid=1&user=1&pass=1&routemethod_id=1&routemethod_name=1&mpesa_code=TESTCODESK&mpesa_acc=3388&mpesa_msisdn=1&mpesa_trx_date=1&mpesa_trx_time=1&mpesa_amt=500&mpesa_sender=1

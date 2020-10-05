@@ -1,0 +1,29 @@
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Header/>
+  <soap:Body>
+      <request>
+         <!--Optional:-->
+         <billNumber>1613754</billNumber>
+         <!--Optional:-->
+         <billAmount>1</billAmount>
+         <!--Optional:-->
+         <customerRefNumber>1613754</customerRefNumber>
+         <!--Optional:-->
+         <bankreference>20171012101253244339</bankreference>
+         <!--Optional:-->
+         <paymentMode>cash</paymentMode>
+         <!--Optional:-->
+         <transactionDate>2017-10-12 00:00:00</transactionDate>
+         <!--Optional:-->
+         <phonenumber>254763741794</phonenumber>
+         <!--Optional:-->
+         <debitaccount>0260193271308</debitaccount>
+         <!--Optional:-->
+         <debitcustname>GEORGE KARIUKI KUNYIHA</debitcustname>
+         <!--Optional:-->
+         <username>Equity</username>
+         <!--Optional:-->
+         <password>3pn!Ty@zoi9</password>
+      </request>
+   </soap:Body>
+</soap:Envelope>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+<soap:Body>
+<request>
+<billNumber>1827509</billNumber>
+<billAmount>4000</billAmount>
+<customerRefNumber>EQUITY_9</customerRefNumber>
+<bankreference>EQUITY_9</bankreference>
+<paymentMode>CASH</paymentMode>
+<transactionDate>29-11-2017</transactionDate>
+<phonenumber>0725463120</phonenumber>
+<debitaccount>3826</debitaccount>
+<bankCode>1030</bankCode>
+<debitcustname>Irine Ngeno</debitcustname>
+<username>1030</username>
+<password>sdfsg3^7Yddd</password>
+</request>
+</soap:Body>
+</soap:Envelope>

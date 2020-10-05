@@ -1,0 +1,246 @@
+set dateformat dmy if not exits (select 1 from MPESA where mpesa_code='') INSERT INTO mpesa 
+(
+id
+,orig 
+,dest 
+,tstamp 
+,[text]
+,[customer id] 
+,[user]
+,[password] 
+,[routemethod id] 
+,[routemethod name] 
+,mpesa_code 
+,mpesa_acc 
+,mpesa_msisdn 
+,mpesa_trx_date 
+,mpesa_trx_time 
+,mpesa_amt 
+,mpesa_sender 
+)
+VALUES
+(
+''
+,''
+,''
+,''
+,''
+,''
+,''
+,''
+,''
+,''
+,''
+,''
+,''
+,''
+,''
+,''
+,''
+)
+-------
+set dateformat dmy if not exits (select 1 from MPESA where mpesa_code='') INSERT INTO mpesa 
+(
+id
+,orig 
+,dest 
+,tstamp 
+,[text]
+,[customer id] 
+,[user]
+,[password] 
+,[routemethod id] 
+,[routemethod name] 
+,mpesa_code 
+,mpesa_acc 
+,mpesa_msisdn 
+,mpesa_trx_date 
+,mpesa_trx_time 
+,mpesa_amt 
+,mpesa_sender 
+)
+VALUES
+(
+''
+,''
+,''
+,''
+,''
+,''
+,''
+,''
+,''
+,''
+,''
+,''
+,''
+,''
+,''
+,''
+,''
+)
+-------
+set dateformat dmy if not exits (select 1 from MPESA where mpesa_code='') INSERT INTO mpesa 
+(
+id
+,orig 
+,dest 
+,tstamp 
+,[text]
+,[customer id] 
+,[user]
+,[password] 
+,[routemethod id] 
+,[routemethod name] 
+,mpesa_code 
+,mpesa_acc 
+,mpesa_msisdn 
+,mpesa_trx_date 
+,mpesa_trx_time 
+,mpesa_amt 
+,mpesa_sender 
+)
+VALUES
+(
+''
+,''
+,''
+,''
+,''
+,''
+,''
+,''
+,''
+,''
+,''
+,''
+,''
+,''
+,''
+,''
+,''
+)
+-------
+set dateformat dmy if not exits (select 1 from MPESA where mpesa_code='') INSERT INTO mpesa 
+(
+id
+,orig 
+,dest 
+,tstamp 
+,[text]
+,[customer id] 
+,[user]
+,[password] 
+,[routemethod id] 
+,[routemethod name] 
+,mpesa_code 
+,mpesa_acc 
+,mpesa_msisdn 
+,mpesa_trx_date 
+,mpesa_trx_time 
+,mpesa_amt 
+,mpesa_sender 
+)
+VALUES
+(
+''
+,''
+,''
+,''
+,''
+,''
+,''
+,''
+,''
+,''
+,''
+,''
+,''
+,''
+,''
+,''
+,''
+)
+-------
+set dateformat dmy if not exits (select 1 from MPESA where mpesa_code='') INSERT INTO mpesa 
+(
+id
+,orig 
+,dest 
+,tstamp 
+,[text]
+,[customer id] 
+,[user]
+,[password] 
+,[routemethod id] 
+,[routemethod name] 
+,mpesa_code 
+,mpesa_acc 
+,mpesa_msisdn 
+,mpesa_trx_date 
+,mpesa_trx_time 
+,mpesa_amt 
+,mpesa_sender 
+)
+VALUES
+(
+''
+,''
+,''
+,''
+,''
+,''
+,''
+,''
+,''
+,''
+,''
+,''
+,''
+,''
+,''
+,''
+,''
+)
+-------
+set dateformat dmy if not exists (select 1 from MPESA where mpesa_code='1') INSERT INTO mpesa 
+(
+id
+,orig 
+,dest 
+,tstamp 
+,[text]
+,[customer id] 
+,[user]
+,[password] 
+,[routemethod id] 
+,[routemethod name] 
+,mpesa_code 
+,mpesa_acc 
+,mpesa_msisdn 
+,mpesa_trx_date 
+,mpesa_trx_time 
+,mpesa_amt 
+,mpesa_sender 
+)
+VALUES
+(
+'1'
+,'1'
+,'1'
+,'1'
+,'1'
+,''
+,'1'
+,'1'
+,'1'
+,'1'
+,'1'
+,'1'
+,'1'
+,'1'
+,'1'
+,'1'
+,'1'
+)
+----1---

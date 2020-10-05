@@ -1,0 +1,29 @@
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Header/>
+  <soap:Body>
+      <request>
+         <!--Optional:-->
+         <billNumber>1123235</billNumber>
+         <!--Optional:-->
+         <billAmount>1</billAmount>
+         <!--Optional:-->
+         <customerRefNumber>1123235</customerRefNumber>
+         <!--Optional:-->
+         <bankreference>20170815100100788569</bankreference>
+         <!--Optional:-->
+         <paymentMode>cash</paymentMode>
+         <!--Optional:-->
+         <transactionDate>2017-08-15 00:00:00</transactionDate>
+         <!--Optional:-->
+         <phonenumber>254763849666</phonenumber>
+         <!--Optional:-->
+         <debitaccount>0120199411457</debitaccount>
+         <!--Optional:-->
+         <debitcustname>STEPHEN OCHWOTO</debitcustname>
+         <!--Optional:-->
+         <username>Equity</username>
+         <!--Optional:-->
+         <password>3pn!Ty@zoi9</password>
+      </request>
+   </soap:Body>
+</soap:Envelope>

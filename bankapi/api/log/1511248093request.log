@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+					<soapenv:Body>
+					<request>
+					<billNumber>3826</billNumber>
+					<username>Eqbank</username>
+					<password>sdfsg3^7Yddd</password>
+					</request>
+					</soapenv:Body>
+					</soapenv:Envelope>

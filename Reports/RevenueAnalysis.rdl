@@ -1,0 +1,602 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns:cl="http://schemas.microsoft.com/sqlserver/reporting/2010/01/componentdefinition" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2010/01/reportdefinition">
+  <AutoRefresh>0</AutoRefresh>
+  <DataSources>
+    <DataSource Name="Revenue">
+      <ConnectionProperties>
+        <DataProvider>SQL</DataProvider>
+        <ConnectString>Data Source=ATTAIN\MSSQLSERVER2014;Initial Catalog=COUNTYREVENUE</ConnectString>
+      </ConnectionProperties>
+      <rd:SecurityType>DataBase</rd:SecurityType>
+      <rd:DataSourceID>9fb9967e-e96c-49d2-8003-85b3b21df10f</rd:DataSourceID>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="DataSet1">
+      <Query>
+        <DataSourceName>Revenue</DataSourceName>
+        <CommandText>SELECT        TOP (100) PERCENT rs.RevenueStreamID, rs.RevenueStreamCode, rs.RevenueStreamName,sum(r.Amount) Received,rs.CurrentBudget
+FROM            dbo.ReceiptLines AS r 
+					INNER JOIN dbo.InvoiceHeader AS ih ON r.InvoiceHeaderID = ih.InvoiceHeaderID 
+					INNER JOIN (SELECT DISTINCT InvoiceHeaderID,ServiceID, ServiceHeaderID
+                               FROM            dbo.InvoiceLines) AS il ON il.InvoiceHeaderID = ih.InvoiceHeaderID 					
+					INNER JOIN dbo.Services AS s ON il.ServiceID = s.ServiceID 					
+					INNER JOIN dbo.RevenueStreams AS rs ON s.RevenueStreamID = rs.RevenueStreamID
+GROUP BY rs.RevenueStreamID, rs.RevenueStreamName,rs.RevenueStreamCode,rs.CurrentBudget
+order by  rs.RevenueStreamID</CommandText>
+        <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
+      </Query>
+      <Fields>
+        <Field Name="RevenueStreamID">
+          <DataField>RevenueStreamID</DataField>
+          <rd:TypeName>System.Int64</rd:TypeName>
+        </Field>
+        <Field Name="RevenueStreamCode">
+          <DataField>RevenueStreamCode</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="RevenueStreamName">
+          <DataField>RevenueStreamName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Received">
+          <DataField>Received</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="CurrentBudget">
+          <DataField>CurrentBudget</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="Variance">
+          <Value>=(Fields!Received.Value/Fields!CurrentBudget.Value)*100</Value>
+        </Field>
+      </Fields>
+    </DataSet>
+  </DataSets>
+  <ReportSections>
+    <ReportSection>
+      <Body>
+        <ReportItems>
+          <Tablix Name="Tablix1">
+            <TablixBody>
+              <TablixColumns>
+                <TablixColumn>
+                  <Width>1.76042in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>3.23958in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1.57292in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1.36458in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1in</Width>
+                </TablixColumn>
+              </TablixColumns>
+              <TablixRows>
+                <TablixRow>
+                  <Height>0.25in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox2">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Revenue Stream ID</Value>
+                                  <Style>
+                                    <FontFamily>Tahoma</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox2</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>#7292cc</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>#4c68a2</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox3">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Revenue Stream Name</Value>
+                                  <Style>
+                                    <FontFamily>Tahoma</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox3</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>#7292cc</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>#4c68a2</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox5">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Actual Received </Value>
+                                  <Style>
+                                    <FontFamily>Tahoma</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox5</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>#7292cc</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>#4c68a2</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox7">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Current Budget</Value>
+                                  <Style>
+                                    <FontFamily>Tahoma</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox7</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>#7292cc</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>#4c68a2</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox9">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Variance (%)</Value>
+                                  <Style>
+                                    <FontFamily>Tahoma</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox9</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>#7292cc</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>#4c68a2</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.25in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="RevenueStreamID">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!RevenueStreamID.Value)</Value>
+                                  <Style>
+                                    <FontFamily>Tahoma</FontFamily>
+                                    <Color>#4d4d4d</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>RevenueStreamID</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>#e5e5e5</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="RevenueStreamName">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!RevenueStreamName.Value</Value>
+                                  <Style>
+                                    <FontFamily>Tahoma</FontFamily>
+                                    <Color>#4d4d4d</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>RevenueStreamName</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>#e5e5e5</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Received">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!Received.Value)</Value>
+                                  <Style>
+                                    <FontFamily>Tahoma</FontFamily>
+                                    <Format>n2</Format>
+                                    <Color>#4d4d4d</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Received</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>#e5e5e5</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="CurrentBudget">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!CurrentBudget.Value)</Value>
+                                  <Style>
+                                    <FontFamily>Tahoma</FontFamily>
+                                    <Format>n2</Format>
+                                    <Color>#4d4d4d</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>CurrentBudget</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>#e5e5e5</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Variance">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Variance.Value</Value>
+                                  <Style>
+                                    <FontFamily>Tahoma</FontFamily>
+                                    <Format>n0</Format>
+                                    <Color>#4d4d4d</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Variance</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>#e5e5e5</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+              </TablixRows>
+            </TablixBody>
+            <TablixColumnHierarchy>
+              <TablixMembers>
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+              </TablixMembers>
+            </TablixColumnHierarchy>
+            <TablixRowHierarchy>
+              <TablixMembers>
+                <TablixMember>
+                  <KeepWithGroup>After</KeepWithGroup>
+                </TablixMember>
+                <TablixMember>
+                  <Group Name="Details" />
+                </TablixMember>
+              </TablixMembers>
+            </TablixRowHierarchy>
+            <DataSetName>DataSet1</DataSetName>
+            <Top>0.4in</Top>
+            <Height>0.5in</Height>
+            <Width>8.9375in</Width>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Tablix>
+          <Textbox Name="ReportTitle">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>REVENUE ANALYSIS</Value>
+                    <Style>
+                      <FontFamily>Verdana</FontFamily>
+                      <FontSize>20pt</FontSize>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Center</TextAlign>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <rd:WatermarkTextbox>Title</rd:WatermarkTextbox>
+            <rd:DefaultName>ReportTitle</rd:DefaultName>
+            <Height>0.4in</Height>
+            <Width>7.9375in</Width>
+            <ZIndex>1</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+        </ReportItems>
+        <Height>2.25in</Height>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+        </Style>
+      </Body>
+      <Width>8.9375in</Width>
+      <Page>
+        <PageHeader>
+          <Height>1.155in</Height>
+          <PrintOnFirstPage>true</PrintOnFirstPage>
+          <PrintOnLastPage>true</PrintOnLastPage>
+          <ReportItems>
+            <Image Name="Image1">
+              <Source>Embedded</Source>
+              <Value>attain_logo_2</Value>
+              <Sizing>FitProportional</Sizing>
+              <Top>0.11333in</Top>
+              <Left>3.60417in</Left>
+              <Height>0.83333in</Height>
+              <Width>1.67708in</Width>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+              </Style>
+            </Image>
+          </ReportItems>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
+          </Style>
+        </PageHeader>
+        <PageFooter>
+          <Height>0.45in</Height>
+          <PrintOnFirstPage>true</PrintOnFirstPage>
+          <PrintOnLastPage>true</PrintOnLastPage>
+          <ReportItems>
+            <Textbox Name="ExecutionTime">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>=Globals!ExecutionTime</Value>
+                      <Style />
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Right</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>ExecutionTime</rd:DefaultName>
+              <Top>0.2in</Top>
+              <Left>4in</Left>
+              <Height>0.25in</Height>
+              <Width>2in</Width>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+          </ReportItems>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
+          </Style>
+        </PageFooter>
+        <LeftMargin>1in</LeftMargin>
+        <RightMargin>1in</RightMargin>
+        <TopMargin>1in</TopMargin>
+        <BottomMargin>1in</BottomMargin>
+        <Style />
+      </Page>
+    </ReportSection>
+  </ReportSections>
+  <EmbeddedImages>
+    <EmbeddedImage Name="attain_logo_2">
+      <MIMEType>image/jpeg</MIMEType>
+      <ImageData>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</ImageData>
+    </EmbeddedImage>
+  </EmbeddedImages>
+  <rd:ReportUnitType>Inch</rd:ReportUnitType>
+  <rd:ReportID>cbda45fc-1baa-450e-88d8-591ec456214d</rd:ReportID>
+</Report>

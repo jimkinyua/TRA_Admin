@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+					<soap:Body>
+					<request>
+					<billNumber>1637404</billNumber>
+					<billAmount>150.00</billAmount>
+					<customerRefNumber>JK2342-01</customerRefNumber>
+					<bankreference>201501015423442-1</bankreference>
+					<paymentMode>CASH</paymentMode>
+					<transactionDate>01-02-2017</transactionDate>
+					<phonenumber>0763785426</phonenumber>
+					<debitaccount>3826</debitaccount>
+					<debitcustname>Osman Hared Ibrahim</debitcustname>
+					<username>Eqbank</username>
+					<password>sdfsg3^7Yddd</password>
+					</request>
+					</soap:Body>
+					</soap:Envelope>

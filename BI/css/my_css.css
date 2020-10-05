@@ -1,0 +1,38 @@
+@charset "utf-8";
+/* CSS Document */
+body {font-family: sans-serif;
+			font-size: 10pt;
+			background-image:url("BackGround.jpg");
+			background-image-resize:6;
+		}
+		p {    margin: 0pt;
+		}
+		td { vertical-align: top; }
+		.items td {
+			border-left: 0.1mm solid #000000;
+			border-right: 0.1mm solid #000000;
+		}
+		table thead td { background-color: #EEEEEE;
+			text-align: center;
+			border: 0.1mm solid #000000;
+		}
+		.items td.blanktotal {
+			background-color: #FFFFFF;
+			border: 0mm none #000000;
+			border-top: 0.1mm solid #000000;
+			border-right: 0.1mm solid #000000;
+		}
+		.items td.totals {
+			text-align: right;
+			border: 0.1mm solid #000000;
+		}
+		
+		#To_list_id {
+		 display: none;
+		 width: 500px;
+		 border: 1px solid #eaeaea;
+		 position: absolute;
+		 z-index: 9;
+		 background: #f3f3f3;
+		 list-style: none;
+		}

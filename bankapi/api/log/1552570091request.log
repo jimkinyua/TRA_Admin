@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+	<soap:Body>
+		<request>
+			<billNumber>1637404</billNumber>                                                               
+			<billAmount>150.00</billAmount>
+			<customerRefNumber>JK2342-01</customerRefNumber>
+			<bankreference>TESTTHREE1</bankreference>                             
+			<paymentMode>CASH</paymentMode>
+			<transactionDate>24-11-2017</transactionDate>                        
+			<phonenumber>0725463120</phonenumber>                             
+			<debitaccount>3826</debitaccount>
+			<bankCode>1040</bankCode>
+			<user>108822</user>
+			<debitcustname>Cosmas Ngeno</debitcustname>                                                   
+			<username>CoOpBank</username>                                   
+			<password>redsf@tfre</password>
+		</request>                                                                          
+	</soap:Body>
+	</soap:Envelope>

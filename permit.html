@@ -1,0 +1,129 @@
+<html 
+		  <head>
+				<link rel="stylesheet" href="css/my_css.css" type="text/css"/>			
+		  </head>			
+		<body>
+			
+			<htmlpageheader name="myheader">
+				<table width="100%">
+					<tr>
+						<td align="Center" colspan="2" style="font-size:10mm">
+							<b>SINGLE BUSINESS PERMIT</b>
+						</td>
+					</tr>			
+					<tr>
+						<td align="Center" colspan="2">
+							<img src="images/CountyLogo.jpg" alt="County Logo">
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2" align="Center"><span style="font-weight: bold; font-size: 14pt;">'.$CountyName.'</span></td>
+					</tr>
+					<tr>
+						<td colspan="2" align="Center"><span style="font-weight: bold; font-size: 14pt;">
+						<br>
+						GRANT THIS <BR>
+						BUSINESS PERMIT <BR>
+						TO
+						</span></td>
+					</tr>
+
+				</table>
+				<table class="items" width="100%" style="font-size: 9pt; border-collapse: collapse;" cellpadding="8">
+					<thead>
+						<tr>
+							<td	colspan="2" width=20%>Business ID No:'.$BusinessID.' </td>
+							<td colspan="3">Business Name:'.$BusinessName.'</td>
+						</tr>
+						<tr>
+							<td colspan="2">Certificate of Registration No/Id No: <br>'.$PermitNo.'</td>
+							<td width=20%></td>
+							<td>Pin No: '.$Pin.'</td>
+							<td>Vat No: '.$Vat.'</td>
+						</tr>
+					</thead>
+					<tr>
+						<td colspan="5" align="center">
+								<p><strong>To engage in the Activity/Business/Profession or Occupation of:</strong></p><br>
+								<p>'.$ServiceName.'</p><br>
+						</td>
+					</tr>
+					<thead>
+						<tr>
+							<td align="left" colspan="3"><strong>Bisiness Activity Code & Description:</strong><br>'.$ServiceName.'</td>
+							<td align="right" colspan="2"><strong>Detailed Activity Description:</strong><br>'.$ServiceName.'</td>
+						</tr>
+					</thead>	
+					<tr>
+						<td colspan="5" align="center">
+							<p><strong>Having Paid a Single Business Permit Fee of:</strong></p><br>
+						</td>					
+					</tr>
+					<tr>
+						<td colspan="2"></td> 
+						<td align="center" style="background-color: #BEBABA; font-size:5mm">(Ksh.)<br>'.$ServiceCost.'</td>
+						<td colspan="2"></td> 
+					</tr>
+					<tr>
+						<td></td> 
+						<td align="center" colspan="3" style="border-left:0mm">(Ksh.)<br>'.$ServiceCost_Words.'</td>
+						<td></td> 
+					</tr>
+					<thead>
+						<tr>
+							<td>P.O Box <br> '.$CountyAddress.'</td>
+							<td>Postal Code <br> '.$PostalCode.'</td>
+							<td>Postal Town <br> '.$CountyTown.'</td>
+							<td>Business Physical Address<br> '.$CountyTown.'</td>
+							<td>Plot No <br> '.$PlotNo.'</td>
+						</tr>
+					
+						<tr>
+							<td><strong>Telephone 1</strong> <br> '.$CountyTelephone.'</td>
+							<td><strong>Telephone 2</strong> <br> '.$CountyTelephone.'</td>
+							<td><strong>Fax</strong> <br> '.$Fax.'</td>
+							<td colspan="2" align="left"><strong>Email Address</strong><br> '.$CountyEmail.'</td>						
+						</tr>
+					</thead>
+					<tr>
+						<td colspan="2"><strong>Validity Period</strong><br>'.$Validity.'</td>
+						<td rowspan="3"><img src="Images/stamp.png"></td>
+						<td colspan="2" align="center"><strong>Expiery Date</strong><br>'.$PermitNo.'</td>
+					</tr>
+					<tr>
+						<td colspan="2"><strong>Name Of the Officer Issuing this Permit:</strong><hr/></td>	
+						<td></td>						
+						<td colspan="2"></td>
+					</tr>
+					<tr>
+						<td colspan="2"><hr><br><strong>For The Treasurer<br>'.$CountyName.'</strong></td>
+						<td></td>
+						<td colspan="2"><hr><br><strong>Signature and Stamp<br></td>
+					</tr>
+					<thead>
+						<tr>
+							<td Colspan="5" style="text-align:justified;"> 
+							<small><strong>Notice:</strong> Granting this permit does not exempt the business identified above from
+									complying with the current regulations on Health and Safety as established by the Government of Kenya 
+									and the '.$CountyName.'</small>
+							</td>
+						</tr>
+					</thead>
+				</table>
+			</htmlpageheader>
+			<table>
+			</table>
+			
+			
+
+			<htmlpagefooter name="myfooter">
+			<div style="border-top: 1px solid #000000; font-size: 9pt; text-align: center; padding-top: 3mm; ">
+			 <i>See Conditions Overleaf</i>
+			</div>
+			</htmlpagefooter>
+
+			<sethtmlpageheader name="myheader" value="on" show-this-page="1" />
+			<sethtmlpagefooter name="myfooter" value="on" />
+			
+		</body>
+		</html>

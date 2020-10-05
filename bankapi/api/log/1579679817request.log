@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+	<soap:Body>
+		<request>
+			<billNumber>19</billNumber>                                                               
+			<billAmount>1000</billAmount>
+			<customerRefNumber>JK2342-05</customerRefNumber>
+			<bankreference>TTTXER342</bankreference>                             
+			<paymentMode>CASH</paymentMode>
+			<transactionDate>29-10-2019</transactionDate>                        
+			<phonenumber>0725463120</phonenumber>                             
+			<debitaccount>3826</debitaccount>
+			<user>108822</user>
+			<bankCode>1020</bankCode>
+			<debitcustname>Cosmas Ngeno</debitcustname>                                                   
+			<username>CoOpBank</username>                                   
+			<password>redsf@tfre</password>
+		</request>                                                                          
+	</soap:Body>
+	</soap:Envelope>

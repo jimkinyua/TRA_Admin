@@ -1,0 +1,14 @@
+#layout {
+  background-color: #1B1C1D;
+  width: 90%;
+  margin 0 auto;
+}
+
+.window {
+	top: 0;
+}
+
+.metro > .window {
+	width: 50%;
+	margin: 0 auto;
+}

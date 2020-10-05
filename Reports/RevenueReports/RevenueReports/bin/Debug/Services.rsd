@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SharedDataSet xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2010/01/shareddatasetdefinition">
+  <Description />
+  <DataSet Name="Services">
+    <Query>
+      <DataSourceReference>RevenueData</DataSourceReference>
+      <DataSetParameters>
+        <DataSetParameter Name="@CatID">
+          <ReadOnly>false</ReadOnly>
+          <Nullable>true</Nullable>
+          <OmitFromQuery>false</OmitFromQuery>
+        </DataSetParameter>
+      </DataSetParameters>
+      <CommandText>SELECT        s.ServiceID, s.ServiceName, s.ServiceCategoryID, sc.CategoryName
+FROM            Services AS s INNER JOIN
+                         ServiceCategory AS sc ON s.ServiceCategoryID = sc.ServiceCategoryID
+WHERE        (s.ServiceCategoryID IN (@CatID))</CommandText>
+    </Query>
+    <Fields>
+      <Field Name="ServiceID">
+        <DataField>ServiceID</DataField>
+        <rd:TypeName>System.Int32</rd:TypeName>
+      </Field>
+      <Field Name="ServiceName">
+        <DataField>ServiceName</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="ServiceCategoryID">
+        <DataField>ServiceCategoryID</DataField>
+        <rd:TypeName>System.Int32</rd:TypeName>
+      </Field>
+      <Field Name="CategoryName">
+        <DataField>CategoryName</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+    </Fields>
+  </DataSet>
+</SharedDataSet>

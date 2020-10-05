@@ -1,0 +1,16 @@
+Start{
+  "TransactionType":"",
+  "TransID":"LGR219G3EY",
+  "TransTime":"20170727104247",
+  "TransAmount":"10.00",
+  "BusinessShortCode":"600134",
+  "BillRefNumber":"KCD 034 G",
+  "InvoiceNumber":"",
+  "OrgAccountBalance":"",
+  "ThirdPartyTransID":"",
+  "MSISDN":"254708374149",
+  "FirstName":"John",
+  "MiddleName":"Doe",
+  "LastName":""
+}
+End

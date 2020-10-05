@@ -1,0 +1,1410 @@
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=576505
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=3
+----576505---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=576505
+----576505---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=576505
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=3
+----576505---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=576505
+----576505---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=576505
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=3
+----576505---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=576505
+----576505---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=112472
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=1
+----112472---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=112472
+----112472---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=112472
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=1
+----112472---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=112472
+----112472---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=86108
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=1
+----86108---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=86108
+----86108---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=86108
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=1
+----86108---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=86108
+----86108---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=85857
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=1
+----85857---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=85857
+----85857---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=462036
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=2
+----462036---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=462036
+----462036---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=99343
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=1
+----99343---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=99343
+----99343---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=99343
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=1
+----99343---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=99343
+----99343---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=99343
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=1
+----99343---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=99343
+----99343---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=125372
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=3
+----125372---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=125372
+----125372---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=88707
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=3
+----88707---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=88707
+----88707---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=88707
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=3
+----88707---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=88707
+----88707---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=88707
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=3
+----88707---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=88707
+----88707---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=88707
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=3
+----88707---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=88707
+----88707---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=88707
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=3
+----88707---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=88707
+----88707---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=88707
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=3
+----88707---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=88707
+----88707---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=392418
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=1
+----392418---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=392418
+----392418---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=382900
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=2
+----382900---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=382900
+----382900---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=382900
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=2
+----382900---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=382900
+----382900---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=382900
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=2
+----382900---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=382900
+----382900---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=382900
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=2
+----382900---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=382900
+----382900---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=467850
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=1
+----467850---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=467850
+----467850---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=467850
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=1
+----467850---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=467850
+----467850---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=467850
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=1
+----467850---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=467850
+----467850---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=467850
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=1
+----467850---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=467850
+----467850---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=493902
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=2
+----493902---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=493902
+----493902---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=119586
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=1
+----119586---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=119586
+----119586---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=119586
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=1
+----119586---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=119586
+----119586---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=119586
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=1
+----119586---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=119586
+----119586---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=119586
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=1
+----119586---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=119586
+----119586---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=119586
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=1
+----119586---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=119586
+----119586---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=119586
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=1
+----119586---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=119586
+----119586---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=119586
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=1
+----119586---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=119586
+----119586---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=110641
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=3
+----110641---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=110641
+----110641---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=110641
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=3
+----110641---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=110641
+----110641---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=110641
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=3
+----110641---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=110641
+----110641---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=110641
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=3
+----110641---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=110641
+----110641---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=244626
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=2
+----244626---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=244626
+----244626---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=244626
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=2
+----244626---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=244626
+----244626---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=244626
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=2
+----244626---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=244626
+----244626---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=123684
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=4
+----123684---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=123684
+----123684---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=123684
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=4
+----123684---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=123684
+----123684---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=123684
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=4
+----123684---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=123684
+----123684---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=86856
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=1
+----86856---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=86856
+----86856---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=144727
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=3
+----144727---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=144727
+----144727---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=144727
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=3
+----144727---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=144727
+----144727---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=144727
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=3
+----144727---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=144727
+----144727---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=144727
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=3
+----144727---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=144727
+----144727---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=144727
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=3
+----144727---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=144727
+----144727---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=144727
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=3
+----144727---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=144727
+----144727---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=144727
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=3
+----144727---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=144727
+----144727---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=144727
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=3
+----144727---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=144727
+----144727---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=98556
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=3
+----98556---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=98556
+----98556---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=98556
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=3
+----98556---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=98556
+----98556---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=125372
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=3
+----125372---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=125372
+----125372---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=454109
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=2
+----454109---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=454109
+----454109---
+select sum (distinct sc.amount)Amount
+									from ServiceCharges sc
+									join ServicePlus sp on sp.service_add=sc.ServiceID
+									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
+									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
+									join services s1 on sp.ServiceID=s1.ServiceID
+									join services s2 on sp.service_add=s2.ServiceID
+									and sh.ServiceHeaderID=87161
+									and fy.isCurrentYear=1
+									and sc.SubSystemId=1
+----87161---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=87161
+----87161---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=87161
+----87161---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=87161
+----87161---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=87161
+----87161---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=87161
+----87161---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=87161
+----87161---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=87161
+----87161---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=87161
+----87161---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=87161
+----87161---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=87161
+----87161---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=87161
+----87161---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=87161
+----87161---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=119756
+----119756---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=119756
+----119756---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=119756
+----119756---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=119756
+----119756---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=119756
+----119756---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=119756
+----119756---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=119756
+----119756---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=201763
+----201763---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=122462
+----122462---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=122462
+----122462---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=357929
+----357929---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=357929
+----357929---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=170535
+----170535---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=170535
+----170535---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=170347
+----170347---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=170347
+----170347---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=284567
+----284567---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=284567
+----284567---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=284567
+----284567---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=122219
+----122219---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=122219
+----122219---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=122219
+----122219---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=122915
+----122915---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=122915
+----122915---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=302698
+----302698---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=302698
+----302698---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=169323
+----169323---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=169323
+----169323---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=279909
+----279909---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=279909
+----279909---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=241510
+----241510---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=241510
+----241510---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=117097
+----117097---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=119128
+----119128---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=119128
+----119128---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=163649
+----163649---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=163649
+----163649---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=170347
+----170347---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=170535
+----170535---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=491225
+----491225---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=491225
+----491225---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=123329
+----123329---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=163649
+----163649---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=163649
+----163649---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=491225
+----491225---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=127608
+----127608---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=127608
+----127608---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=127608
+----127608---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=127608
+----127608---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=127608
+----127608---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=127608
+----127608---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=127608
+----127608---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=127608
+----127608---
+select sum(sc.Amount) Amount 
+	            from ApplicationCharges sc 
+	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	            join Services s1 on sc.ServiceID=s1.ServiceID 
+	            where sh.ServiceHeaderID=127608
+----127608---

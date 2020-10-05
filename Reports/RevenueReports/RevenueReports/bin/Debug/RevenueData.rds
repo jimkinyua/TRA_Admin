@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RptDataSource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="RevenueData">
+  <ConnectionProperties>
+    <Extension>SQL</Extension>
+    <ConnectString>Data Source=ATTAIN\MSSQLSERVER2014;Initial Catalog=COUNTYREVENUE</ConnectString>
+  </ConnectionProperties>
+  <DataSourceID>4c66f9e3-c169-438e-b8b1-94fb086e8ec3</DataSourceID>
+</RptDataSource>

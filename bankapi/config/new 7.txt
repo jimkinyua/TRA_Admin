@@ -1,0 +1,25 @@
+-- 82455054
+
+select top 1 ud.* from userdevices ud where 
+ud.deviceuserid='82455123' and deviceuserstatusid=1 order by ud.userdeviceid desc
+
+select ud.* from userdevices ud where 
+ud.deviceserialno='82455123' order by ud.userdeviceid desc
+select * from agents where agentid in ('52871', '30259', '30509');
+
+select serviceid from servicetrees where servicetreeid in ('8019', '2012');
+select * from servicetrees where servicetreeid='0'
+select * from servicetrees order by servicetreeid asc
+
+
+
+select * from serviceheader where serviceheaderid='1090013'
+select posreceiptid, count(*) as cnt from invoicelines group by posreceiptid order by cnt desc
+select posreceiptid, count(*) as cnt from invoicelines group by posreceiptid order by cnt desc
+select top 10 * from invoicelines
+select * from invoicelines where posreceiptid='16113082455173002'
+select * from invoicelines where posreceiptid='17040182455091033'
+select * from invoiceheader where invoiceheaderid='1003573'
+select * from invoiceheader where customerid=NULL
+
+select * from services where serviceid='0'
