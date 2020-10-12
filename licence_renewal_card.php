@@ -3,6 +3,13 @@ require 'DB_PARAMS/connect.php';
 require_once('utilities.php');
 require_once('GlobalFunctions.php');
 require_once('county_details.php');
+require_once('smsgateway.php');
+// require("/PHPMailer/src/PHPMailer.php");
+// require("/PHPMailer/src/SMTP.php");
+// require("/PHPMailer/src/Exception.php");
+// require_once("mPDF/mpdf.php");
+
+
 
 if (!isset($_SESSION))
 {
@@ -55,14 +62,19 @@ $DateLine=date('d/m/Y',strtotime($DateLine));
 $BusinessIsOld=0;
 $ConservancyCost=0;
 $PermitYear=date("Y");
-
 $InvoiceNo=0;
-
 $ServiceCost=0;
+$LicenceNumber = "";
+$SubmisionDate = "";
+$LicenceIssueDate = "";
+$LicenceExpiryDate = "";
+$ServiceHeaderID= "";
 
 if (isset($_REQUEST['ApplicationID'])) 
 {
-	$ApplicationID = $_REQUEST['ApplicationID']; 	
+    $ApplicationID = $_REQUEST['ApplicationID']; 	
+
+
 }
 
 $today=date('Y-m-d H:i:s');
@@ -72,108 +84,317 @@ if($today>$FirstDec){
 }
 
 
-if (isset($_REQUEST['save']) && $_REQUEST['NextStatus']!='')
-{
-	
-	$ApplicationID=$_REQUEST['ApplicationID'];
-	$CustomerID=$_REQUEST['CustomerID'];
-	$CurrentStatus=$_REQUEST['CurrentStatus'];
-	$NextStatus=$_REQUEST['NextStatus'];
-	$Notes=$_REQUEST['Notes'];
-	$NextStatusID=$NextStatus;
-	$InvoiceNo=$_REQUEST['InvoiceNo'];
-	
-	if ($NextStatus=='')
-	{
-		// /break;		
-	}
-	
-	$sql="select f.serviceheadertype from Forms f 
-	  join ServiceHeader sh on sh.FormID=f.formid 
-	  where sh.ServiceHeaderID='$ApplicationID'";
-	$s_result=sqlsrv_query($db,$sql);
-	//echo $s_sql;
-	if ($s_result)
-	{					
-		while ($row = sqlsrv_fetch_array( $s_result, SQLSRV_FETCH_ASSOC))
-		{			
-			$ServiceHeaderType=$row['serviceheadertype'];
-		}
-	}
+    if (isset($_REQUEST['save']) && $_REQUEST['NextStatus']!='')
+    {
+        // echo '<pre>';
+        // print_r($_REQUEST);
+        // exit;
 
-		
-	  
-	
-	$s_sql="select * from Customer where CustomerID=$CustomerID";
-	$s_result=sqlsrv_query($db,$s_sql);
-	//echo $s_sql;
-	if ($s_result)
-	{					
-		while ($row = sqlsrv_fetch_array( $s_result, SQLSRV_FETCH_ASSOC))
-		{			
-			$CustomerEmail=$row['Email'];
-			$CustomerName=$row['CustomerName'];
-		}
-	}
-	
-	$s_sql="select ServiceStatusID from ServiceStatus where ServiceStatusID='$NextStatus'";
-	$s_result=sqlsrv_query($db,$s_sql);
+        
+        $ApplicationID=$_REQUEST['ApplicationID'];
+        $ServiceHeaderID=$_REQUEST['ServiceHeaderID'];
+        $CustomerID=$_REQUEST['CustomerID'];
+        $CurrentStatus=$_REQUEST['CurrentStatus'];
+        $NextStatus= $_REQUEST['NextStatus'];
+        $Notes=empty($_REQUEST['Notes'])?$_REQUEST['Notes']:'tEST';
+        $NextStatusID=$NextStatus;
+        $InvoiceNo=$_REQUEST['InvoiceNo'];
+        
+        if($NextStatus == 5){ //Reject
+            /* Begin the transaction. */
+            if ( sqlsrv_begin_transaction( $db ) === false ) {
+                die( print_r( sqlsrv_errors(), true ));
+            }
+            $UpdateLicenceRenewalSQL="update LicenceRenewals set 
+            LicenceRenewalStatusId=2,
+            Renewed = 0,
+            Notes ='$Notes'
+            where ServiceHeaderId=$ServiceHeaderID AND Renewed=0";
+            // exit($UpdateLicenceRenewalSQL);
+            $UpdateLicenceRenewalResult = sqlsrv_query($db, $UpdateLicenceRenewalSQL);
 
-	if ($s_result){
-		while ($row = sqlsrv_fetch_array( $s_result, SQLSRV_FETCH_ASSOC))
-		{			
-			$NextStatusID=$row['ServiceStatusID'];
-		}
-	}
-	
-	$initQry="Insert into ServiceApprovalActions(ServiceHeaderID,ServiceStatusID,NextServiceStatusID,Notes,CreatedBy) 
-	Values ($ApplicationID,$CurrentStatus,$NextStatusID,'$Notes','$UserID')";	
-	//echo 'insert actions';
-	$s_result = sqlsrv_query($db, $initQry);
-	
-	if ($s_result) 
-	{
-		if($NextStatusID==2){
-			// $sql="insert into Inspections(ServiceHeaderID,UserID,InspectionStatusID) values($ApplicationID,$UserID,0)";
-			$sql="update Inspections set InspectionStatusID=0 where ServiceHeaderID=$ApplicationID";
-			// echo $sql; exit;
-			$result = sqlsrv_query($db, $sql);
+            /* If  query is successful, commit the transaction. */
+            /* Otherwise, rollback the transaction. */
+            if($UpdateLicenceRenewalResult ) {
+                sqlsrv_commit( $db );
+                echo "Transaction committed.<br />";
+                // Header ("Location:renewal_applications_list.php");
 
-			if($result){
-				Header ("Location:clients_list.php");
-			}
-		}					
-		$sql="Update ServiceHeader set ServiceStatusID=$NextStatus where ServiceHeaderID=$ApplicationID";	
-		$s_result = sqlsrv_query($db, $sql);					
-	}else
-	{
-		
-		DisplayErrors();
-		$msg="Transaction failed to initialize";
-	}
-}
+            } else {
+                sqlsrv_rollback( $db );
+                echo "Transaction rolled back.<br />";
+                DisplayErrors();
+                // Header ("Location:renewal_applications_list.php");
 
-$s_sql="select c.*,f.ServiceHeaderType,bt.CustomerTypeName,sh.ServiceStatusID,sh.ServiceHeaderID,bz.ZoneName,w.WardName,sc.SubCountyName,s.ServiceName,sh.ServiceID,sh.CreatedDate,sh.SubSystemID,S.ServiceCategoryID
-	from Customer c 
-	join ServiceHeader sh on sh.CustomerID=c.CustomerID
-	join services s on sh.ServiceID=s.ServiceID
-	join Forms f on sh.FormID=f.FormID
-	left join CustomerType bt on bt.CustomerTypeID=c.BusinessTypeID 
-	left join BusinessZones bz on sh.BusinessZoneID=bz.ZoneID
-	left join Wards w on bz.wardid=w.wardid
-	left join subcounty sc on w.subcountyid=sc.subcountyid
-	
-	where sh.ServiceHeaderID=$ApplicationID";
+            }
+        }else{ //Renew Licence
+
+                /* Begin the transaction. */
+            if ( sqlsrv_begin_transaction( $db ) === false ) {
+                die( print_r( sqlsrv_errors(), true ));
+            }
+
+            $LicenceRenewalDate=date('Y-m-d H:i:s');
+            $UpdateLicenceRenewalSQL="update LicenceRenewals set 
+            LicenceRenewalDate='$LicenceRenewalDate',
+            Renewed = 1,
+            Notes ='$Notes'
+            where ServiceHeaderId=$ServiceHeaderID AND Renewed=0";
+            // exit($UpdateLicenceRenewalSQL);
+            $UpdateLicenceRenewalResult = sqlsrv_query($db, $UpdateLicenceRenewalSQL);
+
+            //Increase Epirey Date to December Next Year
+            $day = 31; $month =12; $year = date("Y")+1;
+            $d=mktime(00, 00, 00, $month,$day, $year);
+            $ExpireDate = date("Y-m-d H:i:s", $d);
+            $UpdateServiceHeaderSql="update ServiceHeader set ExpiryDate='$ExpireDate' 
+            where ServiceHeaderID=$ServiceHeaderID";
+           $UpdateServiceHeaderResult = sqlsrv_query($db, $UpdateServiceHeaderSql);
+
+            /* If both queries were successful, commit the transaction. */
+
+            //Generate an Invoice Now
+
+            // $ServiceAmount=0;
+            $InvoiceAmount=$_REQUEST['RenewalFee'];
+            $InvoiceDate= date("Y-m-d H:i:s");
+            $CustomerId = $_REQUEST['CustomerID'];
+            $InvoiceNo = 'RENEWAL/'.date('Y').'/'.rand(1 , 7000);
+            $UserID = $_SESSION['UserID'];
+            $InsertIntoLicenceRenewalInvoiceHeaderSQL="insert into LiceneRenewaInvoiceHeader
+             (InvoiceDate,ServiceHeaderID,InvoiceNo,CustomerID, LicenceRenewalid, CreatedBy) 
+			Values('$InvoiceDate','$ServiceHeaderID','$InvoiceNo','$CustomerId','$ApplicationID','$UserID') SELECT SCOPE_IDENTITY() AS ID";
+            
+            // exit($InsertIntoLicenceRenewalInvoiceHeaderSQL);
+            $InsertIntoLicenceRenewalInvoiceHeaderResult = sqlsrv_query($db, $InsertIntoLicenceRenewalInvoiceHeaderSQL);
+            
+            
+            //Insert Into the Lines
+            $InvoiceHeader=lastid($InsertIntoLicenceRenewalInvoiceHeaderResult);
+            // ECHO '<PRE>';
+            // print_r($InvoiceHeader);
+            // exit;
+
+                
+            $Description = "Renewal Fee";
+            $InsertIntoLicenceRenewalnvoiceLinesSQL="insert into LicenceRenewalnvoiceLines (InvoiceHeaderID,
+                Description,
+                Amount,CreatedDate,CreatedBy) 
+				Values($InvoiceHeader,'$Description',$InvoiceAmount,'$InvoiceDate',$UserID)";
+            //  exit($InsertIntoLicenceRenewalnvoiceLinesSQL);
+
+                $InsertIntoLicenceRenewalnvoiceLinesresult = sqlsrv_query($db, $InsertIntoLicenceRenewalnvoiceLinesSQL);
+                    
+            /* Otherwise, rollback the transaction. */
+            if( $UpdateServiceHeaderResult && $UpdateLicenceRenewalResult && $InsertIntoLicenceRenewalnvoiceLinesresult && $InsertIntoLicenceRenewalInvoiceHeaderResult ) {
+                sqlsrv_commit( $db );
+                
+                $tablestr.='<tr>
+				<td align="center">'.$InvoiceLineID.'</td>
+				<td align="center">1</td>
+				<td>'.$Description.'</td>
+				<td align="right">'.number_format($InvoiceAmount,2).'</td>
+				<td align="right">'.number_format($InvoiceAmount,2).'</td>
+                </tr>'; 
+                $SerialNo=$InvoiceHeader;
+                // createBarCode($InvoiceHeader);
+                $mpdf=new mPDF('win-1252','A4','','',20,15,48,25,10,10);
+                $mpdf->useOnlyCoreFonts = true;    // false is default
+                $mpdf->SetProtection(array('print'));
+                $mpdf->SetTitle($CustomerName." - Invoice");
+                $mpdf->SetAuthor('TRA');
+                $mpdf->SetWatermarkText('Tourism Regulatory Authority');
+                $mpdf->showWatermarkText = true;
+                $mpdf->watermark_font = 'DejaVuSansCondensed';
+                $mpdf->watermarkTextAlpha = 0.1;
+                $mpdf->SetDisplayMode('fullpage');
+
+                $html = '
+                <html>
+                <head>
+                    <link rel="stylesheet" type="text/css" href="css/my_css.css"/>		
+                </head>
+                <body>
+
+                <!--mpdf
+                <htmlpageheader name="myheader">
+                <table width="100%">
+                        
+                <tr>
+                    <td align="Center" colspan="2">
+                        <img src="images/logo1.png" alt="TRA Logo">
+                    </td>
+                </tr>
+                <tr>
+                    <td align="Center" colspan="2" style="font-size:5mm">
+                        <b>Licence Renewal Invoice</b>
+                    </td>
+                </tr>
+                    
+                <tr>
+                    <td width="50%" style="color:#0000BB;">
+                        Address: 30 <br />
+                        <br /> 
+                        Telephone: 0710 467 646</td>
+                    <td width="50%" style="text-align: right;">			
+                    Invoice No.<br/><span style="font-weight: bold; font-size: 10pt;">'.$SerialNo.'</span>
+                    </td>
+                </tr></table>
+                
+                </htmlpageheader>
+
+                <htmlpagefooter name="myfooter">
+                <div style="border-top: 1px solid #000000; font-size: 9pt; text-align: center; padding-top: 3mm; ">
+                powered by      <img src="images/attain_logo_2.jpg" alt="County Logo">
+                </div>
+                </htmlpagefooter>
+
+                <sethtmlpageheader name="myheader" value="on" show-this-page="1" />
+                <sethtmlpagefooter name="myfooter" value="on" />
+                mpdf-->
+                <br/><br/><br/><br/>
+                <div style="text-align: right">Invoice Date: '.date_format(date_create($CreatedDate),"d/m/Y").'</div>
+                
+                <table width="100%" style="font-family: serif;" cellpadding="10">
+                <tr>
+                    <td width="45%" style="border: 0.1mm solid #888888;">
+                        <span style="font-size: 7pt; color: #555555; font-family: sans;">TO:</span><br /><br />'.$CustomerName.'<br /> Postal Address: Meru <br />Nairobi<br />O710 467 646
+                    </td>
+                    <td width="10%">&nbsp;</td>
+                    <td width="45%"></td>
+                </tr>
+                </table>
+
+                <table class="items" width="100%" style="font-size: 9pt; border-collapse: collapse;" cellpadding="8">
+                <thead>
+                <tr>
+                <td width="15%">REF. NO.</td>
+                <td width="15%">QUANTITY</td>
+                <td width="40%">DESCRIPTION</td>
+                <td width="15%">UNIT PRICE</td>
+                <td width="15%">AMOUNT</td>
+                </tr>
+                </thead>
+                <tbody>
+                
+                <!-- ITEMS HERE -->'.
+                
+                
+                $tablestr.
+                                                
+                '<!-- END ITEMS HERE -->
+                
+                <tr>
+                    <td class="blanktotal" colspan="2" rowspan="6"></td>
+                    <td class="totals" align="left">'.$Description.'</td>
+                    <td class="totals">Subtotal:</td>
+                    <td class="totals">'.number_format($InvoiceAmount,2).'</td>
+                </tr>
+                <tr>
+                    <td class="blanktotal" rowspan="6"></td>
+                    <td class="totals"><b>TOTAL:</b></td>
+                    <td class="totals"><b>'.number_format($InvoiceAmount,2).'</b></td>
+                </tr>
+                <tr>
+                
+                <td class="totals"><b>Balance due:</b></td>
+                <td class="totals"><b>'.number_format($InvoiceAmount,2).'</b></td>
+                </tr>
+                </tbody>
+                </table>
+                Created By <strong>'.$CreatedBy.'</strong><br>
+                <div style="font-style: italic; font-size: 10;">
+                    Payment terms: payment due in 30 days<br>
+                    Payment by MPESA
+                    <ol>
+                    <li> Go to MPESA menu and select <b>Lipa na MPESA</b></li>
+                    <li> Enter <b>522522</b> as the paybill number and the Invoice Number as the account number</li>
+                    <li> Pay the amount and enter your MPESA pin number when printed</li>
+                    </ol>							
+                    <b>Payment by Bank</b>
+                    <ol>
+                        <li>Enter the TRA revenue account invoice number as the account number</li>
+                    </ol>
+               							
+                    Contact us on <b>0720646464</b> for any assistance
+                </div>
+                <br>
+                <div style="text-align: center;">
+                    <img src="images/Bar_Codes/'.$InvoiceNo.'.PNG">
+                </div>
+                </body>
+                </html>
+                ';
+        /* 		echo $html;
+                exit; */
+                $mpdf->WriteHTML($html);
+                // $mpdf->Output();
+                // exit; 
+                
+                $mpdf->Output('pdfdocs/invoices/'.$SerialNo.'.pdf','F'); 
+                
+                //send email
+                $my_file = $SerialNo.'.pdf';
+                $file_path = "pdfdocs/invoices/";
+                $my_name ='TRA'; //$CountyName;
+                $toEmail ='jimkinyua25@gmail.com';// $Email;
+                $fromEmail ='passdevelopment00@gmail.com';// $CountyEmail;
+                $my_subject = "Service Application Invoice";
+                $my_message="Kindly receive the invoice for your applied Service";
+                //$my_mail = 'cngeno11@gmail.com';
+                $result=php_mailer($toEmail,$fromEmail,$CountyName,$my_subject,$my_message,$my_file,$file_path,"Invoice");
+                echo "Transaction committed.<br />";
+                // Header ("Location:renewal_applications_list.php");
+
+            } else {
+                sqlsrv_rollback( $db );
+                echo "Transaction rolled back.<br />";
+                DisplayErrors();
+                // Header ("Location:renewal_applications_list.php");
+
+            }
+        }
+
+        
+                // if($result){
+                // 	Header ("Location:renewal_applications_list.php");
+                // }
+                    
+    }//else
+    // {
+        
+    //     DisplayErrors();
+    //     $msg="Transaction failed to initialize";
+    // }
+
+
+$s_sql="select c.*, renewal.*, bt.CustomerTypeName, sh.ServiceStatusID,sh.ServiceHeaderID,s.ServiceName,sh.ServiceID,sh.CreatedDate,sh.SubSystemID,S.ServiceCategoryID
+from Customer c 
+left join ServiceHeader sh on sh.CustomerID=c.CustomerID
+join services s on sh.ServiceID=s.ServiceID
+left join LicenceRenewals renewal on sh.ServiceID=renewal.ServiceId 
+left join CustomerType bt on bt.CustomerTypeID=c.BusinessTypeID 
+where renewal.LicenceId=$ApplicationID AND renewal.Renewed=0";
+
+    
+    // echo '<pre>';
+    // print_r($s_sql);
+    // exit;
 
 $s_result=sqlsrv_query($db,$s_sql);
+
 
 // echo $s_sql;exit;
 
 if ($s_result)
 {
+    
 	
 	while ($row = sqlsrv_fetch_array( $s_result, SQLSRV_FETCH_ASSOC)){	
-		
+       
+        // echo '<pre>';
+        // print_r($row);
+        // exit;	
 		$CustomerType=$row['CustomerTypeName'];
 		$CustomerID=$row['CustomerID'];
 		$CustomerName=$row['CustomerName'];
@@ -202,7 +423,13 @@ if ($s_result)
 		$BusinessZone=$row['ZoneName'];
 		$SubSystemID=$row['SubSystemID'];
 		$ApplicationDate=$row['CreatedDate'];//date('d/m/Y',strtotime($date));
-		$ApplicationDate=date('d/m/Y',strtotime($ApplicationDate));
+        $ApplicationDate=date('d/m/Y',strtotime($ApplicationDate));
+        $LicenceNumber = $row['LicenceNo'];
+        $SubmisionDate = $row['SubmissionDate'];
+        $LicenceIssueDate = $row['IssueDate'];
+        $LicenceExpiryDate =$row['ExpiryDate'];
+        $ServiceFee = $row['RenewalFee'];
+        $ServiceHeaderID = $row['ServiceHeaderID'];
 		
 	}
 }
@@ -212,7 +439,6 @@ if ($s_result)
 
 if ($ServiceHeaderTypeID==1)
 {
-
 	$BSql="select l.RatesPayable from LandApplication la join land l on la.PlotNo=l.PlotNo and la.LRN=l.LRN where la.ServiceHeaderID=$ApplicationID";
 	$rsult=sqlsrv_query($db,$BSql);
 	//echo $BSql;
@@ -494,6 +720,9 @@ if (isset($_REQUEST['InspectionDate']))
 	}
 }
 
+// echo '<pre>';
+// print_r($CustomerName);
+// exit;
 
 
 	 //$ServiceCost=$ServiceCost-OtherCharge;
@@ -526,7 +755,7 @@ if (isset($_REQUEST['InspectionDate']))
 	});
 </script>
 <div class="example">
-   <legend>Service Approval</legend>
+   <legend>Licence Renewal Approval</legend>
    <form>
       <fieldset>
           <table width="100%" border="0" cellspacing="0" cellpadding="3">
@@ -553,7 +782,7 @@ if (isset($_REQUEST['InspectionDate']))
                   <td width="50%">				  
                   </td>   
               </tr>
-              <tr>
+              <!-- <tr>
                   <td width="50%">
                   <label>Ward</label>
 					  <div class="input-control text" data-role="input-control">
@@ -562,10 +791,10 @@ if (isset($_REQUEST['InspectionDate']))
                   </td>
                   <td width="50%">				  
                   </td>   
-              </tr>
+              </tr> -->
               <tr>
                   <td width="50%">
-                  <label>Susb System</label>
+                  <label>Region</label>
 					  <div class="input-control text" data-role="input-control">
 						  <input name="SubSystem" type="text" id="SubSystem" value="<?php echo $SubSystemName; ?>" disabled="disabled" placeholder="">						  
 					  </div>				  
@@ -575,40 +804,21 @@ if (isset($_REQUEST['InspectionDate']))
               </tr>
               <tr>
                   <td width="50%">
-                  <label>Service</label>
+                  <label>Licence Being Renewed</label>
 					  <div class="input-control text" data-role="input-control">
 						  <input name="servicename" type="text" id="servicename" value="<?php echo $ServiceName; ?>" disabled="disabled" placeholder="">
 						  
 					  </div>				  
                   </td>
-                  <td width="50%">
-				<label>&nbsp;</label>				  
+                  <!-- <td width="50%"> -->
+				<!-- <label>&nbsp;</label>				   -->
 					<!--service_approval.php?ApplicationID='+app_id+'&app_type='+app_type+'&CurrentStatus='+current_status
 					<input name="Button" type="button" onclick="loadmypage('service_form.php?save=1&ApplicationID=<?php echo $ApplicationID ?>','content','loader','','')" value="Change">-->
-					<input name="Button" type="button" 
-					onclick="loadmypage('application_change.php?ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','','')" value="Change">
-                  </td>   
+					<!-- <input name="Button" type="button" 
+					onclick="loadmypage('application_change.php?ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','','')" value="Change"> -->
+                  <!-- </td>    -->
               </tr>	
 
-
-
-
- <tr>
-                  <td width="50%">
-                  <label>Add Inspection Officers</label>
-					  <div class="input-control text" data-role="input-control">
-						  <input name="servicename" type="text" id="servicename" value="Add Inspection Officer" disabled="disabled" placeholder="">
-						  
-					  </div>				  
-                  </td>
-                  <td width="50%">
-				<label>&nbsp;</label>				  
-					<!--service_approval.php?ApplicationID='+app_id+'&app_type='+app_type+'&CurrentStatus='+current_status
-					<input name="Button" type="button" onclick="loadmypage('service_form.php?save=1&ApplicationID=<?php echo $ApplicationID ?>','content','loader','','')" value="Change">-->
-					<input name="Button" type="button" 
-					onclick="loadmypage('add_officer.php?ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','','')" value="Add Inspection Officer">
-                  </td>   
-              </tr>	
 
 <tr>
 
@@ -625,19 +835,13 @@ if (isset($_REQUEST['InspectionDate']))
 				}
 			}
 			?>
-                  <td width="50%">
-                  <label>Set Inspection Date</label>
-					  <div class="input-control text" data-role="input-control">
-						  <input name="servicename" type="text" id="servicename" value="<?php echo $SetDate; ?>" disabled="disabled" placeholder="">
-						  
-					  </div>				  
-                  </td>
+                
                   <td width="50%">
 				<label>&nbsp;</label>				  
 					<!--service_approval.php?ApplicationID='+app_id+'&app_type='+app_type+'&CurrentStatus='+current_status
 					<input name="Button" type="button" onclick="loadmypage('service_form.php?save=1&ApplicationID=<?php echo $ApplicationID ?>','content','loader','','')" value="Change">-->
 					<input name="Button" type="button" 
-					onclick="loadmypage('inspection_date.php?ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','','')" value="Set Inspection Date">
+					onclick="loadmypage('inspection_date.php?ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','','')" value="Renew Licence">
                   </td>   
               </tr>
 
@@ -648,7 +852,7 @@ if (isset($_REQUEST['InspectionDate']))
 				   <td width="50%">
 						<label>Service Cost (Ksh.)</label>
 						  <div class="input-control text" data-role="input-control">
-							  <input name="servicecost" type="text" id="servicecost" value="<?php echo $ServiceCost; ?>" disabled="disabled" placeholder="">
+							  <input name="servicecost" type="text" id="servicecost" value="<?php echo $ServiceFee; ?>" disabled="disabled" placeholder="">
 							  
 						  </div>                  	
                   </td>
@@ -673,7 +877,7 @@ if (isset($_REQUEST['InspectionDate']))
 								<li class=""><a href="#_page_4">Applicant's Details</a></li>	
 								<li class="active"><a href="#_page_1">Aplication Details</a></li>
 								<li class=""><a href="#_page_3">Application Attachments</a></li>
-								<li class=""><a href="#_page_2">Notes</a></li>
+								<!-- <li class=""><a href="#_page_2">Notes</a></li> -->
 								<li class=""><a href="#_page_5">Inspection Officers</a></li>
 							</ul>							
 							<div class="frames">
@@ -852,27 +1056,35 @@ if (isset($_REQUEST['InspectionDate']))
 									  </table> 
 								  </div>
 								  <div class="frame" id="_page_1" style="display: none;">
-									<table width="50%">
-										<!-- <tr>
-											<td width="30%">
-												<label>SubCounty</label>
+									<table width="100%">
+										<tr>
+											<td >
+												<label>Licence Number</label>  
+
 												  <div class="input-control text" data-role="input-control">
-													  <input name="SubCounty" type="text" id="SubCounty" value="<?php echo $SubCountyName; ?>" disabled="disabled">													  
+													  <input name="SubCounty" type="text" id="SubCounty" value="<?php echo $LicenceNumber; ?>" disabled="disabled">													  
 												  </div>
 											</td>
-											<td width="30%">
-												<label>WardName</label>
+											<td >
+												<label>Submision Date</label>
 												  <div class="input-control text" data-role="input-control">
-													  <input name="WardName" type="text" id="WardName" value="<?php echo $WardName; ?>" disabled="disabled">													  
+													  <input name="WardName" type="text" id="WardName" value="<?php echo $SubmisionDate; ?>" disabled="disabled">													  
 												  </div>
 											</td>
-											<td width="30%">
-												<label>BusinessZone</label>
+											<td >
+												<label>Licence Issue Date</label>
 												  <div class="input-control text" data-role="input-control">
-													  <input name="ZoneName" type="text" id="ZoneName" value="<?php echo $BusinessZone; ?>" disabled="disabled">													  
+													  <input name="ZoneName" type="text" id="ZoneName" value="<?php echo $LicenceIssueDate; ?>" disabled="disabled">													  
 												  </div>
-											</td>											
-										</tr> -->
+											</td>	
+
+                                            											<td >
+												<label>Licence Expiry Date</label>
+												  <div class="input-control text" data-role="input-control">
+													  <input name="ZoneName" type="text" id="ZoneName" value="<?php echo $LicenceExpiryDate; ?>" disabled="disabled">													  
+												  </div>
+											</td>										
+										</tr>
 										
 										<?php  
 											if ($ServiceHeaderTypeID==1)
@@ -1002,50 +1214,7 @@ if (isset($_REQUEST['InspectionDate']))
 										?>            	
 									</table> 
 								  </div>
-								  <div class="frame" id="_page_5" style="display: none;">
 
-								  	<?php 
-								  	include 'inspection_officers_list.php'; 
-								  	$UserID = '$UserID';
-								  	$ServiceID = $ApplicationID;
-								  	//include 'inspection_officers.php'; 
-								  	?>
-
-								  	
-									<!-- <table class="hovered" cellpadding="3" cellspacing="1">
-
-										
-
-<?php
-
-
-
-
-$sql="SELECT u.Email, FirstName, Middlename, LastName UserNames 
-	FROM Users u 
-	join agents ag on u.agentid=ag.agentID ";
-												$s_result=sqlsrv_query($db,$sql);
-												if ($s_result){
-													while($row=sqlsrv_fetch_array($s_result,SQLSRV_FETCH_ASSOC)){
-														echo "<tr><td>Facilty: </td><td> ".$row["Email"]."</td></tr>";
-														echo "<tr><td>Start Date: </td><td> ".$row["FirstName"]."</td></tr>";
-														echo "<tr><td>End Date: </td><td> ".$row["LastName"]."</td></tr>";														
-														}
-												}else
-												{
-													echo $sql;
-												}						
-
-
-
-?>
-
-
-
-
-
-									  </table>  -->
-								  </div>
 
 								</div>
 
@@ -1057,7 +1226,7 @@ $sql="SELECT u.Email, FirstName, Middlename, LastName UserNames
 
 				<tr>
 
-					<td width="50%"><label>Notes</label>
+					<td width="100%"><label>Notes</label>
 					  <div class="input-control textarea" data-role="input-control">
 						<textarea name="Notes" type="textarea> id="Notes" placeholder=""><?php //echo $Notes; ?></textarea>  
 					  </div>
@@ -1075,7 +1244,7 @@ $sql="SELECT u.Email, FirstName, Middlename, LastName UserNames
                     <?php 
                          
 						
-						$s_sql="SELECT ServiceStatusID,ServiceStatusDisplay  from ServiceStatus where ServiceStatusID in (2,6)";						
+						$s_sql="SELECT Id,StatusName  from LicenceRenewalStatus where Id in (4,5)";						
 
 						
 						$s_result = sqlsrv_query($db, $s_sql);
@@ -1083,8 +1252,8 @@ $sql="SELECT u.Email, FirstName, Middlename, LastName UserNames
 						{ //connection succesful 
 						  while ($row = sqlsrv_fetch_array( $s_result, SQLSRV_FETCH_ASSOC))
 						  {
-							  $s_name = $row["ServiceStatusDisplay"];							  
-							  $s_id = $row["ServiceStatusID"];
+							  $s_name = $row["StatusName"];							  
+							  $s_id = $row["Id"];
                                     
 						   ?>
 						  <option value="<?php echo $s_id; ?>" <?php echo $selected; ?>><?php echo $s_name; ?></option>
@@ -1126,87 +1295,27 @@ if ($myrow = sqlsrv_fetch_array( $dresult, SQLSRV_FETCH_ASSOC))
           ?>
 
           
-          <?= $CurrentStatus;?>
+        
           <?php 
-          if($ServiceType == 2074 && $numrows == 3 && (!empty($SetDate1))){
+     
            ?>
 		  
-           <input type="reset" value="Cancel" onClick="loadmypage('clients_list.php?i=1','content','loader','listpages','','applications','<?php echo $_SESSION['RoleCenter'] ?>')">
+           <input type="reset" value="Cancel" onClick="loadmypage('renewal_applications_list.php?i=1','content','loader','listpages','','applications','<?php echo $_SESSION['RoleCenter'] ?>')">
 
 
 		  <input name="Button" type="button" onClick="
-		   CurrStatus=this.form.CurrentStatus.value;
+		    CurrStatus=this.form.CurrentStatus.value;
 
-		  if(CurrStatus>2)
-		  {
-		  	loadmypage('clients_list.php?save=1&ApplicationID=<?php echo $ApplicationID ?>&CustomerName=<?php echo $CustomerName ?>&CustomerID=<?php echo $CustomerID ?>&ServiceID=<?php echo $ServiceID ?>&ServiceName=<?php echo $ServiceName ?>&CurrentStatus=<?php echo $CurrentStatus ?>&NextStatus='+this.form.NextStatus.value+'&Notes='+this.form.Notes.value+'&ServiceCategoryID=<?php echo $ServiceCategoryID ?>','content','loader','listpages','','applications','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')
-		  }else
-		  {
-		  	loadpage('service_approval.php?save=1&ApplicationID=<?php echo $ApplicationID ?>&CustomerName=<?php echo $CustomerName ?>&CustomerID=<?php echo $CustomerID ?>&ServiceID=<?php echo $ServiceID ?>&ServiceName=<?php echo $ServiceName ?>&CurrentStatus=<?php echo $CurrentStatus ?>&NextStatus='+this.form.NextStatus.value+'&Notes='+this.form.Notes.value+'&ServiceCategoryID=<?php echo $ServiceCategoryID ?>','content')
-		  }
+		  	loadpage('licence_renewal_card.php?save=1&ApplicationID=<?php echo $ApplicationID ?>&CustomerName=<?php echo $CustomerName ?>&CustomerID=<?php echo $CustomerID ?>&ServiceID=<?php echo $ServiceID ?>&RenewalFee=<?php echo $ServiceFee ?>&ServiceHeaderID=<?php echo $ServiceHeaderID ?>&ServiceName=<?php echo $ServiceName ?>&CurrentStatus=<?php echo $CurrentStatus ?>&NextStatus='+this.form.NextStatus.value+'&Notes='+this.form.Notes.value+'&ServiceCategoryID=<?php echo $ServiceCategoryID ?>','content')
+		  
 
-		  " value="Approve">
+		    " value="Submit ">
 
 		  <?php
-		}elseif($ServiceType != 2074 && $numrows != 0 && (!empty($SetDate1))){
-
-		  	?>
-			   
-		  	<input type="reset" value="Cancel" onClick="loadmypage('clients_list.php?i=1','content','loader','listpages','','applications','<?php echo $_SESSION['RoleCenter'] ?>')">
+		
 
 
-		  <input name="Button" type="button" onClick="
-		   CurrStatus=this.form.CurrentStatus.value;
 
-		  if(CurrStatus>2)
-		  {
-		  	loadmypage('clients_list.php?save=1&ApplicationID=<?php echo $ApplicationID ?>&CustomerName=<?php echo $CustomerName ?>&CustomerID=<?php echo $CustomerID ?>&ServiceID=<?php echo $ServiceID ?>&ServiceName=<?php echo $ServiceName ?>&CurrentStatus=<?php echo $CurrentStatus ?>&NextStatus='+this.form.NextStatus.value+'&Notes='+this.form.Notes.value+'&ServiceCategoryID=<?php echo $ServiceCategoryID ?>','content','loader','listpages','','applications','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')
-		  }else
-		  {
-		  	loadpage('service_approval.php?save=1&ApplicationID=<?php echo $ApplicationID ?>&CustomerName=<?php echo $CustomerName ?>&CustomerID=<?php echo $CustomerID ?>&ServiceID=<?php echo $ServiceID ?>&ServiceName=<?php echo $ServiceName ?>&CurrentStatus=<?php echo $CurrentStatus ?>&NextStatus='+this.form.NextStatus.value+'&Notes='+this.form.Notes.value+'&ServiceCategoryID=<?php echo $ServiceCategoryID ?>','content')
-		  }
-
-		  " value="Approve">
-
-
-			<?php
-		  }elseif($ServiceType == 2074 && $numrows !=3 && (!empty($SetDate1))){
-		  	?>
-		  	<p style="color:red;"><strong> You have to add 3 inspection officers to proceed for grading inspection!</strong></p>
-
-			<?php
-		  }elseif($ServiceType == 2074 && $numrows != 3 && (empty($SetDate1))){
-		  	?>		  	<p style="color:red;"><strong>You have not set the inspection date and Inspection Officers! </strong></p>
-
-		  	<?php
-		  }elseif($ServiceType != 2074 && $numrows < 1 && (empty($SetDate1))){
-		  	?>		  	<p style="color:red;"><strong>You have not set the inspection date and saved Inspection officers! </strong></p>
-
-		  	 	<?php
-		  }elseif($ServiceType != 2074 && $numrows < 1 && (!empty($SetDate1))){
-		  	?>		  	<p style="color:red;"><strong>You have not saved Inspection officers! </strong></p>
-
-
-		  	 	<?php
-		  }elseif($ServiceType != 2074 && $numrows > 1 && (empty($SetDate1))){
-		  	?>		  	<p style="color:red;"><strong>You have not set the inspection date  </strong></p>
-
-
-		  	
-
-		  	<?php
-		  }elseif($ServiceType == 2074 && $numrows == 3 && (empty($SetDate1))){
-		  	?>		  	<p style="color:red;"><strong>You have not set the inspection date! </strong></p>
-		  	<?php
-		  }elseif($ServiceType != 2074 && $numrows > 0 && (empty($SetDate1))){
-		  	?>		  	<p style="color:red;"><strong>You have not set the inspection date! </strong></p>
-
-		  	<?php
-		  }elseif($ServiceType == 2074 && $numrows == 3 && (!empty($SetDate1))){
-		  	?>
-		  	<p style="color:red; size: "><strong>Save the inspection date and add inspection officers to proceed! </strong></p>
-		  	<?php
-		  }
 		  ?>
 
           <span class="table_text">

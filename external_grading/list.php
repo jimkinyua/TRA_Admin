@@ -4,7 +4,7 @@
    
     if(isset($_POST['search'])) {
         $searchitem = $_POST['search']; 
-}
+    }
 // print_r($_POST);exit();
 
   $sql= "select c.CustomerName, sum(cr.ParameterScore) as

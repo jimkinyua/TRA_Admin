@@ -30,6 +30,9 @@ function save_roles(url,destination,loader,op,id,opv,exPM)
 }
 function loadoptionalpage(app_id,app_type,current_status,destination,loader,op,id,opv,exPM)
 {
+	alert(destination);
+	// alert(opv);
+	// alert(op);
 	var mypage='';
 	if (app_type==1)
 	{
@@ -55,6 +58,12 @@ function loadoptionalpage(app_id,app_type,current_status,destination,loader,op,i
 		mypage='permit_renewal.php?ApplicationID='+app_id+'&app_type='+app_type+'&CurrentStatus='+current_status;
 		//mypage='hire_application.php?ApplicationID='+app_id+'&app_type='+app_type+'&CurrentStatus='+current_status;
 		//opv='LAIFOMS_PERMIT';
+	}
+	else if(app_type==6)
+	{
+		mypage='licence_renewal_card.php?ApplicationID='+app_id+'&app_type='+app_type+'&CurrentStatus='+current_status;
+		//mypage='hire_application.php?ApplicationID='+app_id+'&app_type='+app_type+'&CurrentStatus='+current_status;
+		opv='LicenceRenewalCard';
 	}
 	else
 	{
@@ -175,8 +184,8 @@ function loadTable2(op,ID,_opv)
 
 function loadTable(op,ID,_opv)
 {	
-	//alert(op);
-	//alert(_opv);
+	// alert(op);
+	// alert(_opv);
 	$(function()
 	{
 		$('#dataTables-1').dataTable( 
@@ -409,7 +418,10 @@ function loadpage(url,destination,loader)
 
 function loadmypage(url,destination,loader,op,id,opv,exPM,SiD)
 {
-	// alert(SiD);
+	// loadmypage(mylink,destination,loader,op,id,opv,app_id);
+	// mypage='licence_renewal_card.php?ApplicationID='+app_id+'&app_type='+app_type+'&CurrentStatus='+current_status;
+	
+	// alert(url);
 	
 	//exit;
 	

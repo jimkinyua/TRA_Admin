@@ -36,7 +36,7 @@ if($_REQUEST['submit']==1){
 	$ExpiryDate="$date.$month.$year";
     $local=new datetime($ExpiryDate);
 	$sqlExpiryDate = $local->format('Y-m-d H:i:s');
-	$LicenceNumber ='TEST/2020/LICENCE/RYWY/7'.rand(87, 600);
+	$LicenceNumber ='KTLL/2020/TEST'.rand(87, 600);
 	$ChangeStatussql="Update ServiceHeader set ServiceStatusID=4, PermitNo='$LicenceNumber', IssuedDate='$TodayDate', ExpiryDate='$sqlExpiryDate' where ServiceHeaderID='$ApplicationID'";
 	// echo '<pre>';
 	// print_r($ChangeStatussql);

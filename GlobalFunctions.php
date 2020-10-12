@@ -33,13 +33,13 @@
 		include('BarCode/class/BCGcode39.barcode.php'); 
 
 		// Loading Font
-		$font =& new BCGFont('BarCode/class/font/Arial.ttf', 18);
+		$font = new BCGFont('BarCode/class/font/Arial.ttf', 18);
 
 		// The arguments are R, G, B for color.
-		$color_black =& new BCGColor(0, 0, 0);
-		$color_white =& new BCGColor(255, 255, 255); 
+		$color_black = new BCGColor(0, 0, 0);
+		$color_white = new BCGColor(255, 255, 255); 
 
-		$code =& new BCGcode39();
+		$code = new BCGcode39();
 		$code->setScale(2); // Resolution
 		$code->setThickness(30); // Thickness
 		$code->setForegroundColor($color_black); // Color of bars
@@ -51,7 +51,7 @@
 		/* Here is the list of the arguments
 		1 - Filename (empty : display on screen)
 		2 - Background color */
-		$drawing =& new BCGDrawing('Images/Bar_Codes/'.$No.'.png', $color_white);
+		$drawing =new BCGDrawing('images/Bar_Codes/'.$No.'.png', $color_white);
 		$drawing->setBarcode($code);
 		$drawing->draw();
 
@@ -227,19 +227,19 @@
 		try 
 		{
 			
-			$mail->SMTPDebug  = 2; 		
-			$mail->defaultCredentials='true';
-			// enables SMTP debug information (for testing)
+			// $mail->SMTPDebug  = 2; 		
+			// $mail->defaultCredentials='true';
+			// // enables SMTP debug information (for testing)
 				
-			$mail->SMTPAuth   = false;
-			$mail->Mailer = "smtp";                  // enable SMTP authentication
+			$mail->SMTPAuth   = true;
+			$mail->Mailer = "smtp";     // enable SMTP authentication
 			$mail->isSMTP();
-			$mail->SMTPAutoTLS = false; 
+			$mail->SMTPAutoTLS = true; 
 			$mail->Host = "smtp.gmail.com"; // sets the SMTP server	
 			$mail->SMTPSecure = 'ssl'; 
 			$mail->Port       = 465;                    // set the SMTP port for the GMAIL server				
-			$mail->Username = "kdbinspec@gmail.com";
-			$mail->Password = "Kdb1958*";	    
+			$mail->Username = "passdevelopment00@gmail.com";
+			$mail->Password = "cyvkhicsdngecuvf";	    
 			
 			
 			$mail->AddReplyTo($toEmail, $fromName);	
@@ -262,9 +262,9 @@
 			{
 				$feedback[0]="true";
 				$feedback[1]=$item." sent Successfully to $toEmail";
-				return $feedback;
+				// return $feedback;
 				
-				//return "Mail Sent Successfully to $toEmail";
+				return "Mail Sent Successfully to $toEmail";
 			}else
 			{
 				$feedback[0]="false";
@@ -575,7 +575,6 @@
 		$ServiceAmount=$ServiceAmount+$OtherCharge;		
 		
 		createBarCode($InvoiceHeaderID);
-		
 		$mpdf=new mPDF('win-1252','A4','','',20,15,48,25,10,10);
 		$mpdf->useOnlyCoreFonts = true;    // false is default
 		$mpdf->SetProtection(array('print'));
@@ -709,8 +708,8 @@
 /* 		echo $html;
 		exit; */
 		$mpdf->WriteHTML($html);
- 		$mpdf->Output();
-		exit; 
+ 		// $mpdf->Output();
+		// exit; 
 		
 		//$mpdf->Output('pdfdocs/invoices/'.$SerialNo.'.pdf','F'); 
 		

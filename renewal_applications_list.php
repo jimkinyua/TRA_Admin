@@ -41,10 +41,10 @@ if (isset($_REQUEST['save']) && $_REQUEST['NextStatus']!='')
 
 	$ConservancyServiceID=1696;
 	
-	if ($NextStatus=='')
-	{
-		break;		
-	}
+	// if ($NextStatus=='')
+	// {
+	// 	break;		
+	// }
 	
 	$sql="select f.serviceheadertype from Forms f 
 	  join ServiceHeader sh on sh.FormID=f.formid 

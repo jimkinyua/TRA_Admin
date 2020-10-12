@@ -1631,7 +1631,7 @@ else if($OptionValue=='renewalapplications')
 	$Subcounties='';
 	$locationcondition='';
 	$role='None';
-	$app_type=5;
+	$app_type=6;
 	//check whether the person is a clerk or Officer
 	$sql="select iif (exists(select 1 from ClerkWard where UserID=$UserID and status=1),'Clerk',
 			iif (exists(select 1 from ApproverSetup where UserID=$UserID and status=1),'Officer','None')) Role";
@@ -1739,7 +1739,7 @@ else if($OptionValue=='renewalapplications')
 	dbo.ServiceStatus ss ON sh.LicenceRenewalStatusId=ss.ServiceStatusID INNER JOIN
 	DBO.ServiceCategory sc on s.ServiceCategoryID=sc.ServiceCategoryID INNER JOIN
 	dbo.LicenenceRenewalForm f on sh.RenewalFormId=2 	 
-	where sh.LicenceRenewalStatusId =1 
+	where sh.Renewed =0 
 	and (sc.InvoiceStage<>sc.LastStage or sh.LicenceRenewalStatusId<>sc.LastStage)
 	and sh.ServiceID not in (select ServiceID from ServiceTrees) 
 	order by sh.SubmissionDate desc";

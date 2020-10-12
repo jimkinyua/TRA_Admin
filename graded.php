@@ -4,6 +4,8 @@ require_once('utilities.php');
 require_once('GlobalFunctions.php');
 require_once('county_details.php');
 
+
+
 if (!isset($_SESSION))
 {
 	session_start();
@@ -211,33 +213,34 @@ $(document).ready(function(){
 </script>
 
 
- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css">
-  
-              <!-- <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.js"></script> -->
-  <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
-  <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
-
-              <!-- <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script> -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+ 
 
 
 <div class="example">
 	<?php 
+
+if(isset($_POST['search'])){
+	$searchItem = $_POST['search'];
+}
+
+
  	$sql= "select c.CustomerName, sum(cr.ParameterScore) as Rating, c.Website,
 	c.PhysicalAddress, c.Email, c.Mobile1
 	from ServiceHeader sh 
 	join Inspections ins on sh.ServiceHeaderID = ins.ServiceHeaderID
 	join ChecklistResults cr on cr.InspectionID = ins.InspectionID
 	join Customer c on c.CustomerID = sh.CustomerID
-	where ServiceID = 2074 and ServiceStatusID = 4 
+	where ServiceID = 2074 and ServiceStatusID = 4 and CustomerName like '%$searchItem%'
 	Group By c.CustomerName, c.Website, c.PhysicalAddress, c.Email, c.Mobile1"; 
 	// echo $sql;
 	$result = sqlsrv_query($db, $sql);
 	if($result){
 	?>
-		<table table class="table table-striped" id="example">
+	<form action="" method="post" name="form1">
+		<input type="text" name="search">
+		<input type="submit" name="search">
+	</form>
+		<table class="table table-striped" id="example">
 			<th width="20%">Name</th>
 			<th width="10%">The Score</th>
 			<th width="20%">Website</th>
@@ -271,13 +274,7 @@ $(document).ready(function(){
 	?>
 	<tr><td><a href="external_grading/">External Classification Site</a></td></tr>
 </table>
-<script type="text/javascript">
-          $(document).ready(function() {
-          $('#example').DataTable( {
-              "pagingType": "full_numbers"
-              } );
-          } );
-        </script>
+ 
 	<?php
 }
 ?>
