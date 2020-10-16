@@ -195,7 +195,7 @@ if ($s_result)
 		$Telephone2=$row['Telephone2'];
 		$Mobile2=$row['Mobile2'];
 		$Mobile1=$row['Mobile1'];
-		$url=$row['Url'];
+		$url=$row['Website'];
 		$Email=$row['Email'];
 		$SubCountyName=$row['SubCountyName'];
 		$WardName=$row['WardName'];
@@ -467,7 +467,31 @@ if (isset($_REQUEST['addofficer']))
 	}
 }
 
+if (isset($_REQUEST['deleteofficer']))
+{	
+	$ApplicationID=$_REQUEST['ApplicationID'];
+	$User_ID=$_REQUEST['User_ID'];
+	
+	if($CurrentStatus>4){
+		$msg="The Application Cannot Be modified at this stage";
+	}
+	else
+	{
 
+			
+			$sql="delete from Inspections where ServiceHeaderID=$ApplicationID and UserID = $User_ID";
+
+			// echo $sql;exit;
+			
+			$result1=sqlsrv_query($db,$sql);
+			if($result1)
+			{
+				$msg ="The Inspection Officer Has Been Successfully Deleted";
+			}else{
+				DisplayErrors();
+			}
+	}
+}
 if (isset($_REQUEST['InspectionDate']))
 {	
 	$ApplicationID=$_REQUEST['ApplicationID'];
@@ -671,7 +695,7 @@ if (isset($_REQUEST['InspectionDate']))
 						<div class="tab-control" data-role="tab-control">
 							<ul class="tabs">
 								<li class=""><a href="#_page_4">Applicant's Details</a></li>	
-								<li class="active"><a href="#_page_1">Aplication Details</a></li>
+								<li class="active"><a href="#_page_1">Aplication Notes</a></li>
 								<li class=""><a href="#_page_3">Application Attachments</a></li>
 								<li class=""><a href="#_page_2">Notes</a></li>
 								<li class=""><a href="#_page_5">Inspection Officers</a></li>
@@ -1097,7 +1121,7 @@ $sql="SELECT u.Email, FirstName, Middlename, LastName UserNames
                 </div></td>
                 <td width="50%"></td>   
             </tr>                       
-            		
+            	
           </table> 
           
            <?php
@@ -1115,20 +1139,21 @@ if ($myrow = sqlsrv_fetch_array( $result, SQLSRV_FETCH_ASSOC))
 
 $SetDate1 = 0;
 $ServiceType = 0;
-$d_sql = "select SetDate,ServiceID from ServiceHeader where ServiceHeaderID = '$ApplicationID'";
+$d_sql = "select SetDate,ServiceCategoryID from ServiceHeader where ServiceHeaderID = '$ApplicationID'";
 
 $dresult = sqlsrv_query($db, $d_sql);
 if ($myrow = sqlsrv_fetch_array( $dresult, SQLSRV_FETCH_ASSOC)) 
 {		
 	$SetDate1 = $myrow['SetDate'];
-	$ServiceType = $myrow['ServiceID'];
+	$ServiceType = $myrow['ServiceCategoryID'];
 }
+
           ?>
 
           
           <?= $CurrentStatus;?>
           <?php 
-          if($ServiceType == 2074 && $numrows == 3 && (!empty($SetDate1))){
+          if($ServiceType == 2033 && $numrows == 3 && (!empty($SetDate1))){
            ?>
 		  
            <input type="reset" value="Cancel" onClick="loadmypage('clients_list.php?i=1','content','loader','listpages','','applications','<?php echo $_SESSION['RoleCenter'] ?>')">
@@ -1148,7 +1173,7 @@ if ($myrow = sqlsrv_fetch_array( $dresult, SQLSRV_FETCH_ASSOC))
 		  " value="Approve">
 
 		  <?php
-		}elseif($ServiceType != 2074 && $numrows != 0 && (!empty($SetDate1))){
+		}elseif($ServiceType != 2033 && $numrows != 0 && (!empty($SetDate1))){
 
 		  	?>
 			   
@@ -1170,39 +1195,39 @@ if ($myrow = sqlsrv_fetch_array( $dresult, SQLSRV_FETCH_ASSOC))
 
 
 			<?php
-		  }elseif($ServiceType == 2074 && $numrows !=3 && (!empty($SetDate1))){
+		  }elseif($ServiceType == 2033 && $numrows !=3 && (!empty($SetDate1))){
 		  	?>
 		  	<p style="color:red;"><strong> You have to add 3 inspection officers to proceed for grading inspection!</strong></p>
 
 			<?php
-		  }elseif($ServiceType == 2074 && $numrows != 3 && (empty($SetDate1))){
+		  }elseif($ServiceType == 2033 && $numrows != 3 && (empty($SetDate1))){
 		  	?>		  	<p style="color:red;"><strong>You have not set the inspection date and Inspection Officers! </strong></p>
 
 		  	<?php
-		  }elseif($ServiceType != 2074 && $numrows < 1 && (empty($SetDate1))){
+		  }elseif($ServiceType != 2033 && $numrows < 1 && (empty($SetDate1))){
 		  	?>		  	<p style="color:red;"><strong>You have not set the inspection date and saved Inspection officers! </strong></p>
 
 		  	 	<?php
-		  }elseif($ServiceType != 2074 && $numrows < 1 && (!empty($SetDate1))){
+		  }elseif($ServiceType != 2033 && $numrows < 1 && (!empty($SetDate1))){
 		  	?>		  	<p style="color:red;"><strong>You have not saved Inspection officers! </strong></p>
 
 
 		  	 	<?php
-		  }elseif($ServiceType != 2074 && $numrows > 1 && (empty($SetDate1))){
+		  }elseif($ServiceType != 2033 && $numrows > 1 && (empty($SetDate1))){
 		  	?>		  	<p style="color:red;"><strong>You have not set the inspection date  </strong></p>
 
 
 		  	
 
 		  	<?php
-		  }elseif($ServiceType == 2074 && $numrows == 3 && (empty($SetDate1))){
+		  }elseif($ServiceType == 2033 && $numrows == 3 && (empty($SetDate1))){
 		  	?>		  	<p style="color:red;"><strong>You have not set the inspection date! </strong></p>
 		  	<?php
-		  }elseif($ServiceType != 2074 && $numrows > 0 && (empty($SetDate1))){
+		  }elseif($ServiceType != 2033 && $numrows > 0 && (empty($SetDate1))){
 		  	?>		  	<p style="color:red;"><strong>You have not set the inspection date! </strong></p>
 
 		  	<?php
-		  }elseif($ServiceType == 2074 && $numrows == 3 && (!empty($SetDate1))){
+		  }elseif($ServiceType == 2033 && $numrows == 3 && (!empty($SetDate1))){
 		  	?>
 		  	<p style="color:red; size: "><strong>Save the inspection date and add inspection officers to proceed! </strong></p>
 		  	<?php

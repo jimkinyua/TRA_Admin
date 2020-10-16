@@ -219,6 +219,7 @@ $(document).ready(function(){
 <div class="example">
 	<?php 
 
+<<<<<<< HEAD
 if(isset($_POST['search'])){
 	$searchItem = $_POST['search'];
 }
@@ -232,6 +233,19 @@ if(isset($_POST['search'])){
 	join Customer c on c.CustomerID = sh.CustomerID
 	where ServiceID = 2074 and ServiceStatusID = 4 and CustomerName like '%$searchItem%'
 	Group By c.CustomerName, c.Website, c.PhysicalAddress, c.Email, c.Mobile1"; 
+=======
+ 	$sql= "select c.CustomerName, ic.AverageScore 
+		as Rating, c.Website, c.PhysicalAddress, c.Email, c.Mobile1,sh.ServiceCategoryID 
+		from ServiceHeader sh 
+		join Inspections ins on sh.ServiceHeaderID = ins.ServiceHeaderID 
+		join ChecklistResults cr on cr.InspectionID = ins.InspectionID 
+		join Customer c on c.CustomerID = sh.CustomerID 
+		join InspectionComments ic on ic.InspectionID = ins.InspectionID
+		where ServiceCategoryID = 2033 and ServiceStatusID = 4 
+		and CustomerName like '%$searchitem%' 
+		Group By c.CustomerName,c.Website,c.PhysicalAddress,c.Email,
+		c.Mobile1,sh.ServiceCategoryID,ic.AverageScore"; 
+>>>>>>> Anasi-Work
 	// echo $sql;
 	$result = sqlsrv_query($db, $sql);
 	if($result){
@@ -272,7 +286,13 @@ if(isset($_POST['search'])){
 	}
 
 	?>
-	<tr><td><a href="external_grading/">External Classification Site</a></td></tr>
+	<tr>
+		<td></td>
+		<td></td>
+		<td><a href="external_grading/">External Classification Site</a></td>
+		<td></td>
+		<td></td>
+	</tr>
 </table>
  
 	<?php

@@ -122,7 +122,12 @@ while ($i<=$rows)
 								if ($myRights['View']==1){	?>	
                          	<button class="fluent-big-button" onClick="loadmypage('clients_list.php?i=1','content','loader','listpages','','applications','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" style="width:80px">
                             	<span class="icon-layers-alt fg-darkBlue"></span>
-                                <span class="button-label fg-darkBlue">Applications</span>
+                                <span class="button-label fg-darkBlue">New Applications</span>
+                            </button>
+
+                            <button class="fluent-big-button" onClick="loadmypage('clients_list.php?i=1','content','loader','listpages','','applications','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" style="width:80px">
+                            	<span class="icon-layers-alt fg-darkBlue"></span>
+                                <span class="button-label fg-darkBlue">Re-Inspect</span>
                             </button>
 
 							<button class="fluent-big-button" onClick="loadmypage('renewal_applications_list.php?i=1','content','loader','listpages','','renewalapplications','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" style="width:80px">

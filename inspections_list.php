@@ -15,11 +15,16 @@ $msg ='';
 
 // print_r($_REQUEST); 
 
+
+
+
+
 if($_REQUEST['submit']==1){
 	//
 	$InspectionID=$_REQUEST['InspectionID'];
 	$Status=$_REQUEST['Status'];
 	$Comment=$_REQUEST['Comment'];
+	$AverageScore=$_REQUEST['AverageScore'];
 	if($Comment==''){
 		$Comment='Cleared for Payment and Licencing';
 	}
@@ -58,7 +63,8 @@ if($_REQUEST['submit']==1){
 	$sql="Update Inspections Set InspectionStatusID=$Status,UserComment='$Comment' where InspectionID='$InspectionID'";
 	$result=sqlsrv_query($db,$sql);
 	if($result){
-		$sql="Insert into InspectionComments (InspectionID,UserID,InspectionStatusID,UserComment) Values($InspectionID,$UserID,$Status,'$Comment')";
+		$sql="Insert into InspectionComments (InspectionID,UserID,InspectionStatusID,UserComment,AverageScore) Values($InspectionID,$UserID,$Status,'$Comment',$AverageScore)";
+		// exit($sql);
 		$result=sqlsrv_query($db,$sql);
 		if($result){
 			$msg="Status Saved Successfully";
@@ -100,7 +106,7 @@ checkSession($db,$UserID);
        <input name="Button" type="button" 
 					onclick="loadmypage('graded.php?ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','','')" value="View Grades">
 	   <input name="Button" type="button" 
-					onclick="loadmypage('add_officer.php?ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','','')" value="Completed Inspections">
+					onclick="loadmypage('setrating.php?CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','','')" value="Set Ratings">
 
 
 		<form>
