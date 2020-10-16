@@ -8,7 +8,7 @@
 		  </tr>
 			<tr>
 			  <td width="50%">&nbsp;</td>
-			  <td width="50%">&nbsp;</td>
+			  <td width="50%">&nbsp; </td>
 		  </tr>                       
                      
         </table>
