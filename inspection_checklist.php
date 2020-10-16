@@ -34,9 +34,10 @@
         <tr>
        <?php
 
-       $s_sql = "select sh.ServiceID,s.ServiceName from ServiceHeader sh join Services s on
-        sh.ServiceID = s.ServiceID  where ServiceHeaderID = $ApplicationID";
+       $s_sql = "select sh.ServiceID,s.ServiceName,s.ServiceCategoryID from ServiceHeader sh join Services s 
+        on sh.ServiceID = s.ServiceID where ServiceHeaderID = $ApplicationID";
         $t_result=sqlsrv_query($db,$s_sql);
+        // echo $s_sql;
         if($t_result){
           ?>
           
@@ -45,11 +46,15 @@
         {
           $ServiceID = $row['ServiceID'];
           $ServiceName = $row['ServiceName'];
+          $ServiceCategoryID = $row['ServiceCategoryID'];
         }
-        // echo $ServiceName;
+        // echo $ServiceCategoryID;
       }
          ?>
+
+
          <?php
+         if($ServiceCategoryID == 2033){
           $sql="select sum(cr.ParameterScore) as TotalScore, ag.FirstName,ag.LastName 
           from ChecklistResults cr join Agents ag on ag.AgentID=cr.CreatedBy join Users u on u.AgentID = ag.AgentID 
             join Inspections ins on ins.InspectionID = cr.InspectionID
@@ -87,6 +92,7 @@ $row = sqlsrv_has_rows( $s_result );
       <?php
       }     
     }
+
 ?>
 <tr>
   <td>
@@ -115,26 +121,35 @@ $row = sqlsrv_has_rows( $s_result );
             $Average = $Totals/$numrows;
         ?>
     The average score from the inspection is: <strong> <?php echo $Average; ?> </strong>
-
+<?php 
+}else{
+    echo 'Continue';
+  }?>
 
   </td>
 </tr>
 </table>
 
 
-
-<?php 
-//if ($ServiceID == 2074 && $numrows !=3 ) {
- //echo 'For Grading 3 officers need to present scores';
-//}else{
-
-?> 
+ 
 <form>
 <table class="table striped hovered dataTable" id="dataTables-1" width="100%">
 <thead>
   <tr>
     <th colspan="3">
       <table width="100%">
+        <?php 
+                  if($ServiceCategoryID == 2033 && $numrows !=3 ){
+                    ?>
+                    <p style="color:red;">
+                      Classification Inspection needs to be completed by 3 officers before approval
+
+                      <!-- Average: <?php echo $Average; ?><br>
+                      Application: <?php echo $ApplicationID; ?> -->
+                    </p>
+                    <?php
+                  }else{
+                  ?>
         <tr>
               <tr>                                                          
                 <td><label>Final Verdict </label>
@@ -149,10 +164,24 @@ $row = sqlsrv_has_rows( $s_result );
 
                 <td><label>Comment</label>
                   <div class="input-control textarea" data-role="input-control">            
-                    <textarea id="Comment" name="Comment" cols="20"></textarea>       
+                    <textarea id="Comment" name="Comment" cols="20"></textarea>  
+                    
+                    <?php
+                      if($ServiceCategoryID == 2033){
+                        ?>
+                        <input type="hidden" name="AverageScore" value="<?php echo $Average; ?>">
+                        <?php
+                      }else{
+                    ?>  
+                    <input type="hidden" name="AverageScore" value="0">
+                      <?php
+                      }
+                      ?>
                   </div>
                 </td>                
                 <td><label>&nbsp;</label>
+
+                  
 
                 <input name="btnSubmit" type="button" onclick="
 
@@ -168,11 +197,13 @@ $row = sqlsrv_has_rows( $s_result );
                       'InspectionID=<?= $InspectionID ?>'+
                       '&Status='+this.form.Status.value+                
                       '&Comment='+this.form.Comment.value+
+                      '&AverageScore='+this.form.AverageScore.value+
                       '&submit=1','content','loader','listpages','','Inspections','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" value="Submit">
-
+                    <?php } ?>
                 </td>
               </tr>
             </table> 
+            
     </th>
   </tr>
   <tr>  
@@ -192,7 +223,4 @@ $row = sqlsrv_has_rows( $s_result );
 </form>
 <br/>
 
-<?php 
-//} 
-?>
 </div>

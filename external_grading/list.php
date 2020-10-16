@@ -4,18 +4,21 @@
    
     if(isset($_POST['search'])) {
         $searchitem = $_POST['search']; 
-}
+    }
 // print_r($_POST);exit();
 
-  $sql= "select c.CustomerName, sum(cr.ParameterScore) as
-    Rating, c.Website, c.PhysicalAddress, c.Email, c.Mobile1 from
-  ServiceHeader sh join Inspections ins 
-  on sh.ServiceHeaderID = ins.ServiceHeaderID 
-  join ChecklistResults cr 
-  on cr.InspectionID = ins.InspectionID 
-  join Customer c on c.CustomerID = sh.CustomerID 
-  where ServiceID = 2074 and ServiceStatusID = 4  and c.CustomerName like '%$searchitem%' Group By
- c.CustomerName, c.Website, c.PhysicalAddress, c.Email, c.Mobile1 order by NEWID()"; 
+  $sql= "select c.CustomerName,c.CustomerID, c.Website, c.PhysicalAddress, c.Email, c.Mobile1, sh.ServiceID,
+          s.ServiceName 
+          from ServiceHeader sh 
+          join Inspections ins on sh.ServiceHeaderID = ins.ServiceHeaderID 
+          join ChecklistResults cr on cr.InspectionID = ins.InspectionID 
+          join Customer c on c.CustomerID = sh.CustomerID 
+          join InspectionComments ic on ic.InspectionID = ins.InspectionID 
+          join Services s on s.ServiceID = sh.ServiceID
+          where sh.ServiceCategoryID = 2033 and ServiceStatusID = 4 Group By c.CustomerName,c.CustomerID,
+          c.Website,c.PhysicalAddress,c.Email,c.Mobile1,sh.ServiceID,s.ServiceName order by NEWID()
+          "; 
+// exit($sql);
 
 
        $result = sqlsrv_query($db, $sql);
@@ -75,37 +78,166 @@
              
              
             <?php
-          $rows = sqlsrv_has_rows($result );
+          $rows = sqlsrv_has_rows($result);
           if($rows ==false){
-           echo 'The establisment was not found!'; 
+           echo 'No Graded Establishments Found!'; 
           }else{
             ?>
-            
-            <table class="table table-striped" id="example">
+ 
+ 
+
+ <ul class="nav nav-tabs" id="myTab" role="tablist">
+  <li class="nav-item">
+    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">All</a>
+  </li>
+<!--   <li class="nav-item">
+    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">5 Star</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">4 Star</a>
+  </li> -->
+</ul>
+<div class="tab-content" id="myTabContent">
+  <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+
+  
+  <table class="table table-striped" id="example" style="border: 4px solid green; border-radius:25px; -moz-border-radius:6px;">
                <thead>
                 <tr>
                  <th>Hotel Name</th>
+                 <th>Establishment Type</th>
                  <th>Rating</th>
                  <th>Location</th>
-                 <th>Email</th>
+                 <th>Mobile</th>
                  <th>Website</th>
                  </tr>
                </thead>
                <?php
+           
+
             while($row=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC)){
                             $CustomerName = $row['CustomerName'];
-                            $Rating = $row['Rating'];
                             $Website = $row['Website'];
-                            $Location = $row['Location'];
+                            $Location = $row['PhysicalAddress'];
                             $Email = $row['Email'];
                             $Mobile1 = $row['Mobile1'];
+                            $ServiceName = $row['ServiceName'];
+                            $ServiceID = $row['ServiceID'];
+                            $CustomerID = $row['CustomerID'];
                 ?>
                 <tr>
                   <td><?php echo $CustomerName; ?></td>
-                  <td><?php echo $Rating; ?></td>
+                  <td><?php echo $ServiceName?></td>
+                    <?php
+                    $ratingsql = " select distinct top 1 ic.AverageScore,ins.InspectionID
+                      from ServiceHeader sh 
+                      join Inspections ins on sh.ServiceHeaderID = ins.ServiceHeaderID 
+                      join ChecklistResults cr on cr.InspectionID = ins.InspectionID 
+                      join Customer c on c.CustomerID = sh.CustomerID 
+                      join InspectionComments ic on ic.InspectionID = ins.InspectionID 
+                      left join Services s on s.ServiceID = sh.ServiceID
+                      where sh.ServiceCategoryID = 2033 and ServiceStatusID = 4 and c.CustomerID = $CustomerID order by InspectionID desc";
+                      // exit($ratingsql);
+                      $rating_result = sqlsrv_query($db, $ratingsql);
+
+                      while($ratingrow=sqlsrv_fetch_array($rating_result,SQLSRV_FETCH_ASSOC)){
+                        $Rating = $ratingrow['AverageScore'];
+                      }
+
+                if($Rating == ''){
+                  ?><td>The Rating Has Not Been Set</td><?php
+                }else{
+
+              $tr_sql = "select * from Rating where ServiceID = $ServiceID";
+             // exit($tr_sql);
+             $tr_result = sqlsrv_query($db, $tr_sql);
+
+            while($omrow=sqlsrv_fetch_array($tr_result,SQLSRV_FETCH_ASSOC)){
+              $trServiceID = $omrow['ServiceID'];
+            }
+                    if($ServiceID == $trServiceID){
+              
+             $r_sql = "select * from Rating where ServiceID=$trServiceID and MinRatingScore<=$Rating and MaxRatingScore>=$Rating";
+             // exit($r_sql);
+             $r_result = sqlsrv_query($db, $r_sql);
+
+            while($omrow=sqlsrv_fetch_array($r_result,SQLSRV_FETCH_ASSOC)){
+              $rServiceID = $omrow['ServiceID'];
+              $MinRatingScore = $omrow['MinRatingScore'];
+              $MaxRatingScore = $omrow['MaxRatingScore'];
+              $RatingName = $omrow['RatingName'];
+
+            }
+            $omrow=sqlsrv_has_rows($r_result);
+            if($omrow == false){
+                        ?><td>Technical Issue</td><?php
+            }else{
+
+                        ?><td>
+
+                           <?php
+                                $StarRate1 = '1 Star'; 
+                                $StarRate2 = '2 Star';
+                                $StarRate3 = '3 Star';
+                                $StarRate4 = '4 Star';
+                                $StarRate5 = '5 Star';
+
+                                if($StarRate1 == trim($RatingName)){
+                                    ?>
+                                    <img src="assets/img/star.png" width="20" height="15">
+                                    <?php
+                                }elseif($StarRate2 == trim($RatingName)){
+                                   ?>
+                                    <img src="assets/img/star.png" width="20" height="15">
+                                    <img src="assets/img/star.png" width="20" height="15">
+                                    <?php
+                                }elseif($StarRate3 == trim($RatingName)){
+                                   ?>
+                                    <img src="assets/img/star.png" width="20" height="15">
+                                    <img src="assets/img/star.png" width="20" height="15">
+                                    <img src="assets/img/star.png" width="20" height="15">
+                                    <?php
+                                }elseif($StarRate4 == trim($RatingName)){
+                                   ?>
+                                    <img src="assets/img/star.png" width="20" height="15">
+                                    <img src="assets/img/star.png" width="20" height="15">
+                                    <img src="assets/img/star.png" width="20" height="15">
+                                    <img src="assets/img/star.png" width="20" height="15">
+                                    <?php
+                                }elseif($StarRate5 == trim($RatingName)){
+                                   ?>
+                                    <img src="assets/img/star.png" width="20" height="15">
+                                    <img src="assets/img/star.png" width="20" height="15">
+                                    <img src="assets/img/star.png" width="20" height="15">
+                                    <img src="assets/img/star.png" width="20" height="15">
+                                    <img src="assets/img/star.png" width="20" height="15">
+                                    <?php
+                                }
+                                ?>
+                                <br><br><p style="font-size: 10px;"><strong>(<?php echo $RatingName; ?>)</strong></p>
+                          </td><?php
+                   } 
+                  }else{
+                    ?><td style="color:red;">Rating Has Not Been Set</td><?php
+                  } 
+                  }                
+                  ?>
+                  
                   <td><?php echo $Location; ?></td>
-                  <td><?php echo $Email; ?></td>
-                  <td><?php echo $Website; ?></td>
+                  <td><?php echo $Mobile1; ?></td>
+                  <td>
+                    <?php 
+                    if($Website != NULL){
+                      ?>
+                      <a href="http://<?php echo $Website; ?>" target="_blank"><?php echo $Website; ?></a>
+                      <?php
+                    }else{
+                      ?>
+                      <p>Website will be updated!</p>
+                      <?php
+                    }
+                    ?>
+                  </td>
                 </tr>
                 <?php
               }
@@ -119,6 +251,14 @@
               } );
           } );
         </script>
+
+
+  </div>
+  <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">Is </div>
+  <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">Emmanuel</div>
+</div>
+
+            
       </div>
     </body>
   </html>

@@ -1411,8 +1411,8 @@ function LicenceExpiryNotification($db,$cosmasRow,$rptName,$fromDate,$toDate)
 		$mpdf=new mPDF('win-1252','A4-L','','',20,15,48,25,10,10);
 		$mpdf->useOnlyCoreFonts = true;    // false is default
 		$mpdf->SetProtection(array('print'));
-		$mpdf->SetTitle("Acme Trading Co. - Invoice");
-		$mpdf->SetAuthor("Acme Trading Co.");
+		$mpdf->SetTitle("TRA");
+		$mpdf->SetAuthor("TRA");
 		//$mpdf->SetWatermarkText("County Government Of Uasin Gishu");
 		//$mpdf->showWatermarkText = true;
 		//$mpdf->watermark_font = 'DejaVuSansCondensed';
@@ -1500,6 +1500,167 @@ function LicenceExpiryNotification($db,$cosmasRow,$rptName,$fromDate,$toDate)
 		
 				
 	}
+
+
+	function establishmentbranches($db,$cosmasRow,$rptName,$fromDate,$toDate)
+	{
+
+		if(isset($_POST['search'])) {
+        $searchitem = $_POST['search']; 
+			}
+
+			  $sql= "select top 6 c.CustomerName, sum(cr.ParameterScore) as
+			    Rating, c.Website, c.PhysicalAddress, c.Email, c.Mobile1 from
+			  ServiceHeader sh join Inspections ins 
+			  on sh.ServiceHeaderID = ins.ServiceHeaderID 
+			  join ChecklistResults cr 
+			  on cr.InspectionID = ins.InspectionID 
+			  join Customer c on c.CustomerID = sh.CustomerID 
+			  where ServiceID = 2074 and ServiceStatusID = 4  and c.CustomerName like '%$searchitem%' Group By
+			 c.CustomerName, c.Website, c.PhysicalAddress, c.Email, c.Mobile1 order by NEWID()"; 
+			    // echo $sql;exit;
+			    
+
+			?>
+		
+
+	    ?>
+	   <nav class="navbar navbar-light bg-light">
+		  <form class="form-inline" name="search" method="post" action="">
+		    <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search" name="search">
+		    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+		  </form>
+	   </nav>
+
+	    <?php
+
+
+		
+		
+		
+
+		$tablestr = '';
+		$ReportTitle="Establishment Branches";
+		$sql="set dateformat dmy 
+			select convert(date,CreatedDate) EstablishmentDate,UPPER(CustomerName)CustomerName,ContactPerson,
+			Type,Mobile1,Email from Customer
+			where convert(date,CreatedDate)>='$fromDate' and convert(date,CreatedDate)<='$toDate'
+			order by CustomerID desc";
+		
+				$tblTotals=0;
+				$result=sqlsrv_query($db, $sql);
+				while($rw=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC))
+				{					
+					$EstablishmentDate = $rw['EstablishmentDate'];					
+					$CustomerName=$rw['CustomerName'];
+					$ContactPerson = $rw['ContactPerson'];						
+					$Type = $rw['Type'];
+					$Mobile1 = $rw['Mobile1'];
+					$Email = $rw['Email'];
+					$tablestr.='<tr>
+					<td align="left">'.$EstablishmentDate.'</td>
+					<td align="left">'.$CustomerName.'</td>
+					<td align="right">'.$ContactPerson.'</td>					
+					<td align="right">'.$Type.'</td>
+					<td align="right">'.$Mobile1.'</td>
+					<td align="right">'.$Email.'</td>
+					</tr>'; 
+				}
+				
+		//echo $tablestr;
+
+		$mpdf=new mPDF('win-1252','A4','','',20,15,48,25,10,10);
+		$mpdf->useOnlyCoreFonts = true;    // false is default
+		$mpdf->SetProtection(array('print'));
+		$mpdf->SetTitle("TRA");
+		$mpdf->SetAuthor("TRA");
+		$mpdf->SetWatermarkText("Tourism Regulatory Authority");
+		$mpdf->showWatermarkText = true;
+		$mpdf->watermark_font = 'DejaVuSansCondensed';
+		$mpdf->watermarkTextAlpha = 0.1;
+		$mpdf->SetDisplayMode('fullpage');
+
+		$html = '
+		<html>
+		<head>
+			<link rel="stylesheet" type="text/css" href="css/my_css.css"/>		
+		</head>
+		<body>
+
+		<!--mpdf
+		<htmlpageheader name="myheader">
+		<table width="100%">
+			<tr>
+				<td align="Center" colspan="2" style="font-size:10mm">
+					<b>'.$ReportTitle.'</b>
+				</td>
+			</tr>		
+			<tr>
+				<td align="Center" colspan="2">
+					<img src="images/CountyLogo_Newpng" alt="TRA Logo">
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2" align="Center"><span style="font-weight: bold; font-size: 14pt;">'.$CountyName.'</span></td>
+			</tr>		
+		</table>
+		
+		</htmlpageheader>
+
+		<htmlpagefooter name="myfooter">
+		<div style="border-top: 1px solid #000000; font-size: 9pt; text-align: center; padding-top: 3mm; ">
+		powered by      <img src="images/attain_logo_2.jpg" alt="County Logo">
+		</div>
+		</htmlpagefooter>
+
+		<sethtmlpageheader name="myheader" value="on" show-this-page="1" />
+		<sethtmlpagefooter name="myfooter" value="on" />
+		mpdf-->
+		<br/><br/><br/><br/><br/><br/><br/><br/>
+		
+		
+
+
+
+		<table class="items" width="100%" style="font-size: 9pt; border-collapse: collapse;" cellpadding="8">
+		<thead>
+		<tr>
+		<td width="20%">Establishment Date</td>
+		<td width="40%">Establishment Name</td>
+		<td width="20%">Contact Person</td>
+		<td width="20%">Type</td>
+		<td width="20%">Phone Number</td>
+		<td width="20%">Email Address</td>
+		</tr>
+		</thead>
+		<tbody>
+		
+		<!-- ITEMS HERE -->'.
+		
+		
+		$tablestr.
+										
+		'<!-- END ITEMS HERE -->
+		
+		
+
+		</tbody>
+		</table>
+		</body>
+		</html>
+		';
+		$mpdf->WriteHTML($html);
+		
+ 		//$mpdf->Output();
+		//exit;
+		
+		$mpdf->Output('pdfdocs/reports/'.$rptName.'.pdf','F'); 
+		
+				
+	}
+
+
+
 	function RevenueGenerated($db,$cosmasRow,$rptName,$fromDate,$toDate)
 	{
 
@@ -1514,7 +1675,7 @@ function LicenceExpiryNotification($db,$cosmasRow,$rptName,$fromDate,$toDate)
 
 		$tablestr = '';
 
-		$ReportTitle="Revenue Generated ".$fromDate." AND ".$toDate;
+		$ReportTitle="Establishment Branches ".$fromDate." AND ".$toDate;
 
 		$sql="set dateformat dmy select rs.RevenueStreamCode,rs.RevenueStreamName,sum(Amount) Total
 			from ReceiptLines2 rl

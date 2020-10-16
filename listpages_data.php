@@ -1563,7 +1563,7 @@ else if($OptionValue=='applications')
 	dbo.ServiceStatus ss ON sh.ServiceStatusID=ss.ServiceStatusID INNER JOIN
 	DBO.ServiceCategory sc on s.ServiceCategoryID=sc.ServiceCategoryID INNER JOIN
 	dbo.Forms f on sh.FormID=f.FormID 	 
-	where sh.ServiceStatusID =1 
+	where sh.ServiceStatusID =1
 	and (sc.InvoiceStage<>sc.LastStage or sh.ServiceStatusID<>sc.LastStage)
 	and sh.ServiceID not in (select ServiceID from ServiceTrees) 
 	order by sh.SubmissionDate desc";

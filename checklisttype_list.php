@@ -36,7 +36,8 @@ if (isset($_REQUEST['save']))
 	if ($ChecklistTypeID=='0')
 	{
 		$sql="Insert into ChecklistTypes (ChecklistTypeName,CreatedBY)
-		Values('$ChecklistTypeName','$ParameterCategoryDescription','$CreatedUserID')";
+		Values('$ChecklistTypeName','$CreatedUserID')";
+		// exit($sql);
 
 	} else
 	{

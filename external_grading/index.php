@@ -1,22 +1,26 @@
 <?php
 require 'DB_PARAMS/connect.php';
+    
+    $msg = '';
 
     if(isset($_POST['search'])) {
         $searchitem = $_POST['search']; 
-}
 
-  $sql= "select top 6 c.CustomerName, sum(cr.ParameterScore) as
-    Rating, c.Website, c.PhysicalAddress, c.Email, c.Mobile1 from
-  ServiceHeader sh join Inspections ins 
-  on sh.ServiceHeaderID = ins.ServiceHeaderID 
-  join ChecklistResults cr 
-  on cr.InspectionID = ins.InspectionID 
-  join Customer c on c.CustomerID = sh.CustomerID 
-  where ServiceID = 2074 and ServiceStatusID = 4  and c.CustomerName like '%$searchitem%' Group By
- c.CustomerName, c.Website, c.PhysicalAddress, c.Email, c.Mobile1 order by NEWID()"; 
-    // echo $sql;exit;
-    
 
+  $sql= "select c.CustomerName,c.CustomerID, c.Website, c.PhysicalAddress, c.Email, c.Mobile1, sh.ServiceID 
+            from ServiceHeader sh 
+            join Inspections ins on sh.ServiceHeaderID = ins.ServiceHeaderID 
+            join ChecklistResults cr on cr.InspectionID = ins.InspectionID 
+            join Customer c on c.CustomerID = sh.CustomerID 
+            join InspectionComments ic on ic.InspectionID = ins.InspectionID 
+            where ServiceCategoryID = 2033 and ServiceStatusID = 4 and c.CustomerName like '%$searchitem%' Group By c.CustomerName,c.CustomerID,
+            c.Website,c.PhysicalAddress,c.Email,c.Mobile1,sh.ServiceID order by newid()"; 
+    // echo $sql;exit;  
+            $result = sqlsrv_query($db, $sql);
+            $rows = sqlsrv_has_rows($result );
+            $msg1 = 'The establishment';
+            $msg2 = 'was not found, try another name!';
+    }
 ?>
 
 <!DOCTYPE html>
@@ -42,12 +46,14 @@ require 'DB_PARAMS/connect.php';
     <body id="page-top">
         <nav class="navbar navbar-expand-lg bg-secondary fixed-top" id="mainNav">
             <div class="container"><a class="navbar-brand js-scroll-trigger" href="#page-top"><img src="assets/img/logo1.png" alt="TRA logo"></a>
-                <button class="navbar-toggler navbar-toggler-right font-weight-bold bg-primary text-white rounded" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">Menu <i class="fas fa-bars"></i></button>
+                <button class="navbar-toggler navbar-toggler-right font-weight-bold bg-primary text-white rounded" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">MENU <i class="fas fa-bars"></i></button>
                 <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav ml-auto">
-                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#Grades">Graded Establishments</a>
+                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#services">OUR SERVICES</a>
                         </li>
-                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#portfolio">Get Graded</a>
+                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#grades">GRADED ESTABLISHMENTS</a>
+                        </li>
+                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#licenced">LICENSED ESTABLISHMENTS</a>
                         </li>
                         <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#about">ABOUT</a>
                         </li>
@@ -75,142 +81,11 @@ require 'DB_PARAMS/connect.php';
 
 
 
-
-
-<section class="page-section portfolio" id="Grades">
+        <section class="page-section portfolio" id="services">
             <div class="container">
                 <!-- Portfolio Section Heading-->
                 <div class="text-center">
-                    <h2 class="page-section-heading text-secondary mb-0 d-inline-block">Graded Establishments</h2>
-                </div>
-                <!-- Icon Divider-->
-                <div class="divider-custom">
-                    <div class="divider-custom-line"></div></di
-                    <div class="divider-custom-icon"><i class="fas fa-star"></i>
-                    <div class="divider-custom-line"></div>
-                </div>
-                <!-- Portfolio Grid Items-->
-                <div class="row justify-content-center">
-                    
-
-<!-- <div class="alert alert-warning alert-dismissible fade show" role="alert">
-  <strong>Check Out!</strong> You should check some of the graded establishments below.
-  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-    <span aria-hidden="true">&times;</span>
-  </button> -->
-</div>
-
-
-<nav class="navbar navbar-light bg-light">
-  <form class="form-inline" name="search" method="post" action="">
-    <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search" name="search">
-    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-  </form>
-  <button type="button" class="btn btn-info" onclick="location.href='list.php'">View All Classified Establishments</button>
-</nav>
-
-
-                    <?php 
-                        $result = sqlsrv_query($db, $sql);
-                        
-                            $rows = sqlsrv_has_rows($result );
-                            if($rows ==false){
-                               echo 'The establisment was not found!'; 
-                            }else{
-                            ?>
-                            <div class="bg-info clearfix">
-                      <button type="button" class="btn btn-secondary float-left">TRA</button>
-                      <h3 style="text-align: center;">Graded Establishments</h3>
-                      <button type="button" class="btn btn-secondary float-right">TRA</button>
-                    </div>
-                    <br><br>
-                    <div class="container">
-                      <div class="row">     
-                        <?php
-
-                        while($row=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC)){
-                            $CustomerName = $row['CustomerName'];
-                            $Rating = $row['Rating'];
-                            $Website = $row['Website'];
-                            $Location = $row['Location'];
-                            $Email = $row['Email'];
-                            $Mobile1 = $row['Mobile1'];
-                            
-                            ?>
-
-                        <div class="col-sm">
-                          
-                        <img src="assets/img/logo1.png">
-                                <p><strong><?php echo $CustomerName; ?></strong>-<?php echo $Location; ?><br><br>
-                                <?php
-                                if($Rating>50){
-                                   // echo "5 star"; 
-                                   ?>
-                                   <strong>Rating:</strong>
-                                   <br>
-                                   <img src="assets/img/star.png" height="15" width="20">
-                                   <img src="assets/img/star.png" height="15" width="20">
-                                   <img src="assets/img/star.png" height="15" width="20">
-                                   <img src="assets/img/star.png" height="15" width="20">
-                                   <img src="assets/img/star.png" height="15" width="20">
-                                   <?php
-                                }else{
-                                    // echo "4 star";
-                                    ?>
-                                    <strong>Rating:</strong>
-                                   <br>
-                                   <img src="assets/img/star.png" height="15" width="20">
-                                   <img src="assets/img/star.png" height="15" width="20">
-                                   <img src="assets/img/star.png" height="15" width="20">
-                                   <img src="assets/img/star.png" height="15" width="20">
-                                   <?php
-                                }
-                                ?>
-                                <br>
-                                
-                                <strong>Contacts & More Info...</strong><br>
-                                Email: <?php echo $Email; ?><br>
-                                Tel: <strong><?php echo $Mobile1; ?><br></strong>
-                                <br>
-                                <a href='<?php echo $Website; ?>'>More About the Hotel</a><br>
-                                <?php 
-                                if($Website == null){
-                                   ?>
-                                   <button onclick="document.location='#'">Website has not been added yet.</button>
-                                   <?php
-                                }else 
-                                ?>
-                                <button onclick="document.location='<?php echo $Website; ?>'"><?php echo $Website; ?></button>
-                            </div>
-                             <?php
-                        }
-
-                        ?>
-                        </div>
-                    </div>
-                        
-
-   
-    
-                            <?php
-                        }
-                        // }
-                    ?>
-             </div>
-            </div>
-        </div>
-
-
-
-
-
-
-
-        <section class="page-section portfolio" id="portfolio">
-            <div class="container">
-                <!-- Portfolio Section Heading-->
-                <div class="text-center">
-                    <h2 class="page-section-heading text-secondary mb-0 d-inline-block">Get Graded</h2>
+                    <h2 class="page-section-heading text-secondary mb-0 d-inline-block">OUR SERVICES</h2>
                 </div>
                 <!-- Icon Divider-->
                 <div class="divider-custom">
@@ -285,7 +160,7 @@ require 'DB_PARAMS/connect.php';
                                     </div>
                                     <!-- Portfolio Modal - Image--><img class="img-fluid rounded mb-5" src="assets/img/portfolio/cabin.png" alt="Log Cabin"/>
                                     <!-- Portfolio Modal - Text-->
-                                    <p class="mb-5">Do you want your facility to be graded and classified using the set guidelines and standards. Apply Here... <a href="localhost:8000" target="_blank">Apply Here</a></p>
+                                    <p class="mb-5">Do you want your facility to be graded and classified using the set guidelines and standards. Apply Here... <a href="http://localhost:8000/" target="_blank">Apply Here</a></p>
                                     <button class="btn btn-primary" href="#" data-dismiss="modal"><i class="fas fa-times fa-fw"></i>Close Window</button>
                                 </div>
                             </div>
@@ -303,7 +178,7 @@ require 'DB_PARAMS/connect.php';
                             <div class="row justify-content-center">
                                 <div class="col-lg-8">
                                     <!-- Portfolio Modal - Title-->
-                                    <h2 class="portfolio-modal-title text-secondary mb-0">Tasty Cake</h2>
+                                    <h2 class="portfolio-modal-title text-secondary mb-0">Licence Application</h2>
                                     <!-- Icon Divider-->
                                     <div class="divider-custom">
                                         <div class="divider-custom-line"></div>
@@ -312,7 +187,7 @@ require 'DB_PARAMS/connect.php';
                                     </div>
                                     <!-- Portfolio Modal - Image--><img class="img-fluid rounded mb-5" src="assets/img/portfolio/cake.png" alt="Tasty Cake"/>
                                     <!-- Portfolio Modal - Text-->
-                                    <p class="mb-5">Lorem ipsum dolor sit amet, consectetur adipisicing elit.Mollitia neque assumenda ipsam nihil, molestias magnam, recusandae quos quis inventore quisquam velit asperiores, vitae? Reprehenderit soluta, eos quod consequuntur itaque. Nam.</p>
+                                    <p class="mb-5">Apply for your facility licence from here! <a href="http://localhost:8000/" target="_blank">Apply Here</a></p>
                                     <button class="btn btn-primary" href="#" data-dismiss="modal"><i class="fas fa-times fa-fw"></i>Close Window</button>
                                 </div>
                             </div>
@@ -330,7 +205,7 @@ require 'DB_PARAMS/connect.php';
                             <div class="row justify-content-center">
                                 <div class="col-lg-8">
                                     <!-- Portfolio Modal - Title-->
-                                    <h2 class="portfolio-modal-title text-secondary mb-0">Circus Tent</h2>
+                                    <h2 class="portfolio-modal-title text-secondary mb-0">Trade Facilitation</h2>
                                     <!-- Icon Divider-->
                                     <div class="divider-custom">
                                         <div class="divider-custom-line"></div>
@@ -339,7 +214,7 @@ require 'DB_PARAMS/connect.php';
                                     </div>
                                     <!-- Portfolio Modal - Image--><img class="img-fluid rounded mb-5" src="assets/img/portfolio/circus.png" alt="Circus Tent"/>
                                     <!-- Portfolio Modal - Text-->
-                                    <p class="mb-5">Lorem ipsum dolor sit amet, consectetur adipisicing elit.Mollitia neque assumenda ipsam nihil, molestias magnam, recusandae quos quis inventore quisquam velit asperiores, vitae? Reprehenderit soluta, eos quod consequuntur itaque. Nam.</p>
+                                    <p class="mb-5">Apply for TradeFacilitation from here! <a href="http://localhost:8000/" target="_blank">Apply Here</a></p>
                                     <button class="btn btn-primary" href="#" data-dismiss="modal"><i class="fas fa-times fa-fw"></i>Close Window</button>
                                 </div>
                             </div>
@@ -357,7 +232,7 @@ require 'DB_PARAMS/connect.php';
                             <div class="row justify-content-center">
                                 <div class="col-lg-8">
                                     <!-- Portfolio Modal - Title-->
-                                    <h2 class="portfolio-modal-title text-secondary mb-0">Controller</h2>
+                                    <h2 class="portfolio-modal-title text-secondary mb-0">Hotel Classification</h2>
                                     <!-- Icon Divider-->
                                     <div class="divider-custom">
                                         <div class="divider-custom-line"></div>
@@ -366,7 +241,7 @@ require 'DB_PARAMS/connect.php';
                                     </div>
                                     <!-- Portfolio Modal - Image--><img class="img-fluid rounded mb-5" src="assets/img/portfolio/game.png" alt="Controller"/>
                                     <!-- Portfolio Modal - Text-->
-                                    <p class="mb-5">Lorem ipsum dolor sit amet, consectetur adipisicing elit.Mollitia neque assumenda ipsam nihil, molestias magnam, recusandae quos quis inventore quisquam velit asperiores, vitae? Reprehenderit soluta, eos quod consequuntur itaque. Nam.</p>
+                                    <p class="mb-5">Apply for the classification of your hotel here! <a href="http://localhost:8000/" target="_blank">Apply Here</a></p>
                                     <button class="btn btn-primary" href="#" data-dismiss="modal"><i class="fas fa-times fa-fw"></i>Close Window</button>
                                 </div>
                             </div>
@@ -384,7 +259,7 @@ require 'DB_PARAMS/connect.php';
                             <div class="row justify-content-center">
                                 <div class="col-lg-8">
                                     <!-- Portfolio Modal - Title-->
-                                    <h2 class="portfolio-modal-title text-secondary mb-0">Locked Safe</h2>
+                                    <h2 class="portfolio-modal-title text-secondary mb-0">Application</h2>
                                     <!-- Icon Divider-->
                                     <div class="divider-custom">
                                         <div class="divider-custom-line"></div>
@@ -393,7 +268,7 @@ require 'DB_PARAMS/connect.php';
                                     </div>
                                     <!-- Portfolio Modal - Image--><img class="img-fluid rounded mb-5" src="assets/img/portfolio/safe.png" alt="Locked Safe"/>
                                     <!-- Portfolio Modal - Text-->
-                                    <p class="mb-5">Lorem ipsum dolor sit amet, consectetur adipisicing elit.Mollitia neque assumenda ipsam nihil, molestias magnam, recusandae quos quis inventore quisquam velit asperiores, vitae? Reprehenderit soluta, eos quod consequuntur itaque. Nam.</p>
+                                    <p class="mb-5">Make this applocation from this point. <a href="http://localhost:8000/" target="_blank">Apply Here</a></p>
                                     <button class="btn btn-primary" href="#" data-dismiss="modal"><i class="fas fa-times fa-fw"></i>Close Window</button>
                                 </div>
                             </div>
@@ -411,7 +286,7 @@ require 'DB_PARAMS/connect.php';
                             <div class="row justify-content-center">
                                 <div class="col-lg-8">
                                     <!-- Portfolio Modal - Title-->
-                                    <h2 class="portfolio-modal-title text-secondary mb-0">Submarine</h2>
+                                    <h2 class="portfolio-modal-title text-secondary mb-0">New Application</h2>
                                     <!-- Icon Divider-->
                                     <div class="divider-custom">
                                         <div class="divider-custom-line"></div>
@@ -420,7 +295,7 @@ require 'DB_PARAMS/connect.php';
                                     </div>
                                     <!-- Portfolio Modal - Image--><img class="img-fluid rounded mb-5" src="assets/img/portfolio/submarine.png" alt="Submarine"/>
                                     <!-- Portfolio Modal - Text-->
-                                    <p class="mb-5">Lorem ipsum dolor sit amet, consectetur adipisicing elit.Mollitia neque assumenda ipsam nihil, molestias magnam, recusandae quos quis inventore quisquam velit asperiores, vitae? Reprehenderit soluta, eos quod consequuntur itaque. Nam.</p>
+                                    <p class="mb-5">Make Application from this point. <a href="http://localhost:8000/" target="_blank">Apply Here</a></p>
                                     <button class="btn btn-primary" href="#" data-dismiss="modal"><i class="fas fa-times fa-fw"></i>Close Window</button>
                                 </div>
                             </div>
@@ -429,6 +304,262 @@ require 'DB_PARAMS/connect.php';
                 </div>
             </div>
         </div>
+
+
+
+
+       <section class="page-section portfolio" id="grades">
+            <div class="container">
+                <!-- Portfolio Section Heading-->
+                <div class="text-center">
+                    <h2 class="page-section-heading text-secondary mb-0 d-inline-block">GRADED ESTABLISHMENT</h2>
+                </div>
+                <!-- Icon Divider-->
+                <div class="divider-custom">
+                    <div class="divider-custom-line"></div></di
+                    <div class="divider-custom-icon"><i class="fas fa-star"></i>
+                    <div class="divider-custom-line"></div>
+                </div>
+                <!-- Portfolio Grid Items-->
+                <div class="row justify-content-center">
+                    
+
+<!-- <div class="alert alert-warning alert-dismissible fade show" role="alert">
+  <strong>Check Out!</strong> You should check some of the graded establishments below.
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button> -->
+</div>
+<style type="text/css">
+    .active-pink-2 input.form-control[type=text]:focus:not([readonly]) {
+  border-bottom: 1px solid #f48fb1;
+  box-shadow: 0 1px 0 0 #f48fb1;
+}
+.active-pink input.form-control[type=text] {
+  border-bottom: 1px solid #f48fb1;
+  box-shadow: 0 1px 0 0 #f48fb1;
+}
+.active-purple-2 input.form-control[type=text]:focus:not([readonly]) {
+  border-bottom: 1px solid #ce93d8;
+  box-shadow: 0 1px 0 0 #ce93d8;
+}
+.active-purple input.form-control[type=text] {
+  border-bottom: 1px solid #ce93d8;
+  box-shadow: 0 1px 0 0 #ce93d8;
+}
+.active-cyan-2 input.form-control[type=text]:focus:not([readonly]) {
+  border-bottom: 1px solid #4dd0e1;
+  box-shadow: 0 1px 0 0 #4dd0e1;
+}
+.active-cyan input.form-control[type=text] {
+  border-bottom: 1px solid #4dd0e1;
+  box-shadow: 0 1px 0 0 #4dd0e1;
+}
+
+</style>
+    
+  
+
+   <div class="bg-info clearfix">
+    <button type="button" class="btn btn-secondary float-left">TRA</button>
+     <button type="button" class="btn btn-info text-center" onclick="location.href='list.php'">View All Classified Establishments</button>
+    <button type="button" class="btn btn-secondary float-right">TRA</button>
+</div>
+<br>
+
+ <form name="search" method="post" action="">
+ <label for="exampleInputEmail1">Enter Establishment Name to Search</label></button>
+<div class="md-form active-cyan-2 mb-3">
+  <input name="search" class="form-control" type="text" placeholder="<?php echo $searchitem; ?>" aria-label="Search" required="true">
+  <small id="emailHelp" class="form-text text-muted">input the correct establishment name.</small>
+  </div>
+  <nav class="navbar-light bg-light">
+    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+  </form>
+</div>
+</nav>
+<?php 
+    if($rows == false){
+        ?>
+        <div class="container">
+           <div class="row">
+            <div class="col-sm">
+        <?php
+        echo $msg1.'&nbsp;<strong>' .$searchitem.'</strong>&nbsp;' .$msg2; 
+        ?>
+         </div>
+        </div>
+       </div>
+        <?php
+    }else{
+        ?>         <div class="container">
+                      <div class="row">     
+                        <?php
+
+                        while($row=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC)){
+                            $CustomerName = $row['CustomerName'];
+                            $CustomerID = $row['CustomerID'];
+                            $Website = $row['Website'];
+                            $Location = $row['Location'];
+                            $Email = $row['Email'];
+                            $Mobile1 = $row['Mobile1'];
+                            $ServiceID = $row['ServiceID'];
+                            
+                            ?>
+
+                        <div class="col-sm" style="border: double green; border-radius: 25px;">
+                          
+                        <img src="assets/img/logo1.png">
+                        <p><strong><?php echo $CustomerName; ?></strong>-<?php echo $Location; ?><br><br>
+
+                <?php
+                 $ratingsql = " select distinct top 1 ic.AverageScore,ins.InspectionID
+                      from ServiceHeader sh 
+                      join Inspections ins on sh.ServiceHeaderID = ins.ServiceHeaderID 
+                      join ChecklistResults cr on cr.InspectionID = ins.InspectionID 
+                      join Customer c on c.CustomerID = sh.CustomerID 
+                      join InspectionComments ic on ic.InspectionID = ins.InspectionID 
+                      left join Services s on s.ServiceID = sh.ServiceID
+                      where sh.ServiceCategoryID = 2033 and ServiceStatusID = 4 and c.CustomerID = $CustomerID order by InspectionID desc";
+                      // exit($ratingsql);
+                      $rating_result = sqlsrv_query($db, $ratingsql);
+
+                      while($ratingrow=sqlsrv_fetch_array($rating_result,SQLSRV_FETCH_ASSOC)){
+                        $Rating = $ratingrow['AverageScore'];
+                      }
+                if($Rating == ''){
+                  ?><td>The Rating Has Not Been Set<br></td><?php
+                }else{
+
+              $tr_sql = "select * from Rating where ServiceID = $ServiceID";
+             // exit($tr_sql);
+             $tr_result = sqlsrv_query($db, $tr_sql);
+
+            while($omrow=sqlsrv_fetch_array($tr_result,SQLSRV_FETCH_ASSOC)){
+              $trServiceID = $omrow['ServiceID'];
+            }
+                    if($ServiceID == $trServiceID){
+              
+             $r_sql = "select * from Rating where ServiceID=$trServiceID and MinRatingScore<=$Rating and MaxRatingScore>=$Rating";
+             // echo $r_sql;
+             $r_result = sqlsrv_query($db, $r_sql);
+
+            while($omrow=sqlsrv_fetch_array($r_result,SQLSRV_FETCH_ASSOC)){
+              $rServiceID = $omrow['ServiceID'];
+              $MinRatingScore = $omrow['MinRatingScore'];
+              $MaxRatingScore = $omrow['MaxRatingScore'];
+              $RatingName = $omrow['RatingName'];
+
+            }
+            $omrow=sqlsrv_has_rows($r_result);
+            if($omrow == false){
+                        ?><td>Technical Issue</td><?php
+            }else{
+
+                        ?>
+                        <!-- <td><strong><?php echo $RatingName; ?></strong> -->
+
+                            <?php
+                            if($RatingName == '1 Star'){
+                                echo 'This is a one star';
+                            }
+                            ?>
+
+                            <?php
+                   } 
+                  }else{
+                    ?><p style="color:red;">Rating Has Not Been Set</p><br>
+                    <?php
+                  } 
+                  ?>
+
+                                
+                            
+                                <?php
+                                $StarRate1 = '1 Star'; 
+                                $StarRate2 = '2 Star';
+                                $StarRate3 = '3 Star';
+                                $StarRate4 = '4 Star';
+                                $StarRate5 = '5 Star';
+
+                                if($StarRate1 == trim($RatingName)){
+                                    ?>
+                                    <img src="assets/img/star.png" width="20" height="15">
+                                    <br>
+                                    <p style="font-size: 9px"><strong><?php echo $RatingName; ?></strong></p>
+                                    <?php
+                                }elseif($StarRate2 == trim($RatingName)){
+                                   ?>
+                                    <img src="assets/img/star.png" width="20" height="15">
+                                    <img src="assets/img/star.png" width="20" height="15">
+                                    <br>
+                                    <p style="font-size: 9px"><strong><?php echo $RatingName; ?></strong></p>
+                                    <?php
+                                }elseif($StarRate3 == trim($RatingName)){
+                                   ?>
+                                    <img src="assets/img/star.png" width="20" height="15">
+                                    <img src="assets/img/star.png" width="20" height="15">
+                                    <img src="assets/img/star.png" width="20" height="15">
+                                    <br>
+                                    <p style="font-size: 9px"><strong><?php echo $RatingName; ?></strong></p>
+                                    <?php
+                                }elseif($StarRate4 == trim($RatingName)){
+                                   ?>
+                                    <img src="assets/img/star.png" width="20" height="15">
+                                    <img src="assets/img/star.png" width="20" height="15">
+                                    <img src="assets/img/star.png" width="20" height="15">
+                                    <img src="assets/img/star.png" width="20" height="15">
+                                    <br>
+                                    <p style="font-size: 9px"><strong><?php echo $RatingName; ?></strong></p>
+                                    <?php
+                                }elseif($StarRate5 == trim($RatingName)){
+                                   ?>
+                                    <img src="assets/img/star.png" width="20" height="15">
+                                    <img src="assets/img/star.png" width="20" height="15">
+                                    <img src="assets/img/star.png" width="20" height="15">
+                                    <img src="assets/img/star.png" width="20" height="15">
+                                    <img src="assets/img/star.png" width="20" height="15">
+                                    <br>
+                                    <p style="font-size: 9px"><strong><?php echo $RatingName; ?></strong></p>
+                                    <?php
+                                }
+                                ?>
+                                <?php
+                             }
+                                ?>
+                              <strong>Contacts & More Info...</strong><br>
+                                Email: <?php echo $Email; ?><br>
+                                Tel: <strong><?php echo $Mobile1; ?></strong><br>
+                                
+                               
+                                <?php 
+                                if($Website != NULL){
+                                   ?>
+                                    <a href='http://<?php echo $Website; ?>' target='_blank'>More About the Hotel</a>
+                                   <?php
+                                }else{
+                                    ?>
+                                    <p>Information will be updated soon</p>
+                                    <?php
+                                } 
+                                ?>
+                            
+                            </div>
+                             <?php
+                        }
+
+                        ?>
+                        </div>
+                    </div>
+                            <?php
+                        }
+                        // }
+                    ?>
+                 </div>
+            </div>
+        </div>
+
+
         <section class="page-section bg-primary text-white mb-0" id="about">
             <div class="container">
                 <!-- About Section Heading-->
@@ -444,10 +575,10 @@ require 'DB_PARAMS/connect.php';
                 <!-- About Section Content-->
                 <div class="row">
                     <div class="col-lg-4 ml-auto">
-                        <p class="pre-wrap lead">Freelancer is a free bootstrap theme created by Start Bootstrap. The download includes the complete source files including HTML, CSS, and JavaScript as well as optional SASS stylesheets for easy customization.</p>
+                        <p class="pre-wrap lead">Tourism Regulatory Authority (TRA) is a corporate body established under section 4 of the Tourism Act No.28 of 2011 and is mandated to regulate the tourism sector in Kenya. This entails developing regulations, standards and guidelines that are necessary to ensure an all-round quality service delivery in the tourism sector.</p>
                     </div>
                     <div class="col-lg-4 mr-auto">
-                        <p class="pre-wrap lead">You can create your own custom avatar for the masthead, change the icon in the dividers, and add your email address to the contact form to make it fully functional!</p>
+                        <p class="pre-wrap lead">Tourism licensing is premised on ensuring customer satisfaction and competitiveness of the country as a tourist destination. Thus, all activities and services as outlined in the 9th Schedule of Tourism Act, 2011 need to manage customer expectations by maintaining minimum standards. </p>
                     </div>
                 </div>
             </div>
@@ -470,13 +601,13 @@ require 'DB_PARAMS/connect.php';
                         <div class="d-flex flex-column align-items-center">
                             <div class="icon-contact mb-3"><i class="fas fa-mobile-alt"></i></div>
                             <div class="text-muted">Phone</div>
-                            <div class="lead font-weight-bold">(555) 555-5555</div>
+                            <div class="lead font-weight-bold">+254 0701-444777</div>
                         </div>
                     </div>
                     <div class="col-lg-4">
                         <div class="d-flex flex-column align-items-center">
                             <div class="icon-contact mb-3"><i class="far fa-envelope"></i></div>
-                            <div class="text-muted">Email</div><a class="lead font-weight-bold" href="mailto:name@example.com">name@example.com</a>
+                            <div class="text-muted">Email</div><a class="lead font-weight-bold" href="mailto:name@example.com">info@tourismauthority.go.ke</a>
                         </div>
                     </div>
                 </div>
@@ -488,24 +619,26 @@ require 'DB_PARAMS/connect.php';
                     <!-- Footer Location-->
                     <div class="col-lg-4 mb-5 mb-lg-0">
                         <h4 class="mb-4">LOCATION</h4>
-                        <p class="pre-wrap lead mb-0">2215 John Daniel Drive
-Clark, MO 65243</p>
+                        <p class="pre-wrap lead mb-0">Tourism Regulatory Authority,
+                        Utalii House,5th Floor,
+                        Utalii Lane, off Uhuru Highway.
+                        P.O. Box 25357-00100, Nairobi, KENYA</p>
                     </div>
                     <!-- Footer Social Icons-->
                     <div class="col-lg-4 mb-5 mb-lg-0">
-                        <h4 class="mb-4">AROUND THE WEB</h4><a class="btn btn-outline-light btn-social mx-1" href="https://www.facebook.com/StartBootstrap"><i class="fab fa-fw fa-facebook-f"></i></a><a class="btn btn-outline-light btn-social mx-1" href="https://www.twitter.com/sbootstrap"><i class="fab fa-fw fa-twitter"></i></a><a class="btn btn-outline-light btn-social mx-1" href="https://www.linkedin.com/in/startbootstrap"><i class="fab fa-fw fa-linkedin-in"></i></a><a class="btn btn-outline-light btn-social mx-1" href="https://www.dribble.com/startbootstrap"><i class="fab fa-fw fa-dribbble"></i></a>
+                        <h4 class="mb-4">FIND US ON THE WEB</h4><a class="btn btn-outline-light btn-social mx-1" href="#"><i class="fab fa-fw fa-facebook-f"></i></a><a class="btn btn-outline-light btn-social mx-1" href="#"><i class="fab fa-fw fa-twitter"></i></a><a class="btn btn-outline-light btn-social mx-1" href="#"><i class="fab fa-fw fa-linkedin-in"></i></a><a class="btn btn-outline-light btn-social mx-1" href="#"><i class="fab fa-fw fa-dribbble"></i></a>
                     </div>
                     <!-- Footer About Text-->
                     <div class="col-lg-4">
-                        <h4 class="mb-4">ABOUT FREELANCER</h4>
-                        <p class="pre-wrap lead mb-0">Freelance is a free to use, MIT licensed Bootstrap theme created by Start Bootstrap</p>
+                        <h4 class="mb-4">TOURISM</h4>
+                        <p class="pre-wrap lead mb-0">The tourism industry operates within a developed legal and regulatory framework which the players in this industry need to adhere to in the course of offering their services. The Authority strives to deepen and broaden tourism by developing and implementing a regulatory framework that ensures fairness, orderliness and high quality</p>
                     </div>
                 </div>
             </div>
         </footer>
         <!-- Copyright Section-->
         <section class="copyright py-4 text-center text-white">
-            <div class="container"><small class="pre-wrap">Copyright © Your Website 2020</small></div>
+            <div class="container"><small class="pre-wrap">Copyright © <?php echo date('Y'); ?> Tourism Regulatory Authority. All rights reserved.</small></div>
         </section>
         <!-- Scroll to Top Button (Only visible on small and extra-small screen sizes)-->
         <div class="scroll-to-top d-lg-none position-fixed"><a class="js-scroll-trigger d-block text-center text-white rounded" href="#page-top"><i class="fa fa-chevron-up"></i></a></div>

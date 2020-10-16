@@ -31,18 +31,21 @@ if (isset($_REQUEST['save']))
 	$ParameterCategoryID=$_REQUEST['ParameterCategoryID'];
 	$ParameterCategoryName=$_REQUEST['ParameterCategoryName'];
 	$ParameterCategoryDescription=$_REQUEST['ParameterCategoryDescription'];
+	$ChecklistTypeID=$_REQUEST['ChecklistTypeID'];
 	
+	// print_r($_REQUEST);exit;
 	
 	if ($ParameterCategoryID=='0')
 	{
-		$sql="Insert into ChecklistParameterCategories (ParameterCategoryName,ParameterCategoryDescription,CreatedBY)
-		Values('$ParameterCategoryName','$ParameterCategoryDescription','$CreatedUserID')";
-
+		$sql="Insert into ChecklistParameterCategories (ParameterCategoryName,ParameterCategoryDescription,CreatedBY,ChecklistTypeID)
+		Values('$ParameterCategoryName','$ParameterCategoryDescription','$CreatedUserID',$ChecklistTypeID)";
+// exit($sql);
 	} else
 	{
 		$sql="Update ChecklistParameterCategories 
 		set ParameterCategoryName='$ParameterCategoryName'
 		,ParameterCategoryDescription='$ParameterCategoryDescription'
+		,ChecklistTypeID = $ChecklistTypeID
 		where ParameterCategoryID=$ParameterCategoryID";
 	}
 

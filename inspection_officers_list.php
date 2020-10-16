@@ -34,8 +34,8 @@ if (isset($_REQUEST['delete']))
 
 
 
-		$sql="SELECT u.Email, u.UserID, ag.FirstName, ag.Middlename, ag.LastName, ins.ServiceHeaderID FROM 
-	Users u join agents ag on u.agentid=ag.agentID join Inspections ins on u.AgentID = ins.UserID 
+		$sql="SELECT u.Email, u.UserID, ag.FirstName, ag.Middlename, ag.LastName, ins.ServiceHeaderID, ag.AgentID FROM 
+	Users u inner join agents ag on u.agentid=ag.agentID inner join Inspections ins on u.AgentID = ins.UserID 
 	where ins.ServiceHeaderID='$ApplicationID'";
 	 // echo $sql;
 	$s_result=sqlsrv_query($db,$sql);
@@ -48,6 +48,7 @@ if (isset($_REQUEST['delete']))
 			while($row=sqlsrv_fetch_array($s_result,SQLSRV_FETCH_ASSOC))
 				{									
 					$UserID = $row['UserID'];
+					$User_ID = $row['AgentID'];
 					$ServiceHeaderID = $row['ServiceHeaderID'];
 					$FirstName = $row['FirstName'];
 					$LastName = $row['LastName'];
@@ -55,7 +56,12 @@ if (isset($_REQUEST['delete']))
 					?>
 						<tr>
 							<td><?php echo $FirstName; ?> <?php echo $LastName; ?></td>
-							<td align="left" class="tabletext"><div align="center"><a href="#" onclick="deleteConfirm('Are you sure you want to Delete','onClick="deleteConfirm2('Are you sure you want to add the officer','service_approval.php?addofficer=1&ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>&User_ID='+this.form.User_ID.value+'','content','loader','listpages','','applications','<?php echo $_SESSION['RoleCenter'] ?>'">Remove</a></div></td>
+							<td align="left" class="tabletext"><div align="center">
+								<a href="#" onClick="deleteConfirm2('Are you sure you want to delete the officer','service_approval.php?deleteofficer=1&ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>&User_ID=<?php echo $User_ID; ?>','content','loader','listpages','','applications','<?php echo $_SESSION['RoleCenter'] ?>')">Remove</a>
+
+								
+
+							</div></td>
 						</tr>
 
 					<?php

@@ -36,6 +36,8 @@
 			revenuegenerated($db,$cosmasRow,$reportFileName,$fromDate,$toDate);		
 	}else if ($report=='licenceexpirynotification'){			
 			licenceexpirynotification($db,$cosmasRow,$reportFileName,$fromDate,$toDate);
+	}else if ($report=='establishmentbranches'){			
+			establishmentbranches($db,$cosmasRow,$reportFileName,$fromDate,$toDate);
 
 	}else if ($report=='mpesa'){
 			mpesaTransactions($db,$cosmasRow,$reportFileName,$fromDate,$toDate);			
@@ -132,6 +134,7 @@
 								<option value="receipts_deposited" <?php if($report=='receipts_deposited'){?> selected="selected" <?php } ?>>Receipts (Deposited)</option>
 								<option value="receipts_receipted" <?php if($report=='receipts_receipted'){?> selected="selected" <?php } ?>>Receipts (Receipted)</option>
 								<option value="revenue_stream" <?php if($report=='revenue_stream'){?> selected="selected" <?php } ?>>Revenue Per Stream</option>
+								<option value="establishmentbranches" <?php if($report=='establishmentbranches'){?> selected="selected" <?php } ?>>Establishment Branches</option>
 
 								<!-- <option value="permits_summary" <?php if($report=='permits_summary'){?> selected="selected" <?php } ?>>Permits (Summary)</option>
 								<option value="mpesa" <?php if($report=='mpesa'){?> selected="selected" <?php } ?>>Mpesa Transactions</option>
