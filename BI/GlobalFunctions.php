@@ -34,13 +34,13 @@
 		include('BarCode/class/BCGcode39.barcode.php'); 
 
 		// Loading Font
-		$font =& new BCGFont('BarCode/class/font/Arial.ttf', 18);
+		$font = new BCGFont('BarCode/class/font/Arial.ttf', 18);
 
 		// The arguments are R, G, B for color.
-		$color_black =& new BCGColor(0, 0, 0);
-		$color_white =& new BCGColor(255, 255, 255); 
+		$color_black = new BCGColor(0, 0, 0);
+		$color_white = new BCGColor(255, 255, 255); 
 
-		$code =& new BCGcode39();
+		$code = new BCGcode39();
 		$code->setScale(2); // Resolution
 		$code->setThickness(30); // Thickness
 		$code->setForegroundColor($color_black); // Color of bars
@@ -52,7 +52,7 @@
 		/* Here is the list of the arguments
 		1 - Filename (empty : display on screen)
 		2 - Background color */
-		$drawing =& new BCGDrawing('Images/Bar_Codes/'.$No.'.png', $color_white);
+		$drawing = new BCGDrawing('Images/Bar_Codes/'.$No.'.png', $color_white);
 		$drawing->setBarcode($code);
 		$drawing->draw();
 
@@ -310,7 +310,7 @@
 
 		$tablestr = '';
 		$bankrows='';
-		$sql="select il.InvoiceLineID,il.InvoiceHeaderID,s.ServiceName, il.ServiceHeaderID,il.Amount,ih.InvoiceNo
+				$sql="select il.InvoiceLineID,il.InvoiceHeaderID,s.ServiceName, il.ServiceHeaderID,il.Amount,ih.InvoiceNo
 				from InvoiceLines il
 				inner join InvoiceHeader ih on il.InvoiceHeaderID=ih.InvoiceHeaderID
 				inner join services s on il.ServiceID=s.ServiceID 				
@@ -498,10 +498,10 @@
 		</body>
 		</html>
 		';
-/* 		echo $html;
+		/* 		echo $html;
 		exit; */
 		$mpdf->WriteHTML($html);
-/*  		$mpdf->Output();
+		/*  		$mpdf->Output();
 		exit;
 		 */
 		$mpdf->Output('pdfdocs/invoices/'.$SerialNo.'.pdf','F'); 
@@ -795,9 +795,9 @@
 		//send Email
 		$my_file = $PermitNo.'.pdf';
 		$my_path = "pdfdocs/sbps/";
-		$my_name = $CountyName;
-		$my_mail = $Email;
-		$my_replyto = $CountyEmail;
+		$my_name = 'Test'; //$CountyName;
+		$my_mail = 'jimkinyua25@gmail.com'; //$Email;
+		$my_replyto = 'jameskinyua190@gmail.com'; //$CountyEmail;
 		$my_subject = "Service Permit";
 		$my_message="Kindly receive the Permit for your approved Service";
 		

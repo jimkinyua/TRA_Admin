@@ -311,6 +311,10 @@ else if ($OptionValue == 'services')
 }
 else if($OptionValue=='invoices-a')
 {
+	// echo '<pre>';
+	// print_r($exParam);
+	// exit;
+
 	$fromDate;
 	$toDate;
 	$filter;
@@ -437,31 +441,53 @@ else if($OptionValue=='invoices-a')
 			$filter=" and DATEDIFF(day,il.CreatedDate,getdate())<3 ";
 		}
 		
-		$sql = "set dateformat dmy select  distinct top 10 sh.ServiceHeaderID,ih.InvoiceHeaderID, sh.CustomerID,ih.InvoiceDate [INV DATE]
-		,isnull(misc.CustomerName,c.CustomerName) CustomerName,s.ServiceName +'('+isnull(ih.[Description],'')+')' 	ServiceName,sum(il.Amount) Amount,isnull(rl.Amount,0) Paid,sh.ServiceID
-			from InvoiceHeader ih
-			inner join InvoiceLines il on il.InvoiceHeaderID=ih.InvoiceHeaderID
-			left join (select InvoiceHeaderid,sum(amount) Amount from ReceiptLines group by InvoiceHeaderID)rl on ih.InvoiceHeaderID=rl.InvoiceHeaderID
-			inner join ServiceHeader sh on ih.ServiceHeaderID=sh.ServiceHeaderID
-			left join Miscellaneous misc on misc.ServiceHeaderID=sh.ServiceHeaderID
-			inner join Customer c on sh.CustomerID=c.CustomerID	
+		// $sql = "set dateformat dmy select  distinct top 10 sh.ServiceHeaderID,ih.InvoiceHeaderID, sh.CustomerID,ih.InvoiceDate [INV DATE]
+		// ,isnull(misc.CustomerName,c.CustomerName) CustomerName,s.ServiceName +'('+isnull(ih.[Description],'')+')' 	ServiceName,sum(il.Amount) Amount,isnull(rl.Amount,0) Paid,sh.ServiceID
+		// 	from InvoiceHeader ih
+		// 	inner join InvoiceLines il on il.InvoiceHeaderID=ih.InvoiceHeaderID
+		// 	left join (select InvoiceHeaderid,sum(amount) Amount from ReceiptLines group by InvoiceHeaderID)rl on ih.InvoiceHeaderID=rl.InvoiceHeaderID
+		// 	inner join ServiceHeader sh on ih.ServiceHeaderID=sh.ServiceHeaderID
+		// 	left join Miscellaneous misc on misc.ServiceHeaderID=sh.ServiceHeaderID
+		// 	inner join Customer c on sh.CustomerID=c.CustomerID	
+		// 	inner join Services s on sh.ServiceID=s.ServiceID 
+		// 	where year(il.CreatedDate)=year(getdate()) ".$filter."
+		// 	group by sh.ServiceHeaderID,misc.CustomerName, sh.CustomerID,ih.InvoiceDate,c.CustomerName,s.ServiceName,ih.InvoiceHeaderID,sh.ServiceID,sh.ServiceHeaderID,ih.[Description],isnull(rl.Amount,0) 
+		// 	Order By ih.InvoiceHeaderID";
+
+			
+			$sql = "set dateformat dmy select distinct top 10 sh.ServiceHeaderID,LiceneRenewaInvoiceHeader.LicenceRenewalInvoiceHeaderID,
+			sh.CustomerID,
+			LiceneRenewaInvoiceHeader.InvoiceDate [INV DATE] ,c.CustomerName, s.ServiceName,
+			sum(il.Amount) Amount,isnull(rl.Amount,0) Paid,sh.ServiceID from LiceneRenewaInvoiceHeader 
+			inner join LicenceRenewalnvoiceLines il on il.InvoiceHeaderID=LiceneRenewaInvoiceHeader.LicenceRenewalInvoiceHeaderID 
+			left join (select InvoiceHeaderID,sum(amount) Amount 
+			from LicenceRenewaReceiptLines group by InvoiceHeaderID)rl on LiceneRenewaInvoiceHeader.LicenceRenewalInvoiceHeaderID=rl.InvoiceHeaderID 
+			inner join ServiceHeader sh on LiceneRenewaInvoiceHeader.ServiceHeaderID=sh.ServiceHeaderID 
+			left join Miscellaneous misc on misc.ServiceHeaderID=sh.ServiceHeaderID 
+			inner join Customer c on sh.CustomerID=c.CustomerID 
 			inner join Services s on sh.ServiceID=s.ServiceID 
-			where year(il.CreatedDate)=year(getdate()) ".$filter."
-			group by sh.ServiceHeaderID,misc.CustomerName, sh.CustomerID,ih.InvoiceDate,c.CustomerName,s.ServiceName,ih.InvoiceHeaderID,sh.ServiceID,sh.ServiceHeaderID,ih.[Description],isnull(rl.Amount,0) 
-			Order By ih.InvoiceHeaderID";
+			where year(il.CreatedDate)=year(getdate())".$filter." 
+			group by sh.ServiceHeaderID,misc.CustomerName, sh.CustomerID,LiceneRenewaInvoiceHeader.InvoiceDate,c.CustomerName,s.ServiceName,
+			LiceneRenewaInvoiceHeader.LicenceRenewalInvoiceHeaderID,sh.ServiceID,sh.ServiceHeaderID,LiceneRenewaInvoiceHeader.ServiceHeaderID ,isnull(rl.Amount,0) Order By LiceneRenewaInvoiceHeader.LicenceRenewalInvoiceHeaderID
+		  ";
+		
 	}
+	// exit($sql);
 	//echo $sql;
 	$result = sqlsrv_query($db, $sql);	
 	while ($row = sqlsrv_fetch_array( $result, SQLSRV_FETCH_ASSOC)) 
-	{			
+	{
+		// echo '<pre>';
+		// print_r($row);
+		// exit;
+
 		extract($row);
 		$Balance=$Amount-$Paid;
+		$CustomerName =  '<a href="#" onClick="loadoptionalpage2('.$ServiceID.','.$LicenceRenewalInvoiceHeaderID.','.$ServiceHeaderID.',\'content\',\'loader\',\'listpages\',\'\',\'invoices_lines\',\''.$LicenceRenewalInvoiceHeaderID.'\')">'.$CustomerName.'</a>';
 
-		$CustomerName =  '<a href="#" onClick="loadoptionalpage2('.$ServiceID.','.$InvoiceHeaderID.','.$ServiceHeaderID.',\'content\',\'loader\',\'listpages\',\'\',\'invoices_lines\',\''.$InvoiceHeaderID.'\')">'.$CustomerName.'</a>';
+		$ViewBtn  = '<a href="reports.php?rptType=Invoice&ServiceHeaderID='.$ServiceHeaderID.'&InvoiceHeaderID='.$LicenceRenewalInvoiceHeaderID.'" target="_blank">View</a>'; 
 
-		$ViewBtn  = '<a href="reports.php?rptType=Invoice&ServiceHeaderID='.$ServiceHeaderID.'&InvoiceHeaderID='.$InvoiceHeaderID.'" target="_blank">View</a>'; 
-
-		$ReceiptBtn = '<a href="#" onClick="loadmypage(\'receipt.php?add=1&InvoiceHeaderID='.$InvoiceHeaderID.'&InvoiceAmount='.$Amount.'&Balance='.$Balance.'\',\'content\',\'\',\'\',\'\',\''.$_SESSION['UserID'].'\')">Receipt</a>';
+		$ReceiptBtn = '<a href="#" onClick="loadmypage(\'renewal_receipt.php?add=1&InvoiceHeaderID='.$LicenceRenewalInvoiceHeaderID.'&InvoiceAmount='.$Amount.'&Balance='.$Balance.'\',\'content\',\'\',\'\',\'\',\''.$_SESSION['UserID'].'\')">Receipt</a>';
 
 		
 		if($Add==0){

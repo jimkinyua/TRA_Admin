@@ -41,7 +41,7 @@ if (isset($_REQUEST['save']) && $_REQUEST['NextStatus']!='')
 	
 	if ($NextStatus=='')
 	{
-		break;		
+		//break;		
 	}
 	
 	$sql="select f.serviceheadertype from Forms f 

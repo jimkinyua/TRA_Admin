@@ -74,13 +74,17 @@ function loadoptionalpage(app_id,app_type,current_status,destination,loader,op,i
 }
 function loadoptionalpage2(service_id,inv_hdr,service_hdr,destination,loader,op,id,opv,exPM)
 {
-	//alert (opv);
+	// alert (service_id);
 	var mypage='';
 	if (service_id==1603)
 	{
 		mypage='land_invoice_edit.php?InvoiceHeaderID='+inv_hdr+'&ServiceHeaderID='+service_hdr;
 		opv='invoices_lines';
-	}else
+	}else if(service_id == 000){
+		mypage='renewal_invoice_lines.php?InvoiceHeaderID='+inv_hdr+'&ServiceHeaderID='+service_hdr;
+		opv='renewal_invoices_lines'
+	}
+	else
 	{
 		mypage='invoice_lines.php?InvoiceHeaderID='+inv_hdr+'&ServiceHeaderID='+service_hdr;
 		opv='invoices_lines';

@@ -132,7 +132,20 @@ if($today>$FirstDec){
                 /* Begin the transaction. */
             if ( sqlsrv_begin_transaction( $db ) === false ) {
                 die( print_r( sqlsrv_errors(), true ));
-            }
+			}
+			// exit($ServiceHeaderID);
+			//Get the ServiceId 
+			$GetServiceIDSQL = "select ServiceID
+									from ServiceHeader  WHERE ServiceHeaderId = $ServiceHeaderID";
+			// exit($GetServiceIDSQL);
+
+			$GetServiceIDSQLresult = sqlsrv_query($db, $GetServiceIDSQL);
+
+			while ($row = sqlsrv_fetch_array( $GetServiceIDSQLresult, SQLSRV_FETCH_ASSOC))
+			{							
+				$ServiceID=$row["ServiceID"];												
+			}	
+
 
             $LicenceRenewalDate=date('Y-m-d H:i:s');
             $UpdateLicenceRenewalSQL="update LicenceRenewals set 
@@ -143,7 +156,7 @@ if($today>$FirstDec){
             // exit($UpdateLicenceRenewalSQL);
             $UpdateLicenceRenewalResult = sqlsrv_query($db, $UpdateLicenceRenewalSQL);
 
-            //Increase Epirey Date to December Next Year
+            //Increase Expirery Date to December Next Year
             $day = 31; $month =12; $year = date("Y")+1;
             $d=mktime(00, 00, 00, $month,$day, $year);
             $ExpireDate = date("Y-m-d H:i:s", $d);
@@ -151,333 +164,420 @@ if($today>$FirstDec){
             where ServiceHeaderID=$ServiceHeaderID";
            $UpdateServiceHeaderResult = sqlsrv_query($db, $UpdateServiceHeaderSql);
 
-            /* If both queries were successful, commit the transaction. */
 
-            //Generate an Invoice Now
-
-            // $ServiceAmount=0;
+			//Generate an Invoice Now
+			
+			//LiceneceRenewalInvoice Header
             $InvoiceAmount=$_REQUEST['RenewalFee'];
             $InvoiceDate= date("Y-m-d H:i:s");
             $CustomerId = $_REQUEST['CustomerID'];
-            $InvoiceNo = 'RENEWAL/'.date('Y').'/'.rand(1 , 7000);
-            $UserID = $_SESSION['UserID'];
+            $InvoiceNo = 'RENEWAL/'.date('Y').'/'.rand(1 , 999999);
+			$UserID = $_SESSION['UserID'];
+			
+			//Get Banks 
+			$sqlb="select BankName,AccountNumber from Banks";
+			$bnkr=sqlsrv_query($db,$sqlb);
+			while($bnks=sqlsrv_fetch_array($bnkr,SQLSRV_FETCH_ASSOC))
+			{
+				$bankrows.='<tr>
+					<td>'.sentence_case($bnks['BankName']).'</td>
+					<td>'.sentence_case($bnks['AccountNumber']).'</td>
+					</tr>
+				';
+			}
             $InsertIntoLicenceRenewalInvoiceHeaderSQL="insert into LiceneRenewaInvoiceHeader
              (InvoiceDate,ServiceHeaderID,InvoiceNo,CustomerID, LicenceRenewalid, CreatedBy) 
 			Values('$InvoiceDate','$ServiceHeaderID','$InvoiceNo','$CustomerId','$ApplicationID','$UserID') SELECT SCOPE_IDENTITY() AS ID";
-            
+			
             // exit($InsertIntoLicenceRenewalInvoiceHeaderSQL);
             $InsertIntoLicenceRenewalInvoiceHeaderResult = sqlsrv_query($db, $InsertIntoLicenceRenewalInvoiceHeaderSQL);
             
-            
-            //Insert Into the Lines
-            $InvoiceHeader=lastid($InsertIntoLicenceRenewalInvoiceHeaderResult);
-            // ECHO '<PRE>';
-            // print_r($InvoiceHeader);
-            // exit;
+            //Get InvoiceHeaderNo
+			$InvoiceHeader=lastid($InsertIntoLicenceRenewalInvoiceHeaderResult);
+			
+			//Get Penalty Charges if Any
+			$GetLicenceRenewalPenaltiesSQL="select * 
+			from Penalties WHERE Penalties.ServiceHeaderID = $ServiceHeaderID";
+			$GetLicenceRenewalPenaltiesSQLResult = sqlsrv_query($db, $GetLicenceRenewalPenaltiesSQL);
+			
+			if(sqlsrv_has_rows($GetLicenceRenewalPenaltiesSQLResult)){
+				//Insert Them into the Invoice Lines
+				while ($data= sqlsrv_fetch_array( $GetLicenceRenewalPenaltiesSQLResult, SQLSRV_FETCH_ASSOC))
+				{			
+					// echo '<pre>';
+					// print_r($data);
+					// exit;
 
-                
-            $Description = "Renewal Fee";
-            $InsertIntoLicenceRenewalnvoiceLinesSQL="insert into LicenceRenewalnvoiceLines (InvoiceHeaderID,
-                Description,
-                Amount,CreatedDate,CreatedBy) 
-				Values($InvoiceHeader,'$Description',$InvoiceAmount,'$InvoiceDate',$UserID)";
-            //  exit($InsertIntoLicenceRenewalnvoiceLinesSQL);
+					$PenaltyAmount=$data["Amount"];
+					// $ServiceID=$row['ServiceID'];
+					$TotalPenaltyAmount+=$PenaltyAmount;
+					$Description = $data['Description'];
 
-                $InsertIntoLicenceRenewalnvoiceLinesresult = sqlsrv_query($db, $InsertIntoLicenceRenewalnvoiceLinesSQL);
-                    
-            /* Otherwise, rollback the transaction. */
-            if( $UpdateServiceHeaderResult && $UpdateLicenceRenewalResult && $InsertIntoLicenceRenewalnvoiceLinesresult && $InsertIntoLicenceRenewalInvoiceHeaderResult ) {
-                sqlsrv_commit( $db );
-                
-                $tablestr.='<tr>
-				<td align="center">'.$InvoiceLineID.'</td>
-				<td align="center">1</td>
-				<td>'.$Description.'</td>
-				<td align="right">'.number_format($InvoiceAmount,2).'</td>
-				<td align="right">'.number_format($InvoiceAmount,2).'</td>
-                </tr>'; 
-                $SerialNo=$InvoiceHeader;
-                // createBarCode($InvoiceHeader);
-                $mpdf=new mPDF('win-1252','A4','','',20,15,48,25,10,10);
-                $mpdf->useOnlyCoreFonts = true;    // false is default
-                $mpdf->SetProtection(array('print'));
-                $mpdf->SetTitle($CustomerName." - Invoice");
-                $mpdf->SetAuthor('TRA');
-                $mpdf->SetWatermarkText('Tourism Regulatory Authority');
-                $mpdf->showWatermarkText = true;
-                $mpdf->watermark_font = 'DejaVuSansCondensed';
-                $mpdf->watermarkTextAlpha = 0.1;
-                $mpdf->SetDisplayMode('fullpage');
+					$InsertPenaltyIntoLicenceRenewalnvoiceLinesSQL="insert into LicenceRenewalnvoiceLines (InvoiceHeaderID,
+					ServiceId,
+					Description,
+					Amount,CreatedDate,CreatedBy) 
+					Values($InvoiceHeader,$ServiceID,'$Description',$TotalPenaltyAmount,'$InvoiceDate',$UserID)";
 
-                $html = '
-                <html>
-                <head>
-                    <link rel="stylesheet" type="text/css" href="css/my_css.css"/>		
-                </head>
-                <body>
+					// exit($InsertPenaltyIntoLicenceRenewalnvoiceLinesSQL);
+					$InsertPenaltyIntoLicenceRenewalnvoiceLinesSQLresult = sqlsrv_query($db, $InsertPenaltyIntoLicenceRenewalnvoiceLinesSQL);
+					
+					if(!$InsertPenaltyIntoLicenceRenewalnvoiceLinesSQLresult){
+						sqlsrv_rollback( $db );
+						echo "Transaction rolled back.<br />";
+					}
+				} 
+			}
 
-                <!--mpdf
-                <htmlpageheader name="myheader">
-                <table width="100%">
-                        
-                <tr>
-                    <td align="Center" colspan="2">
-                        <img src="images/logo1.png" alt="TRA Logo">
-                    </td>
-                </tr>
-                <tr>
-                    <td align="Center" colspan="2" style="font-size:5mm">
-                        <b>Licence Renewal Invoice</b>
-                    </td>
-                </tr>
-                    
-                <tr>
-                    <td width="50%" style="color:#0000BB;">
-                        Address: 30 <br />
-                        <br /> 
-                        Telephone: 0710 467 646</td>
-                    <td width="50%" style="text-align: right;">			
-                    Invoice No.<br/><span style="font-weight: bold; font-size: 10pt;">'.$SerialNo.'</span>
-                    </td>
-                </tr></table>
-                
-                </htmlpageheader>
+			//Get Service Charges Using the SeriviceId
+			$GetServiceChargeSQL="select s.ServiceID,s.ServiceName, Amount 
+					from ServiceCharges sc
+					join services s on sc.ServiceID=s.serviceid                                 
+					join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID                                      
+					and fy.isCurrentYear=1
+					and sc.serviceid=$ServiceID";
+			// exit($GetServiceChargeSQL);
+			$GetServiceChargeSQLResult = sqlsrv_query($db, $GetServiceChargeSQL);
 
-                <htmlpagefooter name="myfooter">
-                <div style="border-top: 1px solid #000000; font-size: 9pt; text-align: center; padding-top: 3mm; ">
-                powered by      <img src="images/attain_logo_2.jpg" alt="County Logo">
-                </div>
-                </htmlpagefooter>
+			if(sqlsrv_has_rows($GetServiceChargeSQLResult)){
+				while ($row7= sqlsrv_fetch_array( $GetServiceChargeSQLResult, SQLSRV_FETCH_ASSOC))
+				{									
+					$ServiceAmount=$row7["Amount"];
+					// $ServiceID=$row['ServiceID'];
+					$InvoiceAmount+=$ServiceAmount;
+					$Description = $row7['ServiceName'];
 
-                <sethtmlpageheader name="myheader" value="on" show-this-page="1" />
-                <sethtmlpagefooter name="myfooter" value="on" />
-                mpdf-->
-                <br/><br/><br/><br/>
-                <div style="text-align: right">Invoice Date: '.date_format(date_create($CreatedDate),"d/m/Y").'</div>
-                
-                <table width="100%" style="font-family: serif;" cellpadding="10">
-                <tr>
-                    <td width="45%" style="border: 0.1mm solid #888888;">
-                        <span style="font-size: 7pt; color: #555555; font-family: sans;">TO:</span><br /><br />'.$CustomerName.'<br /> Postal Address: Meru <br />Nairobi<br />O710 467 646
-                    </td>
-                    <td width="10%">&nbsp;</td>
-                    <td width="45%"></td>
-                </tr>
-                </table>
+					$InsertIntoLicenceRenewalnvoiceLinesSQL="insert into LicenceRenewalnvoiceLines (InvoiceHeaderID,
+					ServiceId,
+					Description,
+					Amount,CreatedDate,CreatedBy,ServiceHeaderID) 
+					Values($InvoiceHeader,
+							$ServiceID,
+							'$Description',
+							$InvoiceAmount,
+							'$InvoiceDate',
+							$UserID,
+							$ServiceHeaderID
+						)";
+					
+					// exit('UR9838E');
 
-                <table class="items" width="100%" style="font-size: 9pt; border-collapse: collapse;" cellpadding="8">
-                <thead>
-                <tr>
-                <td width="15%">REF. NO.</td>
-                <td width="15%">QUANTITY</td>
-                <td width="40%">DESCRIPTION</td>
-                <td width="15%">UNIT PRICE</td>
-                <td width="15%">AMOUNT</td>
-                </tr>
-                </thead>
-                <tbody>
-                
-                <!-- ITEMS HERE -->'.
-                
-                
-                $tablestr.
-                                                
-                '<!-- END ITEMS HERE -->
-                
-                <tr>
-                    <td class="blanktotal" colspan="2" rowspan="6"></td>
-                    <td class="totals" align="left">'.$Description.'</td>
-                    <td class="totals">Subtotal:</td>
-                    <td class="totals">'.number_format($InvoiceAmount,2).'</td>
-                </tr>
-                <tr>
-                    <td class="blanktotal" rowspan="6"></td>
-                    <td class="totals"><b>TOTAL:</b></td>
-                    <td class="totals"><b>'.number_format($InvoiceAmount,2).'</b></td>
-                </tr>
-                <tr>
-                
-                <td class="totals"><b>Balance due:</b></td>
-                <td class="totals"><b>'.number_format($InvoiceAmount,2).'</b></td>
-                </tr>
-                </tbody>
-                </table>
-                Created By <strong>'.$CreatedBy.'</strong><br>
-                <div style="font-style: italic; font-size: 10;">
-                    Payment terms: payment due in 30 days<br>
-                    Payment by MPESA
-                    <ol>
-                    <li> Go to MPESA menu and select <b>Lipa na MPESA</b></li>
-                    <li> Enter <b>522522</b> as the paybill number and the Invoice Number as the account number</li>
-                    <li> Pay the amount and enter your MPESA pin number when printed</li>
-                    </ol>							
-                    <b>Payment by Bank</b>
-                    <ol>
-                        <li>Enter the TRA revenue account invoice number as the account number</li>
-                    </ol>
-               							
-                    Contact us on <b>0720646464</b> for any assistance
-                </div>
-                <br>
-                <div style="text-align: center;">
-                    <img src="images/Bar_Codes/'.$InvoiceNo.'.PNG">
-                </div>
-                </body>
-                </html>
-                ';
-        /* 		echo $html;
-                exit; */
-                $mpdf->WriteHTML($html);
-                // $mpdf->Output();
-                // exit; 
-                
-                $mpdf->Output('pdfdocs/invoices/'.$SerialNo.'.pdf','F'); 
-                
-                //send email
-                $my_file = $SerialNo.'.pdf';
-                $file_path = "pdfdocs/invoices/";
-                $my_name ='TRA'; //$CountyName;
-                $toEmail ='jimkinyua25@gmail.com';// $Email;
-                $fromEmail ='passdevelopment00@gmail.com';// $CountyEmail;
-                $my_subject = "Service Application Invoice";
-                $my_message="Kindly receive the invoice for your applied Service";
-                //$my_mail = 'cngeno11@gmail.com';
-                $result=php_mailer($toEmail,$fromEmail,$CountyName,$my_subject,$my_message,$my_file,$file_path,"Invoice");
-                echo "Transaction committed.<br />";
-                // Header ("Location:renewal_applications_list.php");
+					// exit($InsertIntoLicenceRenewalnvoiceLinesSQL);
+					$InsertIntoLicenceRenewalnvoiceLinesresult = sqlsrv_query($db, $InsertIntoLicenceRenewalnvoiceLinesSQL);
+										
+				} 
+				//If Everything Went Well, Commit Transactions and Send The Client an Email with the Invoice
+				if( $UpdateServiceHeaderResult && $UpdateLicenceRenewalResult && $InsertIntoLicenceRenewalnvoiceLinesresult && $InsertIntoLicenceRenewalInvoiceHeaderResult ) {
+					sqlsrv_commit( $db );
 
-            } else {
-                sqlsrv_rollback( $db );
-                echo "Transaction rolled back.<br />";
-                DisplayErrors();
-                // Header ("Location:renewal_applications_list.php");
+					$GetInvoiceLinesSQL="SELECT  [LiceneceRenewalInvoiceLineID]
+					,[InvoiceHeaderID]
+					,[Description]
+					,[Amount]
+					FROM [TRANEW].[dbo].[LicenceRenewalnvoiceLines] WHERE InvoiceHeaderID=$InvoiceHeader";
 
-            }
+					// EXIT($GetInvoiceLinesSQL);
+					$tblTotals=0;
+					$GetInvoiceLinesResult=sqlsrv_query($db, $GetInvoiceLinesSQL);
+					while($rw=sqlsrv_fetch_array($GetInvoiceLinesResult,SQLSRV_FETCH_ASSOC))
+					{					
+						$Description = $rw['Description'].'<br>'.$Remark;
+						$ServiceAmount = $rw['Amount'];	
+						$InvoiceLineID=$rw['LiceneceRenewalInvoiceLineID'];
+						$InvoiceHeaderID=$rw['InvoiceHeaderID'];
+						$InvoiceNo=$InvoiceHeader;
+						$tblTotals+=$ServiceAmount;
+						$tablestr.='<tr>
+						<td align="center">'.$InvoiceLineID.'</td>
+						<td align="center">1</td>
+						<td>'.$Description.'</td>
+						<td align="right">'.number_format($ServiceAmount,2).'</td>
+						<td align="right">'.number_format($ServiceAmount,2).'</td>
+						</tr>'; 
+					}
+
+					$SerialNo=$InvoiceHeader;
+					// createBarCode($InvoiceHeader);
+					$mpdf=new mPDF('win-1252','A4','','',20,15,48,25,10,10);
+					$mpdf->useOnlyCoreFonts = true;    // false is default
+					$mpdf->SetProtection(array('print'));
+					$mpdf->SetTitle($CustomerName." - Invoice");
+					$mpdf->SetAuthor('TRA');
+					$mpdf->SetWatermarkText('Tourism Regulatory Authority');
+					$mpdf->showWatermarkText = true;
+					$mpdf->watermark_font = 'DejaVuSansCondensed';
+					$mpdf->watermarkTextAlpha = 0.1;
+					$mpdf->SetDisplayMode('fullpage');
+
+					$html = '
+			<html>
+				<head>
+					<link rel="stylesheet" type="text/css" href="css/my_css.css"/>		
+				</head>
+				<body>
+
+					<!--mpdf
+					<htmlpageheader name="myheader">
+					<table width="100%">
+							
+					<tr>
+						<td align="Center" colspan="2">
+							<img src="images/logo1.png" alt="TRA Logo">
+						</td>
+					</tr>
+					<tr>
+						<td align="Center" colspan="2" style="font-size:5mm">
+							<b>Licence Renewal Invoice</b>
+						</td>
+					</tr>
+						
+					<tr>
+						<td width="50%" style="color:#0000BB;">
+							Address: 30 <br />
+							<br /> 
+							Telephone: 0710 467 646</td>
+						<td width="50%" style="text-align: right;">			
+						Invoice No.<br/><span style="font-weight: bold; font-size: 10pt;">'.$SerialNo.'</span>
+						</td>
+					</tr></table>
+					
+					</htmlpageheader>
+
+					<htmlpagefooter name="myfooter">
+					<div style="border-top: 1px solid #000000; font-size: 9pt; text-align: center; padding-top: 3mm; ">
+					powered by      <img src="images/attain_logo_2.jpg" alt="County Logo">
+					</div>
+					</htmlpagefooter>
+
+					<sethtmlpageheader name="myheader" value="on" show-this-page="1" />
+					<sethtmlpagefooter name="myfooter" value="on" />
+					mpdf-->
+					<br/><br/><br/><br/>
+					<div style="text-align: right">Invoice Date: '.date_format(date_create($CreatedDate),"d/m/Y").'</div>
+					
+					<table width="100%" style="font-family: serif;" cellpadding="10">
+					<tr>
+						<td width="45%" style="border: 0.1mm solid #888888;">
+							<span style="font-size: 7pt; color: #555555; font-family: sans;">TO:</span><br /><br />'.$CustomerName.'<br /> Postal Address: Meru <br />Nairobi<br />O710 467 646
+						</td>
+						<td width="10%">&nbsp;</td>
+						<td width="45%"></td>
+					</tr>
+					</table>
+
+					<table class="items" width="100%" style="font-size: 9pt; border-collapse: collapse;" cellpadding="8">
+					<thead>
+					<tr>
+					<td width="15%">REF. NO.</td>
+					<td width="15%">QUANTITY</td>
+					<td width="40%">DESCRIPTION</td>
+					<td width="15%">UNIT PRICE</td>
+					<td width="15%">AMOUNT</td>
+					</tr>
+					</thead>
+					<tbody>
+					
+					<!-- ITEMS HERE -->'.
+					
+					
+					$tablestr.
+													
+					'<!-- END ITEMS HERE -->
+					
+					<tr>
+						<td class="blanktotal" colspan="2" rowspan="6"></td>
+						<td class="totals" align="left">'.$Description.'</td>
+						<td class="totals">Subtotal:</td>
+						<td class="totals">'.number_format($tblTotals,2).'</td>
+					</tr>
+					<tr>
+						<td class="blanktotal" rowspan="6"></td>
+						<td class="totals"><b>TOTAL:</b></td>
+						<td class="totals"><b>'.number_format($tblTotals,2).'</b></td>
+					</tr>
+					<tr>
+					
+					<td class="totals"><b>Balance due:</b></td>
+					<td class="totals"><b>'.number_format($tblTotals,2).'</b></td>
+					</tr>
+					</tbody>
+					</table>
+					Created By <strong>'.$CreatedBy.'</strong><br>
+					<div style="font-style: italic; font-size: 10;">
+						Payment terms: payment due in 30 days<br>
+						Payment by MPESA
+						<ol>
+						<li> Go to MPESA menu and select <b>Lipa na MPESA</b></li>
+						<li> Enter <b>522522</b> as the paybill number and the Invoice Number as the account number</li>
+						<li> Pay the amount and enter your MPESA pin number when printed</li>
+						</ol>							
+						<b>Payment by Bank</b>
+						<ol>
+							<li>Enter the TRA revenue account invoice number as the account number</li>
+						</ol>
+											
+						Contact us on <b>0720646464</b> for any assistance
+					</div>
+					<br>
+					<div style="text-align: center;">
+						<img src="images/Bar_Codes/'.$InvoiceNo.'.PNG">
+					</div>
+				</body>
+			</html>
+					';
+						/* 		echo $html;
+					exit; */
+					$mpdf->WriteHTML($html);
+					// $mpdf->Output();
+					// exit; 
+					
+					$mpdf->Output('pdfdocs/invoices/'.$SerialNo.'.pdf','F'); 
+					
+					//send email
+					$my_file = $SerialNo.'.pdf';
+					$file_path = "pdfdocs/invoices/";
+					$my_name ='TRA'; //$CountyName;
+					$toEmail ='jimkinyua25@gmail.com';// $Email;
+					$fromEmail ='passdevelopment00@gmail.com';// $CountyEmail;
+					$my_subject = "Service Application Invoice";
+					$my_message="Kindly receive the invoice for your applied Service";
+					//$my_mail = 'cngeno11@gmail.com';
+					$result=php_mailer($toEmail,$fromEmail,$CountyName,$my_subject,$my_message,$my_file,$file_path,"Invoice");
+					createPermit($db, $ApplicationID,$row);
+					echo "Licence Renewed and Invoice Sent to the Customer via Email<br />";
+					// exit;
+					// Header ("Location:renewal_applications_list.php");
+
+				} else {
+					/* Otherwise, rollback the transaction. */
+					sqlsrv_rollback( $db );
+					echo "Transaction rolled back.<br />";
+					// die( print_r( sqlsrv_errors(), true ));
+					DisplayErrors();
+					// Header ("Location:renewal_applications_list.php");
+
+				}
+
+			}else{
+				echo'The Service is set not to have Renewal charges, hence cannot be invoiced';
+
+			}
+
+
         }
+              
+    }
 
-        
-                // if($result){
-                // 	Header ("Location:renewal_applications_list.php");
-                // }
-                    
-    }//else
-    // {
-        
-    //     DisplayErrors();
-    //     $msg="Transaction failed to initialize";
-    // }
-
-
-$s_sql="select c.*, renewal.*, bt.CustomerTypeName, sh.ServiceStatusID,sh.ServiceHeaderID,s.ServiceName,sh.ServiceID,sh.CreatedDate,sh.SubSystemID,S.ServiceCategoryID
-from Customer c 
-left join ServiceHeader sh on sh.CustomerID=c.CustomerID
-join services s on sh.ServiceID=s.ServiceID
-left join LicenceRenewals renewal on sh.ServiceID=renewal.ServiceId 
-left join CustomerType bt on bt.CustomerTypeID=c.BusinessTypeID 
-where renewal.LicenceId=$ApplicationID AND renewal.Renewed=0";
+	$s_sql="select c.*, renewal.*, bt.CustomerTypeName, sh.ServiceStatusID,sh.ServiceHeaderID,s.ServiceName,sh.ServiceID,sh.CreatedDate,sh.SubSystemID,S.ServiceCategoryID
+	from Customer c 
+	left join ServiceHeader sh on sh.CustomerID=c.CustomerID
+	join services s on sh.ServiceID=s.ServiceID
+	left join LicenceRenewals renewal on sh.ServiceID=renewal.ServiceId 
+	left join CustomerType bt on bt.CustomerTypeID=c.BusinessTypeID 
+	where renewal.LicenceId=$ApplicationID AND renewal.Renewed=0";
 
     
     // echo '<pre>';
     // print_r($s_sql);
     // exit;
 
-$s_result=sqlsrv_query($db,$s_sql);
+	$s_result=sqlsrv_query($db,$s_sql);
 
 
-// echo $s_sql;exit;
+	// echo $s_sql;exit;
 
-if ($s_result)
-{
-    
-	
-	while ($row = sqlsrv_fetch_array( $s_result, SQLSRV_FETCH_ASSOC)){	
-       
-        // echo '<pre>';
-        // print_r($row);
-        // exit;	
-		$CustomerType=$row['CustomerTypeName'];
-		$CustomerID=$row['CustomerID'];
-		$CustomerName=$row['CustomerName'];
-		$ServiceID=$row['ServiceID'];
-		$ServiceName=$row['ServiceName'];
-		$CurrentStatus=$row['ServiceStatusID'];
-		$ServiceCategoryID=$row['ServiceCategoryID'];
-		$RegNo=$row['RegistrationNumber'];
-		$PostalAddress=$row['PostalAddress'];
-		$PostalCode=$row['PostalCode'];
-		$ServiceHeaderTypeID=$row['ServiceHeaderType'];
-		$ServiceHeaderID=$row['ServiceHeaderID'];
-		$Pin=$row['PIN'];
-		$Vat=$row['VATNumber'];
-		$Town=$row['Town'];
-		$Country=$row['CountyID'];
-		$Telephone1=$row['Telephone1'];
-		$Mobile1=$row['Mobile1'];
-		$Telephone2=$row['Telephone2'];
-		$Mobile2=$row['Mobile2'];
-		$Mobile1=$row['Mobile1'];
-		$url=$row['Url'];
-		$Email=$row['Email'];
-		$SubCountyName=$row['SubCountyName'];
-		$WardName=$row['WardName'];
-		$BusinessZone=$row['ZoneName'];
-		$SubSystemID=$row['SubSystemID'];
-		$ApplicationDate=$row['CreatedDate'];//date('d/m/Y',strtotime($date));
-        $ApplicationDate=date('d/m/Y',strtotime($ApplicationDate));
-        $LicenceNumber = $row['LicenceNo'];
-        $SubmisionDate = $row['SubmissionDate'];
-        $LicenceIssueDate = $row['IssueDate'];
-        $LicenceExpiryDate =$row['ExpiryDate'];
-        $ServiceFee = $row['RenewalFee'];
-        $ServiceHeaderID = $row['ServiceHeaderID'];
+	if ($s_result)
+	{
 		
+		
+		while ($row = sqlsrv_fetch_array( $s_result, SQLSRV_FETCH_ASSOC)){	
+		
+			// echo '<pre>';
+			// print_r($row);
+			// exit;	
+			$CustomerType=$row['CustomerTypeName'];
+			$CustomerID=$row['CustomerID'];
+			$CustomerName=$row['CustomerName'];
+			$ServiceID=$row['ServiceID'];
+			$ServiceName=$row['ServiceName'];
+			$CurrentStatus=$row['ServiceStatusID'];
+			$ServiceCategoryID=$row['ServiceCategoryID'];
+			$RegNo=$row['RegistrationNumber'];
+			$PostalAddress=$row['PostalAddress'];
+			$PostalCode=$row['PostalCode'];
+			$ServiceHeaderTypeID=$row['ServiceHeaderType'];
+			$ServiceHeaderID=$row['ServiceHeaderID'];
+			$Pin=$row['PIN'];
+			$Vat=$row['VATNumber'];
+			$Town=$row['Town'];
+			$Country=$row['CountyID'];
+			$Telephone1=$row['Telephone1'];
+			$Mobile1=$row['Mobile1'];
+			$Telephone2=$row['Telephone2'];
+			$Mobile2=$row['Mobile2'];
+			$Mobile1=$row['Mobile1'];
+			$url=$row['Url'];
+			$Email=$row['Email'];
+			$SubCountyName=$row['SubCountyName'];
+			$WardName=$row['WardName'];
+			$BusinessZone=$row['ZoneName'];
+			$SubSystemID=$row['SubSystemID'];
+			$ApplicationDate=$row['CreatedDate'];//date('d/m/Y',strtotime($date));
+			$ApplicationDate=date('d/m/Y',strtotime($ApplicationDate));
+			$LicenceNumber = $row['LicenceNo'];
+			$SubmisionDate = $row['SubmissionDate'];
+			$LicenceIssueDate = $row['IssueDate'];
+			$LicenceExpiryDate =$row['ExpiryDate'];
+			$ServiceFee = $row['RenewalFee'];
+			$ServiceHeaderID = $row['ServiceHeaderID'];
+			
+		}
 	}
-}
 
 
 //get the serviceCost
 
-if ($ServiceHeaderTypeID==1)
-{
-	$BSql="select l.RatesPayable from LandApplication la join land l on la.PlotNo=l.PlotNo and la.LRN=l.LRN where la.ServiceHeaderID=$ApplicationID";
-	$rsult=sqlsrv_query($db,$BSql);
-	//echo $BSql;
-	if ($rsu=sqlsrv_fetch_array($rsult,SQLSRV_FETCH_ASSOC))
+	if ($ServiceHeaderTypeID==1)
 	{
-		$ServiceCost=$rsu['RatesPayable'];							
+		$BSql="select l.RatesPayable from LandApplication la join land l on la.PlotNo=l.PlotNo and la.LRN=l.LRN where la.ServiceHeaderID=$ApplicationID";
+		$rsult=sqlsrv_query($db,$BSql);
+		//echo $BSql;
+		if ($rsu=sqlsrv_fetch_array($rsult,SQLSRV_FETCH_ASSOC))
+		{
+			$ServiceCost=$rsu['RatesPayable'];							
+		}else
+		{
+			$ServiceCost=0;
+		}	
 	}else
 	{
-		$ServiceCost=0;
-	}	
-}else
-{
 
-	//get the subsystem
-	$sql="select fn.Value, ss.SubSystemName from fnFormData($ServiceHeaderID) fn 
-			join SubSystems ss on fn.Value=ss.SubSystemID
-			where formcolumnid=12237";
-	$res=sqlsrv_query($db,$sql);
-	while($row=sqlsrv_fetch_array($res,SQLSRV_FETCH_ASSOC))
-	{
-		$SubSystemID=$row['Value'];
-		$SubSystemName=$row['SubSystemName'];
+		//get the subsystem
+		$sql="select fn.Value, ss.SubSystemName from fnFormData($ServiceHeaderID) fn 
+				join SubSystems ss on fn.Value=ss.SubSystemID
+				where formcolumnid=12237";
+		$res=sqlsrv_query($db,$sql);
+		while($row=sqlsrv_fetch_array($res,SQLSRV_FETCH_ASSOC))
+		{
+			$SubSystemID=$row['Value'];
+			$SubSystemName=$row['SubSystemName'];
+		}
+
+		//get the ward
+
+		$sql="select fn.Value, w.WardName from fnFormData($ServiceHeaderID) fn 
+			join Wards w on fn.Value=w.WardID
+			where fn.formcolumnid=11204
+			";
+		$res=sqlsrv_query($db,$sql);
+		while($row=sqlsrv_fetch_array($res,SQLSRV_FETCH_ASSOC))
+		{
+			$WardName=$row['WardName'];
+		}	
+
+		$ServiceCost=getServiceCost($db,$ServiceID,$SubSystemID,$ServiceHeaderID);
+		
 	}
-
-	//get the ward
-
-	$sql="select fn.Value, w.WardName from fnFormData($ServiceHeaderID) fn 
-		join Wards w on fn.Value=w.WardID
-		where fn.formcolumnid=11204
-		";
-	$res=sqlsrv_query($db,$sql);
-	while($row=sqlsrv_fetch_array($res,SQLSRV_FETCH_ASSOC))
-	{
-		$WardName=$row['WardName'];
-	}	
-
-	$ServiceCost=getServiceCost($db,$ServiceID,$SubSystemID,$ServiceHeaderID);
-	
-}
 
 function getServiceCost($db,$ServiceID,$SubSystemID,$ServiceHeaderID){
 	//echo $SubSystemID.'<BR>';

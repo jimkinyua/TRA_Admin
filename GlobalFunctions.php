@@ -521,9 +521,6 @@
 		}
 
 		$SerialNo=$InvoiceHeaderID;
-
-
-
 		$params = array();
 		$options =  array( "Scrollable" => SQLSRV_CURSOR_KEYSET );
 
@@ -1090,7 +1087,7 @@
 		</body>
 		</html>
 		';
-/* 		echo $html;
+		/* 		echo $html;
 		exit; */
 		$mpdf->WriteHTML($html);
  		$mpdf->Output();
@@ -3527,6 +3524,98 @@ function ReceiptMoney($db,$DepositDate,$BankID,$RefNumber,$PaymentMethod,$Invoic
 
 	return $msg1;		
 }
+
+function ReceiptLicenceRenewalMoney($db,$DepositDate,$BankID,$RefNumber,$PaymentMethod,$InvoiceHeaderID,$SlipAmount,$InvoiceAmount,$CreatedBy)
+{
+	$total=0;
+	$params = array();
+	$options =  array( "Scrollable" => SQLSRV_CURSOR_KEYSET );
+
+	$sql="select r.LicenceRenewalReceiptID,r.ReferenceNumber,sum(r.Amount)-sum(rl.Amount) Balance
+	from LicenceRenewalReceipt r 
+	join (select ReceiptID,sum(Amount) Amount from LicenceRenewalnvoiceLines group by ReceiptID) rl on  rl.ReceiptID=r.LicenceRenewalReceiptID 
+	where r.ReferenceNumber='$RefNumber' and BankID='$BankID' and [ReceiptStatusID]=1
+	group by r.ReferenceNumber,r.LicenceRenewalReceiptID";
+	// EXIT($sql);
+	$s_result = sqlsrv_query($db, $sql,$params,$options);
+
+	$rows=sqlsrv_num_rows($s_result);
+
+	if($rows>0) //Document Already exists
+	{
+		while($row=sqlsrv_fetch_array($s_result,SQLSRV_FETCH_ASSOC))
+		{
+			$Balance=(double)$row['Balance'];
+			if($Balance<=0){
+				$msg1[0] = '0';
+				$msg1[1] = 'The Receipt is already in the system, unless it is cancelled, you cannot use';
+				return $msg1;
+			}else{
+				if($InvoiceAmount>$Balance)
+				{
+					$msg1[0] = '0';
+					$msg1[1] = 'The total Invoice Amount is more than the Receipt Amount';
+					return $msg1;
+				}
+				$ReceiptID=$row['ReceiptID'];
+			}
+		}
+	}else
+	{
+		//Insert into Receipt Header
+		$DepositDate= date("Y-m-d H:i:s");
+		$query2 = "insert into  LicenceRenewalReceipt ([ReceiptDate],
+		[ReceiptMethodID],[ReferenceNumber],BankID,[Amount],[ReceiptStatusID],CreatedBy) 
+		VALUES('$DepositDate','$PaymentMethod','$RefNumber','$BankID','$SlipAmount','1','$CreatedBy') SELECT SCOPE_IDENTITY() AS ID";
+
+		// EXIT($query2);
+		$result1 = sqlsrv_query($db, $query2);
+		if ($result1)
+		{
+			$ReceiptID=lastid($result1);
+		}
+
+	}
+
+	if($ReceiptID==0)
+	{
+		$msg1[0] = '0';
+		$msg1[1] = 'The Receipt is badly formed. Kindly repost or consult the admin';
+		return $msg1;
+	}
+	$ReceiptDate= date("d/m/Y");
+
+	$query4="Insert into LicenceRenewaReceiptLines (ReceiptID,
+	InvoiceHeaderID,Amount,CreatedDate,CreatedBy)
+	VALUES('$ReceiptID','$InvoiceHeaderID','$InvoiceAmount','$ReceiptDate','$CreatedBy')";		
+	
+	// exit($query4);
+	$result2 = sqlsrv_query($db, $query4);
+	if($result2)
+	{
+
+	}else
+	{
+		DisplayErrors();
+	}
+	
+
+	if($result2)
+	{
+		$rst=SaveTransaction($db,$CreatedBy," Receipted Reference Number ".$RefNumber." Costing ".$Amount);
+
+		$msg1[0] = '1';
+		$msg1[1] = 'Receipting Done';
+	} else 
+	{
+		//DisplayErrors();
+		$msg1[0] = '0';
+		$msg1[1] = 'Receipting Failed';
+	}
+
+	return $msg1;		
+}
+
 function BillHouse($db,$ApplicationID,$CustomerID,$EstateID,$HouseNumber,$DocumentNo,$uhn,$BillAmount,$UserID,$cosmasRow)
 {
 $InvoiceNo='';
