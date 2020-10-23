@@ -16,8 +16,10 @@
 		$report=$_REQUEST['report'];
 		$fromDate=$_REQUEST['fromDate'];
 		$toDate=$_REQUEST['toDate'];
+		$cName = $_REQUEST['cName'];
 		$RevenueStreamID=$_REQUEST['RevenueStreamID'];	
-		// echo $report;
+		
+		// echo $cName;
 		// exit;
 	}else{
 		//echo "sio sawa";
@@ -37,7 +39,10 @@
 	}else if ($report=='licenceexpirynotification'){			
 			licenceexpirynotification($db,$cosmasRow,$reportFileName,$fromDate,$toDate);
 	}else if ($report=='establishmentbranches'){			
-			establishmentbranches($db,$cosmasRow,$reportFileName,$fromDate,$toDate);
+			establishmentbranches($db,$cosmasRow,$reportFileName,$fromDate,$toDate,$cName);
+	}else if ($report=='graded'){
+		graded($db,$cosmasRow,$reportFileName,$fromDate,$toDate);
+
 
 	}else if ($report=='mpesa'){
 			mpesaTransactions($db,$cosmasRow,$reportFileName,$fromDate,$toDate);			
@@ -126,8 +131,9 @@
 						<div class="input-control select" data-role="input-control">						
 							<select name="ReportName"  id="ReportName">
 								<option value="0" ></option>
-								<option value="permits" <?php if($report=='permits'){?> selected="selected" <?php } ?>>Licences Issued</option>
-								<option value="newestablishment" <?php if($report=='newestablishment'){?> selected="selected" <?php } ?>>New Establishments</option>
+								<!-- <option value="permits" <?php if($report=='permits'){?> selected="selected" <?php } ?>>Licences Issued</option> -->
+								<option value="graded" <?php if($report=='graded'){?> selected="selected" <?php } ?>>Graded Establishments</option>
+								<option value="newestablishment" <?php if($report=='newestablishment'){?> selected="selected" <?php } ?>>Licenced Establishments</option>
 								<option value="revenuegenerated" <?php if($report=='revenuegenerated'){?> selected="selected" <?php } ?>>Revenue Generated</option>
 								<option value="licenceexpirynotification" <?php if($report=='licenceexpirynotification'){?> selected="selected" <?php } ?>>Licences Expiry Notification</option>
 								<option value="receipts" <?php if($report=='receipts'){?> selected="selected" <?php } ?>>Receipts</option>
@@ -154,6 +160,55 @@
 						  </select>					
 						</div>
 					</td>
+					<?php
+					if($report == 'establishmentbranches'){
+						?>
+						<td><label width="20%">Establishment Name</label>
+						<div class="input-control select" data-role="input-control">	
+						
+						<select name="cName" required width="48">
+				        <option value="" selected="selected" >select establishment</option>
+				        <?php 
+						$status_sql = "select top 1 with ties ca.CustomerAgentID,ca.AgentID,c.CustomerName 
+							from Customer c 
+							join CustomerAgents ca on c.CustomerID = ca.CustomerID
+							join Agents ag on ag.AgentID = ca.AgentID
+							order by row_number() over (partition by ca.AgentID order by c.CustomerName desc)";
+						$status_result = sqlsrv_query($db, $status_sql) or die ("failed to load Status");
+
+						$selected = '';
+					    while ($myrow = sqlsrv_fetch_array( $status_result, SQLSRV_FETCH_ASSOC)) 
+					    {
+							$a_id = $myrow ['AgentID'];
+							$a_name = $myrow['CustomerName'];
+							if ($a_name==$a_id) 
+							{
+							   	$selected = 'SELECTED';
+							} else
+							{
+								$selected = '';
+							}	 
+						 	?>
+				       <option value="<?php echo $a_id;?>"><?php echo $a_name;?></option> 
+
+						
+				        <?php
+					 }
+					 ?>
+				    </select>
+
+
+						</div>
+						</td>
+						<td></td>
+						<td><label>&nbsp;</label>
+					<input name="btnSearch" type="button" onclick="loadmypage('reporting.php?'+
+								'&report='+this.form.ReportName.value+	
+								'&cName='+this.form.cName.value+ '&search=1','content','loader','listpages','')" value="Search">
+					</td>
+						<?php
+					}else{
+					?>
 					<td><label width="20%">From Date</label>
 						<div class="input-control text datepicker" data-role="input-control" data-format="dd/mm/yyyy">	
 							<input type="text" id="fromDate" name="fromDate" value="<?php echo $fromDate ?>"></input>				
@@ -164,6 +219,7 @@
 							<input type="text" id="toDate" name="toDate" value="<?php echo $toDate ?>"></input>				
 						</div>
 					</td>
+				
 					<!-- <td><label width="20%">Agent/User</label>
 						<div class="input-control select" data-role="input-control">								
 							<select name="AgentID"  id="AgentID">
@@ -199,6 +255,8 @@
 								'&report='+this.form.ReportName.value+	
 								'&fromDate='+this.form.fromDate.value+								'&toDate='+this.form.toDate.value+'&search=1','content','loader','listpages','')" value="Search">
 					</td>
+					<?php }
+				?>
 				</tr>
 				</thead>
 				<tbody>
