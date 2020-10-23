@@ -1580,19 +1580,17 @@ else if($OptionValue=='applications')
 	}
 		
 		
-	$msql = "set dateformat dmy SELECT top 100 sh.ServiceHeaderID AS ApplicationID,sh.ServiceStatusID,ss.ServiceStatusName, 
-	s.ServiceName ,c.CustomerID, c.CustomerName, sh.SubmissionDate,s.ServiceID,f.ServiceHeaderType ApplicationType,s.ServiceCategoryID,s.ServiceCategoryID
-
-	FROM dbo.ServiceHeader AS sh INNER JOIN 
-	dbo.Services AS s ON sh.ServiceID = s.ServiceID INNER JOIN
-	dbo.Customer AS c ON sh.CustomerID = c.CustomerID INNER JOIN 
-	dbo.ServiceStatus ss ON sh.ServiceStatusID=ss.ServiceStatusID INNER JOIN
-	DBO.ServiceCategory sc on s.ServiceCategoryID=sc.ServiceCategoryID INNER JOIN
-	dbo.Forms f on sh.FormID=f.FormID 	 
-	where sh.ServiceStatusID =1
-	and (sc.InvoiceStage<>sc.LastStage or sh.ServiceStatusID<>sc.LastStage)
-	and sh.ServiceID not in (select ServiceID from ServiceTrees) 
-	order by sh.SubmissionDate desc";
+	$msql = "set dateformat dmy SELECT top 100 sh.ServiceHeaderID 
+				AS ApplicationID,sh.ServiceStatusID,ss.ServiceStatusName, s.ServiceName ,c.CustomerID, 
+				c.CustomerName, sh.SubmissionDate,s.ServiceID,f.ServiceHeaderType ApplicationType,s.ServiceCategoryID,s.ServiceCategoryID 
+				FROM dbo.ServiceHeader AS sh 
+				INNER JOIN dbo.Services AS s ON sh.ServiceID = s.ServiceID 
+				INNER JOIN dbo.Customer AS c ON sh.CustomerID = c.CustomerID 
+				INNER JOIN dbo.ServiceStatus ss ON sh.ServiceStatusID=ss.ServiceStatusID 
+				INNER JOIN DBO.ServiceCategory sc on s.ServiceCategoryID=sc.ServiceCategoryID 
+				INNER JOIN dbo.Forms f on sh.FormID=f.FormID 
+				where sh.ServiceStatusID =1 or (sh.ServiceStatusID = 5 and sh.ServiceCategoryID = 2033) and (sc.InvoiceStage<>sc.LastStage or sh.ServiceStatusID<>sc.LastStage) 
+				and sh.ServiceID not in (select ServiceID from ServiceTrees) order by sh.SubmissionDate desc";
 
 	// echo $msql; 	
 	//".$filter.$locationcondition."
@@ -1637,6 +1635,7 @@ else if($OptionValue=='applications')
 				$ServiceName,
 				$SubmissionDate,
 				$RegionName	
+				
 		);			
 	}  	
 	
