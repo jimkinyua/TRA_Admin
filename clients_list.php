@@ -521,8 +521,8 @@ if (isset($_REQUEST['save']) && $_REQUEST['NextStatus']!='')
 					</td>							  
 				</tr>
                 <tr>
-                    <th  class="text-left"> ID</th>
-                    <th  class="text-left">CustomerName</th>                   
+                    <th  class="text-left">Application ID</th>
+                    <th  class="text-left">Customer Name</th>                   
                     <th  class="text-left" width="30%">Service Name</th>
                     <th  class="text-left">Application Date</th>
                     <th  class="text-left">Region</th>

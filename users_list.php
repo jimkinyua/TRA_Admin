@@ -235,7 +235,7 @@ if (isset($_REQUEST['save']))
                             <th></th><?php
 						}else
 						{ ?>
-							<th class="text-left"><a href="#" onClick="loadmypage('user_import.php?i=1','content','loader','listpages','','','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')">Add</a></th>
+							<th class="text-left"><a href="#" onClick="loadmypage('add_officer_card.php?i=1','content','loader','listpages','','','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')">Add</a></th>
 
                             <?php
 						}

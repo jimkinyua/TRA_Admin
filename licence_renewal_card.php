@@ -187,7 +187,8 @@ if($today>$FirstDec){
 			}
             $InsertIntoLicenceRenewalInvoiceHeaderSQL="insert into LiceneRenewaInvoiceHeader
              (InvoiceDate,ServiceHeaderID,InvoiceNo,CustomerID, LicenceRenewalid, CreatedBy) 
-			Values('$InvoiceDate','$ServiceHeaderID','$InvoiceNo','$CustomerId','$ApplicationID','$UserID') SELECT SCOPE_IDENTITY() AS ID";
+			Values('$InvoiceDate','$ServiceHeaderID','$InvoiceNo',
+			'$CustomerId','$ApplicationID','$UserID') SELECT SCOPE_IDENTITY() AS ID";
 			
             // exit($InsertIntoLicenceRenewalInvoiceHeaderSQL);
             $InsertIntoLicenceRenewalInvoiceHeaderResult = sqlsrv_query($db, $InsertIntoLicenceRenewalInvoiceHeaderSQL);
@@ -443,7 +444,7 @@ if($today>$FirstDec){
 					$my_message="Kindly receive the invoice for your applied Service";
 					//$my_mail = 'cngeno11@gmail.com';
 					$result=php_mailer($toEmail,$fromEmail,$CountyName,$my_subject,$my_message,$my_file,$file_path,"Invoice");
-					createPermit($db, $ApplicationID,$row);
+					createPermit($db, $ServiceHeaderID,$cosmasRow);
 					echo "Licence Renewed and Invoice Sent to the Customer via Email<br />";
 					// exit;
 					// Header ("Location:renewal_applications_list.php");
@@ -654,6 +655,295 @@ function getServiceCost($db,$ServiceID,$SubSystemID,$ServiceHeaderID){
 		return $ServiceCost;
 	}
 }
+
+function createPermit($db, $ApplicationID,$row)
+		{
+		
+		$CustomerName = '';
+		$ServiceName = '';
+		$ServiceAmount = '';	
+		$InvoiceHeaderID='';	
+		$CountyName=$row['CountyName'];
+		$CountyAddress=$row['PostalAddress'];
+		$CountyTown=$row['Town'];
+		$CountyTelephone=$row['Telephone1'];
+		$CountyMobile=$row['Mobile1'];
+		$CountyEmail=$row['Email'];	
+		$CountyPostalCode=$row['PostalCode'];
+		$PlotNo="";
+		
+		$PermitNo='';
+		$BusinessID="";
+		$CustomerID="";
+		$Validity="";
+		$Expiry="";
+		$ExpityDate="";
+		$CustomerName="";
+		$BusinessName="";
+		$ServiceName="";
+		$ServiceCost="";
+		$ServiceCost_Words="";
+		$PostalAdress="";
+		$PhysicalAddress="";
+		$PostalCode="";
+		$Vat="";
+		$PIN="";
+		$Town="";
+	
+
+		//get the details for this application
+
+		$sql = "select distinct sh.ServiceHeaderID,p.PermitNo,sh.ServiceID,p.Validity,p.ExpiryDate,
+			ih.InvoiceHeaderID, ih.CustomerID,ih.InvoiceDate,ih.Paid,
+			c.CustomerName,c.Mobile1,c.BusinessID,c.BusinessRegistrationNumber,C.CustomerID,c.PostalAddress,c.PhysicalAddress,c.Telephone1,c.Telephone2,c.PostalCode,c.VatNumber,c.PIN,c.Town,c.Email,
+			s.ServiceName,
+			il.Amount,a.FirstName+' '+a.MiddleName+' '+a.LastName IssuedBy
+			
+			from InvoiceHeader ih
+			join InvoiceLines il on il.InvoiceHeaderID=ih.InvoiceHeaderID
+			join ServiceHeader sh on il.ServiceHeaderID=sh.ServiceHeaderID
+			join Customer c on sh.CustomerID=c.CustomerID	
+			join Services s on sh.ServiceID=s.ServiceID and  il.ServiceID=sh.ServiceID			
+			join Permits p on p.ServiceHeaderID=sh.ServiceHeaderID
+			left join Agents a on p.CreatedBy=a.AgentID
+			where sh.ServiceHeaderID = $ApplicationID";
+			
+
+			$qry_result=sqlsrv_query($db,$sql);	
+			  
+			if (($rrow = sqlsrv_fetch_array($qry_result,SQLSRV_FETCH_ASSOC))==false)
+			{
+				DisplayErrors();
+				die;
+			}else
+			{
+
+				$BusinessRegNo=$rrow['BusinessRegistrationNumber'];
+				$PermitNo=$rrow['PermitNo'];
+				$BusinessID=$rrow['BusinessID'];
+				$CustomerID=$rrow['CustomerID'];
+				$Validity=$rrow['Validity'];
+				$Expiry=$rrow['ExpiryDate'];
+				$ExpiryDate=$rrow['ExpiryDate'];
+				$CustomerName=$rrow['CustomerName'];
+				$BusinessName=$rrow['CustomerName'];
+				$ServiceName=$rrow['ServiceName'];
+				$ServiceCost=$rrow['Amount'];
+				$PostalAdress=$rrow['PostalAddress'];
+				$Telephone1=$rrow['Telephone1'];
+				$Telephone2=$rrow['Telephone2'];
+				$CustomerEmail=$rrow['Email'];
+				$PostalCode=$rrow['PostalCode'];
+				$PIN=$rrow['PIN'];
+				$Vat=$rrow['VatNumber'];
+				$Town=$rrow['Town'];
+				$IssuedBy=$rrow['IssuedBy'];
+				$MobileNo=$rrow['Mobile1'];
+				
+				$ServiceCost_Words=convertNumber($ServiceCost);				
+			}
+
+		//$Validity='2016';
+		$mdate=date_create($Expiry);
+		$Expiry=date_format($mdate,"d/m/Y");
+		$Validity=date_format($mdate,'Y');
+		$PostalTown='';
+		/*$Expiry='2015';	
+		$PostalAdress=0;
+		$PostalCode=0;
+		$Vat=0;
+		$PIN=0;
+		$Town='';
+		$Email='amail';*/
+		
+		$rsql="select sh.CustomerID,c.CustomerName,c.PostalAddress,c.PhysicalAddress,c.PostalCode,sh.ServiceID,s.ServiceName,s.ServiceCode, il.ServiceHeaderID,il.ServiceHeaderID,il.Amount,ih.InvoiceHeaderID,c.Email,fd.Value BDescription  
+			from invoiceLines il 
+			inner join InvoiceHeader ih on il.InvoiceHeaderID=ih.InvoiceHeaderID 
+			inner join ServiceHeader sh on	il.ServiceHeaderID=sh.ServiceHeaderID 
+			inner join Services s on sh.ServiceID=s.ServiceID and il.ServiceID=sh.ServiceID
+			inner join Customer c on sh.CustomerID=c.CustomerID 
+			join FormData fd on fd.ServiceHeaderID=sh.ServiceheaderID
+			where fd.FormColumnID=5 and sh.ServiceHeaderID=$ApplicationID";
+			
+			$rresult = sqlsrv_query($db, $rsql);	
+			
+
+			if ($rrow = sqlsrv_fetch_array( $rresult, SQLSRV_FETCH_ASSOC))
+			{
+				$CustomerName = $rrow['CustomerName'];
+				$ServiceName = $rrow['ServiceName'];
+				$ServiceAmount = $rrow['Amount'];	
+				$InvoiceHeaderID=$rrow['InvoiceHeaderID'];	
+				$Email=$rrow['Email'];
+				$BDescription=$rrow['BDescription'];
+				$ServiceCode=$rrow['ServiceCode'];
+				$PostalAddress=$rrow['PostalAddress'];
+				$PostalTown=$rrow['Town'];
+				$PostalCode=$rrow['PostalCode'];
+				$PhysicalAddress=$rrow['PhysicalAddress'];
+			}		
+		
+		$PlotNo="";
+		//$sql="select Value PlotNo from fnFormData ($ApplicationID) where formcolumnid=12233";
+		$sql="select
+			(select distinct Value PlotNo from fnFormData ($ApplicationID) where formcolumnid=12242) PlotNo,
+			(select distinct Value VatNo from fnFormData ($ApplicationID) where formcolumnid=12243)VatNo";
+		
+		$result=sqlsrv_query($db,$sql);
+		while($rww=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC))
+		{
+			$PlotNo=$rww['PlotNo'];
+			$Vat=$rww['VatNo'];
+		}
+		
+		createBarCode($PermitNo);	
+
+		$mpdf=new mPDF('win-1252','A4','','',20,15,48,25,10,10);
+		$mpdf->useOnlyCoreFonts = true;    // false is default
+		$mpdf->debugfonts = true; 
+		$mpdf->SetProtection(array('print'));
+		$mpdf->SetTitle($CountyName."- Invoice");
+		$mpdf->SetAuthor($CountyName);
+		$mpdf->SetWatermarkText("Tourism Regulatory Authority");
+		$mpdf->showWatermarkText = true;
+		$mpdf->watermark_font = 'DejaVuSansCondensed';
+		$mpdf->watermarkTextAlpha = 0.1;
+		$mpdf->SetDisplayMode('fullpage');
+		
+		$html='<html 
+		  <head>
+				<link rel="stylesheet" href="css/my_css.css" type="text/css"/>			
+		  </head>			
+		<body>
+				<table class="items" width="100%" style="font-size: 9pt; border-collapse: collapse; border-top:thick; " cellpadding="1">
+					<tr>
+						<td align="Center" colspan="5" style="font-size:10mm">
+							<b>BUSINESS PERMIT</b>
+						</td>
+					</tr>
+					<tr>
+						<td align="Center" colspan="5">
+							<img src="images/CountyLogo_New.png" alt="County Logo">
+						</td>
+					</tr>					
+					<tr>
+						<td style="border-right:0pt"></td>
+						<td colspan="3" align="Center"><span style="font-weight: bold; font-size: 14pt;">'.$CountyName.'</span></td>
+						<td><span style="font-weight: bold; font-size: 14pt;">'.$Validity.'</span></h3></td>
+					</tr>
+					<tr>
+						<td colspan="5" align="Center"><span style="font-weight: bold; font-size: 14pt;">
+						<br>
+						GRANTS THIS BUSINESS PERMIT <BR>
+								TO
+						</span></td>
+					</tr>
+					<thead>
+						<tr>							
+							<td colspan="5"><B>'.$BusinessName.'</B></td>
+						</tr>
+						<tr>
+							<td colspan="2">Certificate of Registration NO/ID No: <br>'.$BusinessRegNo.'</td>
+							<td width=20%>Business ID No:'.$BusinessID.'</td>
+							<td>PIN NO: '.$PIN.'</td>
+							<td>VAT NO: '.$Vat.'</td>
+						</tr>
+					</thead>
+						<tr>
+							<td colspan="5" align="center">
+									<br><p><strong>To engage in the Activity/Business/Profession or Occupation of:</strong></p><br><br>									
+							</td>
+						</tr>
+					<thead>
+						<tr>
+							<td align="left" colspan="3"><strong>Business Activity Code & Description:</strong><br>('.$ServiceCode.') '.$ServiceName.'</td>
+							<td align="right" colspan="2"><strong>Detailed Activity Description:</strong><br>'.$BDescription.'</td>
+						</tr>
+					</thead>	
+					<tr>
+						<td colspan="5" align="center">
+							<br><p><strong>Having Paid a Single Business Permit Fee of:</strong></p><br><br>
+						</td>					
+					</tr>
+					<tr>
+						<td></td> 
+						<td colspan="3"  align="center" style="background-color: #BEBABA; font-size:5mm">(Ksh.)<br>'.number_format($ServiceCost,2).'<br>('.$ServiceCost_Words.' only)</td>
+						<td></td> 
+					</tr>
+					<thead>
+						<tr>
+							<td>P.O Box <br> '.$PostalAddress.'</td>
+							<td>Postal Code <br> '.$PostalCode.'</td>
+							<td>Postal Town <br> '.$PostalTown.'</td>
+							<td>Business Physical Address<br> '.$PhysicalAddress.'</td>
+							<td>Plot No <br> '.$PlotNo.'</td>
+						</tr>
+					
+						<tr>
+							<td><strong>Mobile No</strong> <br> '.$Telephone1.'</td>
+							<td><strong>Telephone</strong> <br> '.$Telephone2.'</td>
+							<td><strong>Fax</strong> <br> '.$Fax.'</td>
+							<td colspan="2" align="left"><strong>Email Address</strong><br> '.$CustomerEmail.'</td>						
+						</tr>
+					</thead>
+					<tr>
+						<td colspan="2"><strong>Validity Period </strong>'.$Validity.'</td>
+						<td></td>
+						<td colspan="2" align="center"><strong>Expiry Date:</strong>'.$Expiry.'</td>
+					</tr>
+					<tr>
+						<td colspan="2"><strong>Issued By:</strong><br>SILAS KERING LETING</td>	
+						<td></td>						
+						<td colspan="2"></td>
+					</tr>
+					<tr>
+						<td colspan="2"><br><strong>For The Chief Officer<br>Finance And Economic Planning</strong></td>
+						<td></td>
+						<td colspan="2"><br><strong><br></td>
+					</tr>
+					<tr>
+						<td colspan="5"><hr></td>
+					</tr>
+					<tr>						
+						<td colspan="5" align="center"><img src="Images/Bar_Codes/'.$PermitNo.'.PNG"></td>
+					</tr>					
+					<thead>
+						<tr>
+							<td Colspan="5" style="text-align:justified;"> 
+							<small><strong>Notice:</strong> Granting this permit does not exempt the business identified above from
+									complying with the current regulations on Health and Safety as established by the Government of Kenya 
+									and the '.$CountyName.'.</small>
+							</td>
+						</tr>
+					</thead>
+				</table>
+				<I>Served by <B>'.$IssuedBy.'</B></I>
+		</body>
+		</html>';
+		//echo $html; 
+		$mpdf->WriteHTML($html);
+		
+		/* $mpdf->Output();
+		exit; */
+		
+		$mpdf->Output('pdfdocs/sbps/'.$PermitNo.'.pdf','F');
+		
+		//send Email
+		$my_file = $PermitNo.'.pdf';
+		$my_path = "pdfdocs/sbps/";
+		$my_name = 'Test'; //$CountyName;
+		$my_mail = 'jimkinyua25@gmail.com'; //$Email;
+		$my_replyto = 'jameskinyua190@gmail.com'; //$CountyEmail;
+		$my_subject = "Service Permit";
+		$my_message="Kindly receive the Permit for your approved Service";
+		
+		//mail_attachment($my_file, $my_path, $my_mail, $my_replyto, $my_name, $my_replyto, $my_subject, $my_message);
+		//echo 'before'.'<br>';
+		$result=php_mailer($my_mail,$my_replyto,$my_name,$my_subject,$my_message,$my_file,$my_path,"Licence");
+		//echo 'after';
+		return $result;
+		
+	}
 
 //get the Arrears
 

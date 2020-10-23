@@ -153,17 +153,16 @@ if (isset($_REQUEST['save']) && $_REQUEST['NextStatus']!='')
 	}
 }
 
-$s_sql="select c.*,f.ServiceHeaderType,bt.CustomerTypeName,sh.ServiceStatusID,sh.ServiceHeaderID,bz.ZoneName,w.WardName,sc.SubCountyName,s.ServiceName,sh.ServiceID,sh.CreatedDate,sh.SubSystemID,S.ServiceCategoryID
-	from Customer c 
-	join ServiceHeader sh on sh.CustomerID=c.CustomerID
-	join services s on sh.ServiceID=s.ServiceID
-	join Forms f on sh.FormID=f.FormID
-	left join CustomerType bt on bt.CustomerTypeID=c.BusinessTypeID 
-	left join BusinessZones bz on sh.BusinessZoneID=bz.ZoneID
-	left join Wards w on bz.wardid=w.wardid
-	left join subcounty sc on w.subcountyid=sc.subcountyid
-	
-	where sh.ServiceHeaderID=$ApplicationID";
+$s_sql="select c.*,f.ServiceHeaderType,bt.CustomerTypeName,
+sh.ServiceStatusID,sh.ServiceHeaderID,bz.ZoneName,w.WardName,
+s.ServiceName,sh.ServiceID,sh.CreatedDate,sh.SubSystemID, sub.SubSystemName,
+S.ServiceCategoryID from Customer c join ServiceHeader sh on sh.CustomerID=c.CustomerID 
+join services s on sh.ServiceID=s.ServiceID 
+join Forms f on sh.FormID=f.FormID 
+left join CustomerType bt on bt.CustomerTypeID=c.BusinessTypeID
+left join BusinessZones bz on sh.BusinessZoneID=bz.ZoneID 
+LEFT JOIN SubSystems sub on sh.BusinessZoneID = sub.SubSystemID
+left join Wards w on bz.wardid=w.wardid  where sh.ServiceHeaderID=$ApplicationID";
 
 $s_result=sqlsrv_query($db,$s_sql);
 
@@ -198,9 +197,10 @@ if ($s_result)
 		$url=$row['Website'];
 		$Email=$row['Email'];
 		$SubCountyName=$row['SubCountyName'];
-		$WardName=$row['WardName'];
-		$BusinessZone=$row['ZoneName'];
+		// $WardName=$row['WardName'];
+		// $BusinessZone=$row['ZoneName'];
 		$SubSystemID=$row['SubSystemID'];
+		$SubSystemName=$row['SubSystemName'];
 		$ApplicationDate=$row['CreatedDate'];//date('d/m/Y',strtotime($date));
 		$ApplicationDate=date('d/m/Y',strtotime($ApplicationDate));
 		
@@ -225,109 +225,122 @@ if ($ServiceHeaderTypeID==1)
 	}	
 }else
 {
+	$ApplicationChargesSQL="select sum(sc.Amount) Amount 
+	from ApplicationCharges sc 
+	join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+	join Services s1 on sc.ServiceID=s1.ServiceID 
+	where sh.ServiceHeaderID=$ServiceHeaderID";
 
-	//get the subsystem
-	$sql="select fn.Value, ss.SubSystemName from fnFormData($ServiceHeaderID) fn 
-			join SubSystems ss on fn.Value=ss.SubSystemID
-			where formcolumnid=12237";
-	$res=sqlsrv_query($db,$sql);
-	while($row=sqlsrv_fetch_array($res,SQLSRV_FETCH_ASSOC))
+	$result=sqlsrv_query($db,$ApplicationChargesSQL);
+	while($row=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC))
 	{
-		$SubSystemID=$row['Value'];
-		$SubSystemName=$row['SubSystemName'];
+		$ApplicationCharge=$row['Amount'];
 	}
+	// echo $ApplicationChargesSQL; exit;
 
-	//get the ward
+	$ServiceCost = $ApplicationCharge;
+		// //get the subsystem
+		// $sql="select fn.Value, ss.SubSystemName from fnFormData($ServiceHeaderID) fn 
+		// 		join SubSystems ss on fn.Value=ss.SubSystemID
+		// 		where formcolumnid=12237";
+		// $res=sqlsrv_query($db,$sql);
+		// while($row=sqlsrv_fetch_array($res,SQLSRV_FETCH_ASSOC))
+		// {
+		// 	$SubSystemID=$row['Value'];
+		// 	$SubSystemName=$row['SubSystemName'];
+		// }
 
-	$sql="select fn.Value, w.WardName from fnFormData($ServiceHeaderID) fn 
-		join Wards w on fn.Value=w.WardID
-		where fn.formcolumnid=11204
-		";
-	$res=sqlsrv_query($db,$sql);
-	while($row=sqlsrv_fetch_array($res,SQLSRV_FETCH_ASSOC))
-	{
-		$WardName=$row['WardName'];
-	}	
+		// //get the ward
 
-	$ServiceCost=getServiceCost($db,$ServiceID,$SubSystemID,$ServiceHeaderID);
+		// $sql="select fn.Value, w.WardName from fnFormData($ServiceHeaderID) fn 
+		// 	join Wards w on fn.Value=w.WardID
+		// 	where fn.formcolumnid=11204
+		// 	";
+		// $res=sqlsrv_query($db,$sql);
+		// while($row=sqlsrv_fetch_array($res,SQLSRV_FETCH_ASSOC))
+		// {
+		// 	$WardName=$row['WardName'];
+		// }	
+
+		// $ServiceCost=getServiceCost($db,$ServiceID,$SubSystemID,$ServiceHeaderID);
 	
 }
 
-function getServiceCost($db,$ServiceID,$SubSystemID,$ServiceHeaderID){
-	//echo $SubSystemID.'<BR>';
-	$sql="select * from fnServiceCost($ServiceID,$SubSystemID)";
-	$result=sqlsrv_query($db,$sql);
-	if ($result)
-	{
-		while($row=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC))
-		{									
-			$ServiceCost=$row['Amount'];
+		function getServiceCost($db,$ServiceID,$SubSystemID,$ServiceHeaderID){
+			//echo $SubSystemID.'<BR>';
+			$sql="select * from fnServiceCost($ServiceID,$SubSystemID)";
+			$result=sqlsrv_query($db,$sql);
+			if ($result)
+			{
+				while($row=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC))
+				{									
+					$ServiceCost=$row['Amount'];
+				}
+
+				//Conservancy
+				$sql1="select * from fnConservancyCost($ServiceCost,$SubSystemID)";
+				//echo $sql1;
+				$rs=sqlsrv_query($db,$sql1);
+				if ($rs)
+				{
+					while($row=sqlsrv_fetch_array($rs,SQLSRV_FETCH_ASSOC))
+					{									
+						$ConservancyCost=$row["Amount"];										
+					}	
+				}	
+
+				//penalty
+				//echo 'The Business is '.$BusinessIsOld;
+				if(strtotime($ApplicationDate)>strtotime($DateLine) and $BusinessIsOld==1)
+					$penalty=.50*(double)$ServiceCost;
+				else{
+					$penalty=0;
+				}
+				//echo $ServiceCost;
+				/* echo $ServiceCost.'<BR>';
+				echo $penalty;  */
+				/*echo '<br>'.$ApplicationDate;*/
+				$OtherCharge=0;
+				//With other Charges?
+				$sql="select Amount 
+						from ServiceCharges sc
+						join services s on sc.ServiceID=s.serviceid                                 
+						join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID                                      
+						and fy.isCurrentYear=1
+						and sc.SubSystemId=$SubSystemID
+						and sc.serviceid=281";
+
+											// echo $sql;
+
+											// echo '<br><br>'
+				
+				$s_result = sqlsrv_query($db, $sql);
+				while ($row = sqlsrv_fetch_array( $s_result, SQLSRV_FETCH_ASSOC))
+				{							
+					$OtherCharge=$row["Amount"];												
+				}
+
+				//Application Charges
+				$ApplicationCharge=0;
+				$sql="select sum(sc.Amount) Amount 
+						from ApplicationCharges sc 
+						join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
+						join Services s1 on sc.ServiceID=s1.ServiceID 
+						where sh.ServiceHeaderID=$ServiceHeaderID";
+
+				//echo $sql;
+
+				$result=sqlsrv_query($db,$sql);
+				while($row=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC))
+				{
+					$ApplicationCharge=$row['Amount'];
+				}
+			//echo $sql;
+			//echo '<BR>'.$OtherCharge.'<BR>';
+				$ServiceCost=$ServiceCost+$OtherCharge+$penalty+$ApplicationCharge+$ConservancyCost;
+				return $ServiceCost;
+			}
 		}
-
-		//Conservancy
-		$sql1="select * from fnConservancyCost($ServiceCost,$SubSystemID)";
-		//echo $sql1;
-		$rs=sqlsrv_query($db,$sql1);
-		if ($rs)
-		{
-			while($row=sqlsrv_fetch_array($rs,SQLSRV_FETCH_ASSOC))
-			{									
-				$ConservancyCost=$row["Amount"];										
-			}	
-		}	
-
-		//penalty
-		//echo 'The Business is '.$BusinessIsOld;
-		if(strtotime($ApplicationDate)>strtotime($DateLine) and $BusinessIsOld==1)
-			$penalty=.50*(double)$ServiceCost;
-		else{
-			$penalty=0;
-		}
-		//echo $ServiceCost;
-		 /* echo $ServiceCost.'<BR>';
-		echo $penalty;  */
-		/*echo '<br>'.$ApplicationDate;*/
-		$OtherCharge=0;
-		//With other Charges?
-	    $sql="select Amount 
-	            from ServiceCharges sc
-	            join services s on sc.ServiceID=s.serviceid                                 
-	            join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID                                      
-	            and fy.isCurrentYear=1
-	            and sc.SubSystemId=$SubSystemID
-	            and sc.serviceid=281";
-
-									// echo $sql;
-
-									// echo '<br><br>'
-		
-		$s_result = sqlsrv_query($db, $sql);
-		while ($row = sqlsrv_fetch_array( $s_result, SQLSRV_FETCH_ASSOC))
-		{							
-			$OtherCharge=$row["Amount"];												
-		}
-
-		//Application Charges
-		$ApplicationCharge=0;
-	    $sql="select sum(sc.Amount) Amount 
-	            from ApplicationCharges sc 
-	            join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
-	            join Services s1 on sc.ServiceID=s1.ServiceID 
-	            where sh.ServiceHeaderID=$ServiceHeaderID";
-
-	    //echo $sql;
-
-	    $result=sqlsrv_query($db,$sql);
-	    while($row=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC))
-	    {
-	        $ApplicationCharge=$row['Amount'];
-	    }
-	//echo $sql;
-	//echo '<BR>'.$OtherCharge.'<BR>';
-		$ServiceCost=$ServiceCost+$OtherCharge+$penalty+$ApplicationCharge+$ConservancyCost;
-		return $ServiceCost;
-	}
-}
 
 //get the Arrears
 
@@ -577,7 +590,7 @@ if (isset($_REQUEST['InspectionDate']))
                   <td width="50%">				  
                   </td>   
               </tr>
-              <tr>
+              <!-- <tr>
                   <td width="50%">
                   <label>Ward</label>
 					  <div class="input-control text" data-role="input-control">
@@ -586,10 +599,10 @@ if (isset($_REQUEST['InspectionDate']))
                   </td>
                   <td width="50%">				  
                   </td>   
-              </tr>
+              </tr> -->
               <tr>
                   <td width="50%">
-                  <label>Susb System</label>
+                  <label>TRA Region</label>
 					  <div class="input-control text" data-role="input-control">
 						  <input name="SubSystem" type="text" id="SubSystem" value="<?php echo $SubSystemName; ?>" disabled="disabled" placeholder="">						  
 					  </div>				  
@@ -599,40 +612,40 @@ if (isset($_REQUEST['InspectionDate']))
               </tr>
               <tr>
                   <td width="50%">
-                  <label>Service</label>
+                  <label>Licence Applied For</label>
 					  <div class="input-control text" data-role="input-control">
 						  <input name="servicename" type="text" id="servicename" value="<?php echo $ServiceName; ?>" disabled="disabled" placeholder="">
 						  
 					  </div>				  
                   </td>
-                  <td width="50%">
-				<label>&nbsp;</label>				  
+                  <!-- <td width="50%"> -->
+				<!-- <label>&nbsp;</label>				   -->
 					<!--service_approval.php?ApplicationID='+app_id+'&app_type='+app_type+'&CurrentStatus='+current_status
 					<input name="Button" type="button" onclick="loadmypage('service_form.php?save=1&ApplicationID=<?php echo $ApplicationID ?>','content','loader','','')" value="Change">-->
-					<input name="Button" type="button" 
-					onclick="loadmypage('application_change.php?ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','','')" value="Change">
-                  </td>   
+					<!-- <input name="Button" type="button" 
+					onclick="loadmypage('application_change.php?ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','','')" value="Change"> -->
+                  <!-- </td>    -->
               </tr>	
 
 
 
 
- <tr>
-                  <td width="50%">
+ 			<!-- <tr> -->
+                  <!-- <td width="50%">
                   <label>Add Inspection Officers</label>
 					  <div class="input-control text" data-role="input-control">
 						  <input name="servicename" type="text" id="servicename" value="Add Inspection Officer" disabled="disabled" placeholder="">
 						  
 					  </div>				  
-                  </td>
-                  <td width="50%">
-				<label>&nbsp;</label>				  
+                  </td> -->
+                  <!-- <td width="50%"> -->
+				<!-- <label>&nbsp;</label>				   -->
 					<!--service_approval.php?ApplicationID='+app_id+'&app_type='+app_type+'&CurrentStatus='+current_status
 					<input name="Button" type="button" onclick="loadmypage('service_form.php?save=1&ApplicationID=<?php echo $ApplicationID ?>','content','loader','','')" value="Change">-->
-					<input name="Button" type="button" 
+					<!-- <input name="Button" type="button" 
 					onclick="loadmypage('add_officer.php?ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','','')" value="Add Inspection Officer">
-                  </td>   
-              </tr>	
+                  </td>    -->
+              <!-- </tr>	 -->
 
 <tr>
 
@@ -650,9 +663,9 @@ if (isset($_REQUEST['InspectionDate']))
 			}
 			?>
                   <td width="50%">
-                  <label>Set Inspection Date</label>
+                  <label>Inspection Date</label>
 					  <div class="input-control text" data-role="input-control">
-						  <input name="servicename" type="text" id="servicename" value="<?php echo $SetDate; ?>" disabled="disabled" placeholder="">
+						  <input name="servicename" type="text" id="servicename" value="<?php echo isset($SetDate)?$SetDate:'Not Set'; ?>" disabled="disabled" placeholder="">
 						  
 					  </div>				  
                   </td>
@@ -1040,14 +1053,14 @@ if (isset($_REQUEST['InspectionDate']))
 
 										
 
-<?php
+										<?php
 
 
 
 
-$sql="SELECT u.Email, FirstName, Middlename, LastName UserNames 
-	FROM Users u 
-	join agents ag on u.agentid=ag.agentID ";
+											$sql="SELECT u.Email, FirstName, Middlename, LastName UserNames 
+												FROM Users u 
+												join agents ag on u.agentid=ag.agentID ";
 												$s_result=sqlsrv_query($db,$sql);
 												if ($s_result){
 													while($row=sqlsrv_fetch_array($s_result,SQLSRV_FETCH_ASSOC)){
@@ -1062,7 +1075,7 @@ $sql="SELECT u.Email, FirstName, Middlename, LastName UserNames
 
 
 
-?>
+										?>
 
 
 
@@ -1147,6 +1160,11 @@ if ($myrow = sqlsrv_fetch_array( $dresult, SQLSRV_FETCH_ASSOC))
 	$SetDate1 = $myrow['SetDate'];
 	$ServiceType = $myrow['ServiceCategoryID'];
 }
+
+$to = 'emmanuelomonso@gmail.com';
+$subject = 'this is a test email';
+$txt = 'this is a test email';
+send_email_users();
 
           ?>
 

@@ -15,7 +15,29 @@ $msg ='';
 
 // print_r($_REQUEST); 
 
+if($_REQUEST['addinspection']==1){
+	$c_id = $_REQUEST['c_id'];
+	$s_id = $_REQUEST['s_id'];
+	$ServiceStatusID = $_REQUEST['ServiceStatusID'];
+	$ServiceHeaderType = $_REQUEST['ServiceHeaderType'];
+	$ServiceCategoryID = $_REQUEST['ServiceCategoryID'];
+	$SubmissionDate = $_REQUEST['SubmissionDate'];
+	$ss_id = $_REQUEST['ss_id'];
+	$Notes = $_REQUEST['Notes'];
+	$formID = $_REQUEST['formID'];
 
+	$sql = "insert into ServiceHeader (CustomerID,ServiceID,ServiceStatusID,ServiceHeaderType,ServiceCategoryID,SubmissionDate,SubSystemID,Notes,FormID) Values ($c_id,$s_id,$ServiceStatusID,$ServiceHeaderType,$ServiceCategoryID,$SubmissionDate,$ss_id,'$Notes',$formID)";
+	// exit($sql);
+	$result=sqlsrv_query($db,$sql);
+		if($result){
+			$msg="Rating Saved Successfully";
+		}else
+		{
+			DisplayErrors();
+			$msg="Failed to save rating, contact the technical teamss";
+		}
+
+}
 
 
 
@@ -107,6 +129,9 @@ checkSession($db,$UserID);
 					onclick="loadmypage('graded.php?ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','','')" value="View Grades">
 	   <input name="Button" type="button" 
 					onclick="loadmypage('setrating.php?CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','','')" value="Set Ratings">
+
+		<input name="Button" type="button" 
+					onclick="loadmypage('create_inspection.php?CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','','')" value="Initiate Inspection">
 
 
 		<form>

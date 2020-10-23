@@ -25,25 +25,6 @@ if(isset($_POST['save'])){
 // print_r($_POST);
 
 if($_REQUEST['addrating']==1){
-	$RatingScore = $_REQUEST['RatingScore'];
-	$RatingName = $_REQUEST['RatingName'];
-	$RatingDescription = $_REQUEST['RatingDescription'];
-	$s_id = $_REQUEST['s_id'];
-
-	$sql = "insert into Rating (RatingScore,RatingName,RatingDescription,ServiceID) Values ($RatingScore,'$RatingName','$RatingDescription',$s_id)";
-	// exit($sql);
-	$result=sqlsrv_query($db,$sql);
-		if($result){
-			$msg="Rating Saved Successfully";
-		}else
-		{
-			DisplayErrors();
-			$msg="Failed to save rating, contact the technical teamss";
-		}
-
-}
-
-if($_REQUEST['addrating']==1){
 	$MinRatingScore = $_REQUEST['MinRatingScore'];
 	$MaxRatingScore = $_REQUEST['MaxRatingScore'];
 	$RatingName = $_REQUEST['RatingName'];
@@ -62,6 +43,8 @@ if($_REQUEST['addrating']==1){
 		}
 
 }
+
+
 
 if($_REQUEST['editrating']==1){
 	$MinRatingScore = $_REQUEST['MinRatingScore'];
@@ -110,7 +93,7 @@ if($_REQUEST['deleterate']==1){
 
 
 <div class="row">
-
+Create Classification and Grading Scores.
 	
 <form action="" name="" method="post">
 

@@ -18,6 +18,7 @@ require 'DB_PARAMS/connect.php';
     // echo $sql;exit;  
             $result = sqlsrv_query($db, $sql);
             $rows = sqlsrv_has_rows($result );
+            // header("Location:index.php#graded");
             $msg1 = 'The establishment';
             $msg2 = 'was not found, try another name!';
     }
@@ -49,17 +50,11 @@ require 'DB_PARAMS/connect.php';
                 <button class="navbar-toggler navbar-toggler-right font-weight-bold bg-primary text-white rounded" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">MENU <i class="fas fa-bars"></i></button>
                 <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav ml-auto">
-<<<<<<< HEAD
-                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#Grades">GRADED ESTABLISHMENTS</a>
-                        </li>
-                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#portfolio">GET GRADED</a>
-=======
                         <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#services">OUR SERVICES</a>
                         </li>
                         <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#grades">GRADED ESTABLISHMENTS</a>
                         </li>
                         <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#licenced">LICENSED ESTABLISHMENTS</a>
->>>>>>> Anasi-Work
                         </li>
                         <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#about">ABOUT</a>
                         </li>
@@ -91,140 +86,7 @@ require 'DB_PARAMS/connect.php';
             <div class="container">
                 <!-- Portfolio Section Heading-->
                 <div class="text-center">
-<<<<<<< HEAD
-                    <h2 class="page-section-heading text-secondary mb-0 d-inline-block">GRADED ESTABLISHMENT</h2>
-                </div>
-                <!-- Icon Divider-->
-                <div class="divider-custom">
-                    <div class="divider-custom-line"></div></di
-                    <div class="divider-custom-icon"><i class="fas fa-star"></i>
-                    <div class="divider-custom-line"></div>
-                </div>
-                <!-- Portfolio Grid Items-->
-                <div class="row justify-content-center">
-                    
-
-<!-- <div class="alert alert-warning alert-dismissible fade show" role="alert">
-  <strong>Check Out!</strong> You should check some of the graded establishments below.
-  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-    <span aria-hidden="true">&times;</span>
-  </button> -->
-</div>
-
-
-<nav class="navbar navbar-light bg-light">
-  <form class="form-inline" name="search" method="post" action="">
-    <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search" name="search">
-    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-  </form>
-  <button type="button" class="btn btn-info" onclick="location.href='list.php'">View All Classified Establishments</button>
-</nav>
-
-
-                    <?php 
-                        $result = sqlsrv_query($db, $sql);
-                        
-                            $rows = sqlsrv_has_rows($result );
-                            if($rows ==false){
-                               echo 'The establisment was not found!'; 
-                            }else{
-                            ?>
-                            <div class="bg-info clearfix">
-                      <button type="button" class="btn btn-secondary float-left">TRA</button>
-                      <h3 style="text-align: center;">Graded Establishments</h3>
-                      <button type="button" class="btn btn-secondary float-right">TRA</button>
-                    </div>
-                    <br><br>
-                    <div class="container">
-                      <div class="row">     
-                        <?php
-
-                        while($row=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC)){
-                            $CustomerName = $row['CustomerName'];
-                            $Rating = $row['Rating'];
-                            $Website = $row['Website'];
-                            $Location = $row['Location'];
-                            $Email = $row['Email'];
-                            $Mobile1 = $row['Mobile1'];
-                            
-                            ?>
-
-                        <div class="col-sm">
-                          
-                        <img src="assets/img/logo1.png">
-                                <p><strong><?php echo $CustomerName; ?></strong>-<?php echo $Location; ?><br><br>
-                                <?php
-                                if($Rating>50){
-                                   // echo "5 star"; 
-                                   ?>
-                                   <strong>Rating:</strong>
-                                   <br>
-                                   <img src="assets/img/star.png" height="15" width="20">
-                                   <img src="assets/img/star.png" height="15" width="20">
-                                   <img src="assets/img/star.png" height="15" width="20">
-                                   <img src="assets/img/star.png" height="15" width="20">
-                                   <img src="assets/img/star.png" height="15" width="20">
-                                   <?php
-                                }else{
-                                    // echo "4 star";
-                                    ?>
-                                    <strong>Rating:</strong>
-                                   <br>
-                                   <img src="assets/img/star.png" height="15" width="20">
-                                   <img src="assets/img/star.png" height="15" width="20">
-                                   <img src="assets/img/star.png" height="15" width="20">
-                                   <img src="assets/img/star.png" height="15" width="20">
-                                   <?php
-                                }
-                                ?>
-                                <br>
-                                
-                                <strong>Contacts & More Info...</strong><br>
-                                Email: <?php echo $Email; ?><br>
-                                Tel: <strong><?php echo $Mobile1; ?><br></strong>
-                                <br>
-                                <a href='<?php echo $Website; ?>'>More About the Hotel</a><br>
-                                <?php 
-                                if($Website == null){
-                                   ?>
-                                   <button onclick="document.location='#'">Website has not been added yet.</button>
-                                   <?php
-                                }else 
-                                ?>
-                                <button onclick="document.location='<?php echo $Website; ?>'"><?php echo $Website; ?></button>
-                            </div>
-                             <?php
-                        }
-
-                        ?>
-                        </div>
-                    </div>
-                        
-
-   
-    
-                            <?php
-                        }
-                        // }
-                    ?>
-             </div>
-            </div>
-        </div>
-
-
-
-
-
-
-
-        <section class="page-section portfolio" id="portfolio">
-            <div class="container">
-                <!-- Portfolio Section Heading-->
-                <div class="text-center">
-                    <h2 class="page-section-heading text-secondary mb-0 d-inline-block">GET GRADED</h2>
-=======
                     <h2 class="page-section-heading text-secondary mb-0 d-inline-block">OUR SERVICES</h2>
->>>>>>> Anasi-Work
                 </div>
                 <!-- Icon Divider-->
                 <div class="divider-custom">
@@ -326,11 +188,7 @@ require 'DB_PARAMS/connect.php';
                                     </div>
                                     <!-- Portfolio Modal - Image--><img class="img-fluid rounded mb-5" src="assets/img/portfolio/cake.png" alt="Tasty Cake"/>
                                     <!-- Portfolio Modal - Text-->
-<<<<<<< HEAD
-                                    <p class="mb-5">Apply for your facility licence from here!</p>
-=======
                                     <p class="mb-5">Apply for your facility licence from here! <a href="http://localhost:8000/" target="_blank">Apply Here</a></p>
->>>>>>> Anasi-Work
                                     <button class="btn btn-primary" href="#" data-dismiss="modal"><i class="fas fa-times fa-fw"></i>Close Window</button>
                                 </div>
                             </div>
@@ -357,11 +215,7 @@ require 'DB_PARAMS/connect.php';
                                     </div>
                                     <!-- Portfolio Modal - Image--><img class="img-fluid rounded mb-5" src="assets/img/portfolio/circus.png" alt="Circus Tent"/>
                                     <!-- Portfolio Modal - Text-->
-<<<<<<< HEAD
-                                    <p class="mb-5">Apply for TradeFacilitation from here!</p>
-=======
                                     <p class="mb-5">Apply for TradeFacilitation from here! <a href="http://localhost:8000/" target="_blank">Apply Here</a></p>
->>>>>>> Anasi-Work
                                     <button class="btn btn-primary" href="#" data-dismiss="modal"><i class="fas fa-times fa-fw"></i>Close Window</button>
                                 </div>
                             </div>
@@ -388,11 +242,7 @@ require 'DB_PARAMS/connect.php';
                                     </div>
                                     <!-- Portfolio Modal - Image--><img class="img-fluid rounded mb-5" src="assets/img/portfolio/game.png" alt="Controller"/>
                                     <!-- Portfolio Modal - Text-->
-<<<<<<< HEAD
-                                    <p class="mb-5">Apply for the classification of your hotel here!</p>
-=======
                                     <p class="mb-5">Apply for the classification of your hotel here! <a href="http://localhost:8000/" target="_blank">Apply Here</a></p>
->>>>>>> Anasi-Work
                                     <button class="btn btn-primary" href="#" data-dismiss="modal"><i class="fas fa-times fa-fw"></i>Close Window</button>
                                 </div>
                             </div>
@@ -419,11 +269,7 @@ require 'DB_PARAMS/connect.php';
                                     </div>
                                     <!-- Portfolio Modal - Image--><img class="img-fluid rounded mb-5" src="assets/img/portfolio/safe.png" alt="Locked Safe"/>
                                     <!-- Portfolio Modal - Text-->
-<<<<<<< HEAD
-                                    <p class="mb-5">Make this applocation from this point.</p>
-=======
                                     <p class="mb-5">Make this applocation from this point. <a href="http://localhost:8000/" target="_blank">Apply Here</a></p>
->>>>>>> Anasi-Work
                                     <button class="btn btn-primary" href="#" data-dismiss="modal"><i class="fas fa-times fa-fw"></i>Close Window</button>
                                 </div>
                             </div>
@@ -450,11 +296,7 @@ require 'DB_PARAMS/connect.php';
                                     </div>
                                     <!-- Portfolio Modal - Image--><img class="img-fluid rounded mb-5" src="assets/img/portfolio/submarine.png" alt="Submarine"/>
                                     <!-- Portfolio Modal - Text-->
-<<<<<<< HEAD
-                                    <p class="mb-5">Make Application from this point.</p>
-=======
                                     <p class="mb-5">Make Application from this point. <a href="http://localhost:8000/" target="_blank">Apply Here</a></p>
->>>>>>> Anasi-Work
                                     <button class="btn btn-primary" href="#" data-dismiss="modal"><i class="fas fa-times fa-fw"></i>Close Window</button>
                                 </div>
                             </div>

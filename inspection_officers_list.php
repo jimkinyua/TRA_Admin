@@ -32,12 +32,10 @@ if (isset($_REQUEST['delete']))
 	}		
 }
 
-
-
 		$sql="SELECT u.Email, u.UserID, ag.FirstName, ag.Middlename, ag.LastName, ins.ServiceHeaderID, ag.AgentID FROM 
 	Users u inner join agents ag on u.agentid=ag.agentID inner join Inspections ins on u.AgentID = ins.UserID 
 	where ins.ServiceHeaderID='$ApplicationID'";
-	 // echo $sql;
+	//  echo $sql; exit;
 	$s_result=sqlsrv_query($db,$sql);
 		if ($s_result){
 			?>

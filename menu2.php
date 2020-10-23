@@ -205,10 +205,10 @@ while ($i<=$rows)
 								$myRights=getrights($db,$UserID,$PageID);						
 								if ($myRights['View']==1){  ?>
 
-                         	<button class="fluent-big-button" onClick="loadmypage('matatu_saccos_list.php?i=1','content','loader','listpages','','MatatuSaccos','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" style="width:80px">
+                         	<!-- <button class="fluent-big-button" onClick="loadmypage('matatu_saccos_list.php?i=1','content','loader','listpages','','MatatuSaccos','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" style="width:80px">
                             	<span class="icon-file-openoffice fg-darkBlue"></span>
                                 <span class="button-label fg-darkBlue">Bus Parks</span>
-                            </button>
+                            </button> -->
 
                             <?php } 
                             	$PageID=39;
