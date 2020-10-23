@@ -64,9 +64,9 @@ ini_set('memory_limit','5000M');
 		$mpdf=new mPDF('win-1252','A4','','',20,15,48,25,10,10);
 		$mpdf->useOnlyCoreFonts = true;    // false is default
 		$mpdf->SetProtection(array('print'));
-		$mpdf->SetTitle("Acme Trading Co. - Invoice");
-		$mpdf->SetAuthor("Acme Trading Co.");
-		$mpdf->SetWatermarkText("County Government Of Uasin Gishu");
+		$mpdf->SetTitle("Tourism Regulatory Authority");
+		$mpdf->SetAuthor("Tourism Regulatory Authority");
+		$mpdf->SetWatermarkText("Tourism Regulatory Authority");
 		$mpdf->showWatermarkText = true;
 		$mpdf->watermark_font = 'DejaVuSansCondensed';
 		$mpdf->watermarkTextAlpha = 0.1;
@@ -101,7 +101,7 @@ ini_set('memory_limit','5000M');
 
 		<htmlpagefooter name="myfooter">
 		<div style="border-top: 1px solid #000000; font-size: 9pt; text-align: center; padding-top: 3mm; ">
-		powered by      <img src="images/attain_logo_2.jpg" alt="County Logo">
+		powered by      <img src="images/attain_logo_2.png" alt="County Logo">
 		</div>
 		</htmlpagefooter>
 
@@ -206,9 +206,9 @@ ini_set('memory_limit','5000M');
 		$mpdf=new mPDF('win-1252','A4','','',20,15,48,25,10,10);
 		$mpdf->useOnlyCoreFonts = true;    // false is default
 		$mpdf->SetProtection(array('print'));
-		$mpdf->SetTitle("Acme Trading Co. - Invoice");
-		$mpdf->SetAuthor("Acme Trading Co.");
-		$mpdf->SetWatermarkText("County Government Of Uasin Gishu");
+		$mpdf->SetTitle("Tourism Regulatory Authority");
+		$mpdf->SetAuthor("Tourism Regulatory Authority");
+		$mpdf->SetWatermarkText("Tourism Regulatory Authority");
 		$mpdf->showWatermarkText = true;
 		$mpdf->watermark_font = 'DejaVuSansCondensed';
 		$mpdf->watermarkTextAlpha = 0.1;
@@ -243,7 +243,7 @@ ini_set('memory_limit','5000M');
 
 		<htmlpagefooter name="myfooter">
 		<div style="border-top: 1px solid #000000; font-size: 9pt; text-align: center; padding-top: 3mm; ">
-		powered by      <img src="images/attain_logo_2.jpg" alt="County Logo">
+		powered by      <img src="images/attain_logo_2.png" alt="County Logo">
 		</div>
 		</htmlpagefooter>
 
@@ -342,9 +342,9 @@ ini_set('memory_limit','5000M');
 		$mpdf=new mPDF('win-1252','A4','','',20,15,48,25,10,10);
 		$mpdf->useOnlyCoreFonts = true;    // false is default
 		$mpdf->SetProtection(array('print'));
-		$mpdf->SetTitle("Acme Trading Co. - Invoice");
-		$mpdf->SetAuthor("Acme Trading Co.");
-		$mpdf->SetWatermarkText("County Government Of Uasin Gishu");
+		$mpdf->SetTitle("Tourism Regulatory Authority");
+		$mpdf->SetAuthor("Tourism Regulatory Authority");
+		$mpdf->SetWatermarkText("Tourism Regulatory Authority");
 		$mpdf->showWatermarkText = true;
 		$mpdf->watermark_font = 'DejaVuSansCondensed';
 		$mpdf->watermarkTextAlpha = 0.1;
@@ -379,7 +379,7 @@ ini_set('memory_limit','5000M');
 
 		<htmlpagefooter name="myfooter">
 		<div style="border-top: 1px solid #000000; font-size: 9pt; text-align: center; padding-top: 3mm; ">
-		powered by      <img src="images/attain_logo_2.jpg" alt="County Logo">
+		powered by      <img src="images/attain_logo_2.png" alt="County Logo">
 		</div>
 		</htmlpagefooter>
 
@@ -514,9 +514,9 @@ ini_set('memory_limit','5000M');
 		$mpdf=new mPDF('win-1252','A4','','',20,15,48,25,10,10);
 		$mpdf->useOnlyCoreFonts = true;    // false is default
 		$mpdf->SetProtection(array('print'));
-		$mpdf->SetTitle("Acme Trading Co. - Invoice");
-		$mpdf->SetAuthor("Acme Trading Co.");
-		$mpdf->SetWatermarkText("County Government Of Uasin Gishu");
+		$mpdf->SetTitle("Tourism Regulatory Authority");
+		$mpdf->SetAuthor("Tourism Regulatory Authority");
+		$mpdf->SetWatermarkText("Tourism Regulatory Authority");
 		$mpdf->showWatermarkText = true;
 		$mpdf->watermark_font = 'DejaVuSansCondensed';
 		$mpdf->watermarkTextAlpha = 0.1;
@@ -551,7 +551,7 @@ ini_set('memory_limit','5000M');
 
 		<htmlpagefooter name="myfooter">
 		<div style="border-top: 1px solid #000000; font-size: 9pt; text-align: center; padding-top: 3mm; ">
-		powered by      <img src="images/attain_logo_2.jpg" alt="County Logo">
+		powered by      <img src="images/attain_logo_2.png" alt="County Logo">
 		</div>
 		</htmlpagefooter>
 
@@ -659,9 +659,9 @@ ini_set('memory_limit','5000M');
 		$mpdf=new mPDF('win-1252','A4','','',20,15,48,25,10,10);
 		$mpdf->useOnlyCoreFonts = true;    // false is default
 		$mpdf->SetProtection(array('print'));
-		$mpdf->SetTitle("Acme Trading Co. - Invoice");
-		$mpdf->SetAuthor("Acme Trading Co.");
-		$mpdf->SetWatermarkText("County Government Of Uasin Gishu");
+		$mpdf->SetTitle("Tourism Regulatory Authority");
+		$mpdf->SetAuthor("Tourism Regulatory Authority");
+		$mpdf->SetWatermarkText("Tourism Regulatory Authority");
 		$mpdf->showWatermarkText = true;
 		$mpdf->watermark_font = 'DejaVuSansCondensed';
 		$mpdf->watermarkTextAlpha = 0.1;
@@ -696,7 +696,7 @@ ini_set('memory_limit','5000M');
 
 		<htmlpagefooter name="myfooter">
 		<div style="border-top: 1px solid #000000; font-size: 9pt; text-align: center; padding-top: 3mm; ">
-		powered by      <img src="images/attain_logo_2.jpg" alt="County Logo">
+		powered by      <img src="images/attain_logo_2.png" alt="County Logo">
 		</div>
 		</htmlpagefooter>
 
@@ -838,9 +838,9 @@ ini_set('memory_limit','5000M');
 		$mpdf=new mPDF('win-1252','A4-L','','',20,15,48,25,10,10);
 		$mpdf->useOnlyCoreFonts = true;    // false is default
 		$mpdf->SetProtection(array('print'));
-		$mpdf->SetTitle("Acme Trading Co. - Invoice");
-		$mpdf->SetAuthor("Acme Trading Co.");
-		$mpdf->SetWatermarkText("County Government Of Uasin Gishu");
+		$mpdf->SetTitle("Tourism Regulatory Authority");
+		$mpdf->SetAuthor("Tourism Regulatory Authority");
+		$mpdf->SetWatermarkText("Tourism Regulatory Authority");
 		$mpdf->showWatermarkText = true;
 		$mpdf->watermark_font = 'DejaVuSansCondensed';
 		$mpdf->watermarkTextAlpha = 0.1;
@@ -875,7 +875,7 @@ ini_set('memory_limit','5000M');
 
 		<htmlpagefooter name="myfooter">
 		<div style="border-top: 1px solid #000000; font-size: 9pt; text-align: center; padding-top: 3mm; ">
-		powered by      <img src="images/attain_logo_2.jpg" alt="County Logo">
+		powered by      <img src="images/attain_logo_2.png" alt="County Logo">
 		</div>
 		</htmlpagefooter>
 
@@ -946,13 +946,13 @@ ini_set('memory_limit','5000M');
 		
 
 		$tablestr = '';
-		$ReportTitle="New Establishments <br>Between<br>$fromDate and $toDate";
+		$ReportTitle="Registered Establishments <br>Between<br>$fromDate and $toDate";
 		$sql="set dateformat dmy 
 			select convert(date,CreatedDate) EstablishmentDate,UPPER(CustomerName)CustomerName,ContactPerson,
 			Type,Mobile1,Email from Customer
 			where convert(date,CreatedDate)>='$fromDate' and convert(date,CreatedDate)<='$toDate'
 			order by CustomerID desc";
-		
+		// exit($sql);
 				$tblTotals=0;
 				$result=sqlsrv_query($db, $sql);
 				while($rw=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC))
@@ -978,8 +978,8 @@ ini_set('memory_limit','5000M');
 		$mpdf=new mPDF('win-1252','A4','','',20,15,48,25,10,10);
 		$mpdf->useOnlyCoreFonts = true;    // false is default
 		$mpdf->SetProtection(array('print'));
-		$mpdf->SetTitle("Acme Trading Co. - Invoice");
-		$mpdf->SetAuthor("Acme Trading Co.");
+		$mpdf->SetTitle("Tourism Regulatory Authority");
+		$mpdf->SetAuthor("Tourism Regulatory Authority");
 		$mpdf->SetWatermarkText("Tourism Regulatory Authority");
 		$mpdf->showWatermarkText = true;
 		$mpdf->watermark_font = 'DejaVuSansCondensed';
@@ -1003,7 +1003,7 @@ ini_set('memory_limit','5000M');
 			</tr>		
 			<tr>
 				<td align="Center" colspan="2">
-					<img src="images/CountyLogo_Newpng" alt="TRA Logo">
+					<img src="images/logo.png" alt="TRA Logo">
 				</td>
 			</tr>
 			<tr>
@@ -1015,23 +1015,39 @@ ini_set('memory_limit','5000M');
 
 		<htmlpagefooter name="myfooter">
 		<div style="border-top: 1px solid #000000; font-size: 9pt; text-align: center; padding-top: 3mm; ">
-		powered by      <img src="images/attain_logo_2.jpg" alt="County Logo">
+		powered by      <img src="images/attain_logo_2.png" alt="County Logo">
 		</div>
 		</htmlpagefooter>
 
 		<sethtmlpageheader name="myheader" value="on" show-this-page="1" />
 		<sethtmlpagefooter name="myfooter" value="on" />
 		mpdf-->
-		<br/><br/><br/><br/><br/><br/><br/><br/>
-		
-		
+		<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+		<style>
+		table {
+		  font-family: arial, sans-serif;
+		  border-collapse: collapse;
+		  width: 100%;
+		}
 
+		td, th {
+		  border: 1px solid #dddddd;
+		  text-align: left;
+		  padding: 8px;
+		}
 
-
+		tr:nth-child(even) {
+		  background-color: #dddddd;
+		}
+		table, th, td {
+		  border: 1px solid black;
+		  border-collapse: collapse;
+		}
+		</style>
 		<table class="items" width="100%" style="font-size: 9pt; border-collapse: collapse;" cellpadding="8">
 		<thead>
 		<tr>
-		<td width="20%">Establishment Date</td>
+		<td width="20%">Registration Date</td>
 		<td width="40%">Establishment Name</td>
 		<td width="20%">Contact Person</td>
 		<td width="20%">Type</td>
@@ -1087,9 +1103,11 @@ function LicenceExpiryNotification($db,$cosmasRow,$rptName,$fromDate,$toDate)
 				from ServiceHeader as sh join Customer as c
 				on c.CustomerID = sh.CustomerID join Services as s on s.ServiceID = sh.ServiceID
 				join ServiceCategory as sc on sc.ServiceCategoryID = sh.ServiceCategoryId 
-				where convert(date,sh.CreatedDate)>='$fromDate' and convert(date,sh.CreatedDate)<='$toDate'
+				where convert(date,sh.CreatedDate)>='$fromDate' and convert(date,sh.CreatedDate)<='$toDate' and 
+				sh.ServiceCategoryId != 2033
 				order by CustomerID desc
 				";
+				// exit($sql);
 		// where convert(date,CreatedDate)=convert(date,getdate())
 				$tblTotals=0;
 				$result=sqlsrv_query($db, $sql);
@@ -1116,8 +1134,8 @@ function LicenceExpiryNotification($db,$cosmasRow,$rptName,$fromDate,$toDate)
 		$mpdf=new mPDF('win-1252','A4','','',20,15,48,25,10,10);
 		$mpdf->useOnlyCoreFonts = true;    // false is default
 		$mpdf->SetProtection(array('print'));
-		$mpdf->SetTitle("Acme Trading Co. - Invoice");
-		$mpdf->SetAuthor("Acme Trading Co.");
+		$mpdf->SetTitle("Tourism Regulatory Authority");
+		$mpdf->SetAuthor("Tourism Regulatory Authority");
 		$mpdf->SetWatermarkText("Tourism Regulatory Authority");
 		$mpdf->showWatermarkText = true;
 		$mpdf->watermark_font = 'DejaVuSansCondensed';
@@ -1141,7 +1159,7 @@ function LicenceExpiryNotification($db,$cosmasRow,$rptName,$fromDate,$toDate)
 			</tr>		
 			<tr>
 				<td align="Center" colspan="2">
-					<img src="images/CountyLogo_Newpng" alt="TRA Logo">
+					<img src="images/logo.png" alt="TRA Logo">
 				</td>
 			</tr>
 			<tr>
@@ -1153,18 +1171,37 @@ function LicenceExpiryNotification($db,$cosmasRow,$rptName,$fromDate,$toDate)
 
 		<htmlpagefooter name="myfooter">
 		<div style="border-top: 1px solid #000000; font-size: 9pt; text-align: center; padding-top: 3mm; ">
-		powered by      <img src="images/attain_logo_2.jpg" alt="County Logo">
+		powered by      <img src="images/attain_logo_2.png" alt="County Logo">
 		</div>
 		</htmlpagefooter>
 
 		<sethtmlpageheader name="myheader" value="on" show-this-page="1" />
 		<sethtmlpagefooter name="myfooter" value="on" />
 		mpdf-->
-		<br/><br/><br/><br/><br/><br/><br/><br/>
-		
+		<br/><br/><br/><br/><br/><br/>
 		
 
+				<style>
+		table {
+		  font-family: arial, sans-serif;
+		  border-collapse: collapse;
+		  width: 100%;
+		}
 
+		td, th {
+		  border: 1px solid #dddddd;
+		  text-align: left;
+		  padding: 8px;
+		}
+
+		tr:nth-child(even) {
+		  background-color: #dddddd;
+		}
+		table, th, td {
+		  border: 1px solid black;
+		  border-collapse: collapse;
+		}
+		</style>
 
 		<table class="items" width="100%" style="font-size: 9pt; border-collapse: collapse;" cellpadding="8">
 		<thead>
@@ -1251,9 +1288,9 @@ function LicenceExpiryNotification($db,$cosmasRow,$rptName,$fromDate,$toDate)
 		$mpdf=new mPDF('win-1252','A4','','',20,15,48,25,10,10);
 		$mpdf->useOnlyCoreFonts = true;    // false is default
 		$mpdf->SetProtection(array('print'));
-		$mpdf->SetTitle("Acme Trading Co. - Invoice");
-		$mpdf->SetAuthor("Acme Trading Co.");
-		$mpdf->SetWatermarkText("County Government Of Uasin Gishu");
+		$mpdf->SetTitle("Tourism Regulatory Authority");
+		$mpdf->SetAuthor("Tourism Regulatory Authority");
+		$mpdf->SetWatermarkText("Tourism Regulatory Authority");
 		$mpdf->showWatermarkText = true;
 		$mpdf->watermark_font = 'DejaVuSansCondensed';
 		$mpdf->watermarkTextAlpha = 0.1;
@@ -1288,7 +1325,7 @@ function LicenceExpiryNotification($db,$cosmasRow,$rptName,$fromDate,$toDate)
 
 		<htmlpagefooter name="myfooter">
 		<div style="border-top: 1px solid #000000; font-size: 9pt; text-align: center; padding-top: 3mm; ">
-		powered by      <img src="images/attain_logo_2.jpg" alt="County Logo">
+		powered by      <img src="images/attain_logo_2.png" alt="County Logo">
 		</div>
 		</htmlpagefooter>
 
@@ -1383,7 +1420,7 @@ function LicenceExpiryNotification($db,$cosmasRow,$rptName,$fromDate,$toDate)
 			where convert(date,p.IssueDate)>='$fromDate' and convert(date,p.IssueDate)<='$toDate'
 			order by p.ServiceHeaderID desc";
 
-			//echo $sql; exit;
+			// echo $sql; exit;
 				
 				$tblTotals=0;
 				$result=sqlsrv_query($db, $sql);
@@ -1502,72 +1539,34 @@ function LicenceExpiryNotification($db,$cosmasRow,$rptName,$fromDate,$toDate)
 	}
 
 
-	function establishmentbranches($db,$cosmasRow,$rptName,$fromDate,$toDate)
+	function establishmentbranches($db,$cosmasRow,$rptName,$fromDate,$toDate,$cName)
 	{
-
-		if(isset($_POST['search'])) {
-        $searchitem = $_POST['search']; 
-			}
-
-			  $sql= "select top 6 c.CustomerName, sum(cr.ParameterScore) as
-			    Rating, c.Website, c.PhysicalAddress, c.Email, c.Mobile1 from
-			  ServiceHeader sh join Inspections ins 
-			  on sh.ServiceHeaderID = ins.ServiceHeaderID 
-			  join ChecklistResults cr 
-			  on cr.InspectionID = ins.InspectionID 
-			  join Customer c on c.CustomerID = sh.CustomerID 
-			  where ServiceID = 2074 and ServiceStatusID = 4  and c.CustomerName like '%$searchitem%' Group By
-			 c.CustomerName, c.Website, c.PhysicalAddress, c.Email, c.Mobile1 order by NEWID()"; 
-			    // echo $sql;exit;
-			    
-
-			?>
-		
-
-	    ?>
-	   <nav class="navbar navbar-light bg-light">
-		  <form class="form-inline" name="search" method="post" action="">
-		    <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search" name="search">
-		    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-		  </form>
-	   </nav>
-
-	    <?php
-
-
-		
-		
-		
-
 		$tablestr = '';
 		$ReportTitle="Establishment Branches";
-		$sql="set dateformat dmy 
-			select convert(date,CreatedDate) EstablishmentDate,UPPER(CustomerName)CustomerName,ContactPerson,
-			Type,Mobile1,Email from Customer
-			where convert(date,CreatedDate)>='$fromDate' and convert(date,CreatedDate)<='$toDate'
-			order by CustomerID desc";
-		
+		$sql="select c.CustomerID,ca.CustomerAgentID,ca.AgentID,c.CustomerName,c.PhysicalAddress,c.Email,c.Mobile1 
+			from Customer c join CustomerAgents ca on c.CustomerID = ca.CustomerID
+			where ca.AgentID like '%$cName%'
+			group by ca.AgentID,c.CustomerID,ca.CustomerAgentID,c.CustomerName,c.PhysicalAddress,c.Email,c.Mobile1
+			order by c.CustomerID asc";
+		// exit($sql);
 				$tblTotals=0;
 				$result=sqlsrv_query($db, $sql);
 				while($rw=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC))
 				{					
-					$EstablishmentDate = $rw['EstablishmentDate'];					
+									
 					$CustomerName=$rw['CustomerName'];
-					$ContactPerson = $rw['ContactPerson'];						
-					$Type = $rw['Type'];
+					$PhysicalAddress = $rw['PhysicalAddress'];
 					$Mobile1 = $rw['Mobile1'];
 					$Email = $rw['Email'];
 					$tablestr.='<tr>
-					<td align="left">'.$EstablishmentDate.'</td>
 					<td align="left">'.$CustomerName.'</td>
-					<td align="right">'.$ContactPerson.'</td>					
-					<td align="right">'.$Type.'</td>
+					<td align="right">'.$PhysicalAddress.'</td>
 					<td align="right">'.$Mobile1.'</td>
 					<td align="right">'.$Email.'</td>
 					</tr>'; 
 				}
 				
-		//echo $tablestr;
+		// echo $tablestr;
 
 		$mpdf=new mPDF('win-1252','A4','','',20,15,48,25,10,10);
 		$mpdf->useOnlyCoreFonts = true;    // false is default
@@ -1597,7 +1596,7 @@ function LicenceExpiryNotification($db,$cosmasRow,$rptName,$fromDate,$toDate)
 			</tr>		
 			<tr>
 				<td align="Center" colspan="2">
-					<img src="images/CountyLogo_Newpng" alt="TRA Logo">
+					<img src="images/logo.png" alt="TRA Logo">
 				</td>
 			</tr>
 			<tr>
@@ -1609,26 +1608,40 @@ function LicenceExpiryNotification($db,$cosmasRow,$rptName,$fromDate,$toDate)
 
 		<htmlpagefooter name="myfooter">
 		<div style="border-top: 1px solid #000000; font-size: 9pt; text-align: center; padding-top: 3mm; ">
-		powered by      <img src="images/attain_logo_2.jpg" alt="County Logo">
+		powered by      <img src="images/attain_logo_2.png" alt="County Logo">
 		</div>
 		</htmlpagefooter>
 
 		<sethtmlpageheader name="myheader" value="on" show-this-page="1" />
 		<sethtmlpagefooter name="myfooter" value="on" />
 		mpdf-->
-		<br/><br/><br/><br/><br/><br/><br/><br/>
-		
-		
+		<br/><br/>
+		<style>
+		table {
+		  font-family: arial, sans-serif;
+		  border-collapse: collapse;
+		  width: 100%;
+		}
 
+		td, th {
+		  border: 1px solid #dddddd;
+		  text-align: left;
+		  padding: 8px;
+		}
 
-
+		tr:nth-child(even) {
+		  background-color: #dddddd;
+		}
+		table, th, td {
+		  border: 1px solid black;
+		  border-collapse: collapse;
+		}
+		</style>
 		<table class="items" width="100%" style="font-size: 9pt; border-collapse: collapse;" cellpadding="8">
 		<thead>
 		<tr>
-		<td width="20%">Establishment Date</td>
 		<td width="40%">Establishment Name</td>
-		<td width="20%">Contact Person</td>
-		<td width="20%">Type</td>
+		<td width="20%">Branch</td>
 		<td width="20%">Phone Number</td>
 		<td width="20%">Email Address</td>
 		</tr>
@@ -1659,6 +1672,226 @@ function LicenceExpiryNotification($db,$cosmasRow,$rptName,$fromDate,$toDate)
 				
 	}
 
+	function graded($db,$cosmasRow,$rptName,$fromDate,$toDate)
+	{
+		$tablestr = '';
+		$ReportTitle="Graded Establishments";
+		$sql="select c.CustomerName,c.CustomerID, c.Website, c.PhysicalAddress, c.Email, c.Mobile1, sh.ServiceID,
+          s.ServiceName 
+          from ServiceHeader sh 
+          join Inspections ins on sh.ServiceHeaderID = ins.ServiceHeaderID 
+          join ChecklistResults cr on cr.InspectionID = ins.InspectionID 
+          join Customer c on c.CustomerID = sh.CustomerID 
+          join InspectionComments ic on ic.InspectionID = ins.InspectionID 
+          join Services s on s.ServiceID = sh.ServiceID
+          where sh.ServiceCategoryID = 2033 and ServiceStatusID = 4 Group By c.CustomerName,c.CustomerID,
+          c.Website,c.PhysicalAddress,c.Email,c.Mobile1,sh.ServiceID,s.ServiceName";
+		// exit($sql);
+				$tblTotals=0;
+				$result=sqlsrv_query($db, $sql);
+				while($rw=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC))
+				{					
+									
+					$CustomerName=$rw['CustomerName'];
+					$Website = $rw['Website'];
+					$PhysicalAddress = $rw['PhysicalAddress'];
+					$ServiceName = $rw['ServiceName'];
+					$CustomerID = $rw['CustomerID'];
+					$ServiceID = $rw['ServiceID'];
+
+
+
+                    $ratingsql = "select distinct top 1 ic.AverageScore,ins.InspectionID
+                      from ServiceHeader sh 
+                      join Inspections ins on sh.ServiceHeaderID = ins.ServiceHeaderID 
+                      join ChecklistResults cr on cr.InspectionID = ins.InspectionID 
+                      join Customer c on c.CustomerID = sh.CustomerID 
+                      join InspectionComments ic on ic.InspectionID = ins.InspectionID 
+                      left join Services s on s.ServiceID = sh.ServiceID
+                      where sh.ServiceCategoryID = 2033 and ServiceStatusID = 4 and c.CustomerID = $CustomerID order by InspectionID desc";
+                      // exit($ratingsql);
+                      $rating_result = sqlsrv_query($db, $ratingsql);
+
+                      while($ratingrow=sqlsrv_fetch_array($rating_result,SQLSRV_FETCH_ASSOC)){
+                        $Rating = $ratingrow['AverageScore'];
+                      }
+
+                if($Rating == ''){
+                  
+                  $Rating = 'Missing Scores';
+                  
+                }else{
+
+              $tr_sql = "select * from Rating where ServiceID = $ServiceID";
+             // exit($tr_sql);
+             $tr_result = sqlsrv_query($db, $tr_sql);
+
+            while($omrow=sqlsrv_fetch_array($tr_result,SQLSRV_FETCH_ASSOC)){
+              $trServiceID = $omrow['ServiceID'];
+            }
+                    if($ServiceID == $trServiceID){
+              
+             $r_sql = "select * from Rating where ServiceID=$trServiceID and MinRatingScore<=$Rating and MaxRatingScore>=$Rating";
+             // exit($r_sql);
+             $r_result = sqlsrv_query($db, $r_sql);
+
+            while($omrow=sqlsrv_fetch_array($r_result,SQLSRV_FETCH_ASSOC)){
+              $rServiceID = $omrow['ServiceID'];
+              $MinRatingScore = $omrow['MinRatingScore'];
+              $MaxRatingScore = $omrow['MaxRatingScore'];
+              $RatingName = $omrow['RatingName'];
+
+            }
+            $omrow=sqlsrv_has_rows($r_result);
+            if($omrow == false){
+                  $Rating = 'Techinal Issue';      
+            }else{
+                                $StarRate1 = '1 Star'; 
+                                $StarRate2 = '2 Star';
+                                $StarRate3 = '3 Star';
+                                $StarRate4 = '4 Star';
+                                $StarRate5 = '5 Star';
+
+                                if($StarRate1 == trim($RatingName)){
+                                	$Rating = $RatingName;
+                                }elseif($StarRate2 == trim($RatingName)){
+                                	$Rating = $RatingName; 
+                                }elseif($StarRate3 == trim($RatingName)){
+                                	$Rating = $RatingName;
+                                }elseif($StarRate4 == trim($RatingName)){
+                                	$Rating = $RatingName;
+                                }elseif($StarRate5 == trim($RatingName)){
+                                	$Rating = $RatingName;
+                                }
+                               } 
+                  }else{
+                  } 
+                  }  
+                  $tablestr.='<tr>
+					<td align="left">'.$CustomerName.'</td>
+					<td align="right">'.$PhysicalAddress.'</td>
+					<td align="right">'.$Website.'</td>
+					<td align="right">'.$ServiceName.'</td>
+					<td align="right">'.$Rating.'</td>
+					</tr>'; 
+				}
+				
+		// echo $tablestr;
+
+		$mpdf=new mPDF('win-1252','A4','','',20,15,48,25,10,10);
+		$mpdf->useOnlyCoreFonts = true;    // false is default
+		$mpdf->SetProtection(array('print'));
+		$mpdf->SetTitle("TRA");
+		$mpdf->SetAuthor("TRA");
+		$mpdf->SetWatermarkText("Tourism Regulatory Authority");
+		$mpdf->showWatermarkText = true;
+		$mpdf->watermark_font = 'DejaVuSansCondensed';
+		$mpdf->watermarkTextAlpha = 0.1;
+		$mpdf->SetDisplayMode('fullpage');
+
+		$html = '
+		<html>
+		<head>
+			<link rel="stylesheet" type="text/css" href="css/my_css.css"/>		
+		</head>
+		<body>
+
+		<!--mpdf
+		<htmlpageheader name="myheader">
+		<table width="100%">
+			<tr>
+				<td align="Center" colspan="2" style="font-size:10mm">
+					<b>'.$ReportTitle.'</b>
+				</td>
+			</tr>		
+			<tr>
+				<td align="Center" colspan="2">
+					<img src="images/logo.png" alt="TRA Logo">
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2" align="Center"><span style="font-weight: bold; font-size: 14pt;">'.$CountyName.'</span></td>
+			</tr>		
+		</table>
+		
+		</htmlpageheader>
+
+		<htmlpagefooter name="myfooter">
+		<div style="border-top: 1px solid #000000; font-size: 9pt; text-align: center; padding-top: 3mm; ">
+		powered by      <img src="images/attain_logo_2.png" alt="County Logo">
+		</div>
+		</htmlpagefooter>
+
+		<sethtmlpageheader name="myheader" value="on" show-this-page="1" />
+		<sethtmlpagefooter name="myfooter" value="on" />
+		mpdf-->
+		<br/><br/>
+		
+		<style>
+		table {
+		  font-family: arial, sans-serif;
+		  border-collapse: collapse;
+		  width: 100%;
+		}
+
+		td, th {
+		  border: 1px solid #dddddd;
+		  text-align: left;
+		  padding: 8px;
+		}
+
+		tr:nth-child(even) {
+		  background-color: #dddddd;
+		}
+		table, th, td {
+		  border: 1px solid black;
+		  border-collapse: collapse;
+		}
+		</style>
+
+		<table class="items" width="100%" style="font-size: 9pt; border-collapse: collapse;" cellpadding="8">
+		<thead>
+		<tr>
+		<td width="40%">Establishment Name</td>
+		<td width="20%">Branch</td>
+		<td width="20%">Website</td>
+		<td width="20%">Classification</td>
+		<td width="20%">Rating</td>
+		</tr>
+		</thead>
+		<tbody>
+		
+		<!-- ITEMS HERE -->'.
+		
+		
+		$tablestr.
+										
+		'<!-- END ITEMS HERE -->
+		
+		
+
+		</tbody>
+		</table>
+		</body>
+		</html>
+		';
+		$mpdf->WriteHTML($html);
+		
+ 		//$mpdf->Output();
+		//exit;
+		
+		$mpdf->Output('pdfdocs/reports/'.$rptName.'.pdf','F'); 
+		
+				
+	}
+
+
+
+
+
+
+
+
 
 
 	function RevenueGenerated($db,$cosmasRow,$rptName,$fromDate,$toDate)
@@ -1675,7 +1908,7 @@ function LicenceExpiryNotification($db,$cosmasRow,$rptName,$fromDate,$toDate)
 
 		$tablestr = '';
 
-		$ReportTitle="Establishment Branches ".$fromDate." AND ".$toDate;
+		$ReportTitle="Revenue Generated Between ".$fromDate." AND ".$toDate;
 
 		$sql="set dateformat dmy select rs.RevenueStreamCode,rs.RevenueStreamName,sum(Amount) Total
 			from ReceiptLines2 rl
@@ -1704,8 +1937,8 @@ function LicenceExpiryNotification($db,$cosmasRow,$rptName,$fromDate,$toDate)
 		$mpdf=new mPDF('win-1252','A4-L','','',20,15,48,25,10,10);
 		$mpdf->useOnlyCoreFonts = true;    // false is default
 		$mpdf->SetProtection(array('print'));
-		$mpdf->SetTitle("Acme Trading Co. - Invoice");
-		$mpdf->SetAuthor("Acme Trading Co.");
+		$mpdf->SetTitle("TRA");
+		$mpdf->SetAuthor("TRA.");
 		//$mpdf->SetWatermarkText("County Government Of Uasin Gishu");
 		//$mpdf->showWatermarkText = true;
 		//$mpdf->watermark_font = 'DejaVuSansCondensed';
@@ -2086,7 +2319,7 @@ function LicenceExpiryNotification($db,$cosmasRow,$rptName,$fromDate,$toDate)
 			ag.FirstName+' '+ag.MiddleName+' '+ag.LastName
 			order by  convert(date,rC.CreatedDate),rc.ReferenceNumber";
 
-			//echo $sql; exit;
+			echo $sql; exit;
 				
 				$tblTotals=0;
 				$result=sqlsrv_query($db, $sql);
@@ -2108,7 +2341,7 @@ function LicenceExpiryNotification($db,$cosmasRow,$rptName,$fromDate,$toDate)
 		$mpdf->useOnlyCoreFonts = true;    // false is default
 		$mpdf->SetProtection(array('print'));
 		$mpdf->SetTitle("Invoice");
-		$mpdf->SetAuthor("Acme Trading Co.");
+		$mpdf->SetAuthor("TRA.");
 		//$mpdf->SetWatermarkText("County Government Of Uasin Gishu");
 		//$mpdf->showWatermarkText = true;
 		//$mpdf->watermark_font = 'DejaVuSansCondensed';
@@ -2240,9 +2473,9 @@ function LicenceExpiryNotification($db,$cosmasRow,$rptName,$fromDate,$toDate)
 		$mpdf=new mPDF('win-1252','A4-L','','',20,15,48,25,10,10);
 		$mpdf->useOnlyCoreFonts = true;    // false is default
 		$mpdf->SetProtection(array('print'));
-		$mpdf->SetTitle("Acme Trading Co. - Invoice");
-		$mpdf->SetAuthor("Acme Trading Co.");
-		$mpdf->SetWatermarkText("County Government Of Uasin Gishu");
+		$mpdf->SetTitle("TRA");
+		$mpdf->SetAuthor("TRA.");
+		$mpdf->SetWatermarkText("Tourism Regulatory Authority");
 		$mpdf->showWatermarkText = true;
 		$mpdf->watermark_font = 'DejaVuSansCondensed';
 		$mpdf->watermarkTextAlpha = 0.1;
@@ -2277,7 +2510,7 @@ function LicenceExpiryNotification($db,$cosmasRow,$rptName,$fromDate,$toDate)
 
 		<htmlpagefooter name="myfooter">
 		<div style="border-top: 1px solid #000000; font-size: 9pt; text-align: center; padding-top: 3mm; ">
-		powered by      <img src="images/attain_logo_2.jpg" alt="County Logo">
+		powered by      <img src="images/attain_logo_2.png" alt="County Logo">
 		</div>
 		</htmlpagefooter>
 
@@ -2325,7 +2558,7 @@ function LicenceExpiryNotification($db,$cosmasRow,$rptName,$fromDate,$toDate)
 		
 		$mpdf->Output('pdfdocs/reports/'.$rptName.'.pdf','F'); 				
 	}
-	function RevenuePerStreams($db,$cosmasRow,$rptName)
+	function RevenuePerStream($db,$cosmasRow,$rptName)
 	{
 
 		$row=$cosmasRow;	
@@ -2360,9 +2593,9 @@ function LicenceExpiryNotification($db,$cosmasRow,$rptName,$fromDate,$toDate)
 		$mpdf=new mPDF('win-1252','A4-L','','',20,15,48,25,10,10);
 		$mpdf->useOnlyCoreFonts = true;    // false is default
 		$mpdf->SetProtection(array('print'));
-		$mpdf->SetTitle("Acme Trading Co. - Invoice");
-		$mpdf->SetAuthor("Acme Trading Co.");
-		$mpdf->SetWatermarkText("County Government Of Uasin Gishu");
+		$mpdf->SetTitle("Tourism Regulatory Authority");
+		$mpdf->SetAuthor("Tourism Regulatory Authority");
+		$mpdf->SetWatermarkText("Tourism Regulatory Authority");
 		$mpdf->showWatermarkText = true;
 		$mpdf->watermark_font = 'DejaVuSansCondensed';
 		$mpdf->watermarkTextAlpha = 0.1;
@@ -2385,7 +2618,7 @@ function LicenceExpiryNotification($db,$cosmasRow,$rptName,$fromDate,$toDate)
 			</tr>		
 			<tr>
 				<td align="Center" colspan="2">
-					<img src="images/CountyLogo_New.png" alt="County Logo">
+					<img src="images/logo.png" alt="County Logo">
 				</td>
 			</tr>
 			<tr>
@@ -2397,7 +2630,7 @@ function LicenceExpiryNotification($db,$cosmasRow,$rptName,$fromDate,$toDate)
 
 		<htmlpagefooter name="myfooter">
 		<div style="border-top: 1px solid #000000; font-size: 9pt; text-align: center; padding-top: 3mm; ">
-		powered by      <img src="images/attain_logo_2.jpg" alt="County Logo">
+		powered by      <img src="images/attain_logo_2.png" alt="County Logo">
 		</div>
 		</htmlpagefooter>
 
@@ -2496,9 +2729,9 @@ function LicenceExpiryNotification($db,$cosmasRow,$rptName,$fromDate,$toDate)
 		$mpdf=new mPDF('win-1252','A4-L','','',20,15,48,25,10,10);
 		$mpdf->useOnlyCoreFonts = true;    // false is default
 		$mpdf->SetProtection(array('print'));
-		$mpdf->SetTitle("Acme Trading Co. - Invoice");
-		$mpdf->SetAuthor("Acme Trading Co.");
-		$mpdf->SetWatermarkText("County Government Of Uasin Gishu");
+		$mpdf->SetTitle("Tourism Regulatory Authority");
+		$mpdf->SetAuthor("Tourism Regulatory Authority");
+		$mpdf->SetWatermarkText("Tourism Regulatory Authority");
 		$mpdf->showWatermarkText = true;
 		$mpdf->watermark_font = 'DejaVuSansCondensed';
 		$mpdf->watermarkTextAlpha = 0.1;
@@ -2533,7 +2766,7 @@ function LicenceExpiryNotification($db,$cosmasRow,$rptName,$fromDate,$toDate)
 
 		<htmlpagefooter name="myfooter">
 		<div style="border-top: 1px solid #000000; font-size: 9pt; text-align: center; padding-top: 3mm; ">
-		powered by      <img src="images/attain_logo_2.jpg" alt="County Logo">
+		powered by      <img src="images/attain_logo_2.png" alt="County Logo">
 		</div>
 		</htmlpagefooter>
 
@@ -2643,9 +2876,9 @@ function LicenceExpiryNotification($db,$cosmasRow,$rptName,$fromDate,$toDate)
 		$mpdf=new mPDF('win-1252','A4-L','','',20,15,48,25,10,10);
 		$mpdf->useOnlyCoreFonts = true;    // false is default
 		$mpdf->SetProtection(array('print'));
-		$mpdf->SetTitle("Acme Trading Co. - Invoice");
-		$mpdf->SetAuthor("Acme Trading Co.");
-		$mpdf->SetWatermarkText("County Government Of Uasin Gishu");
+		$mpdf->SetTitle("Tourism Regulatory Authority");
+		$mpdf->SetAuthor("Tourism Regulatory Authority.");
+		$mpdf->SetWatermarkText("Tourism Regulatory Authority");
 		$mpdf->showWatermarkText = true;
 		$mpdf->watermark_font = 'DejaVuSansCondensed';
 		$mpdf->watermarkTextAlpha = 0.1;
@@ -2670,7 +2903,7 @@ function LicenceExpiryNotification($db,$cosmasRow,$rptName,$fromDate,$toDate)
 			</tr>		
 			<tr>
 				<td align="Center" colspan="2">
-					<img src="images/CountyLogo_New.png" alt="County Logo">
+					<img src="images/logo.png" alt="County Logo">
 				</td>
 			</tr>
 			<tr>
@@ -2682,7 +2915,7 @@ function LicenceExpiryNotification($db,$cosmasRow,$rptName,$fromDate,$toDate)
 
 		<htmlpagefooter name="myfooter">
 		<div style="border-top: 1px solid #000000; font-size: 9pt; text-align: center; padding-top: 3mm; ">
-		powered by      <img src="images/attain_logo_2.jpg" alt="County Logo">
+		powered by      <img src="images/attain_logo_2.png" alt="County Logo">
 		</div>
 		</htmlpagefooter>
 
@@ -2905,7 +3138,7 @@ function LicenceExpiryNotification($db,$cosmasRow,$rptName,$fromDate,$toDate)
 
 		<htmlpagefooter name="myfooter">
 		<div style="border-top: 1px solid #000000; font-size: 9pt; text-align: center; padding-top: 3mm; ">
-		powered by      <img src="images/attain_logo_2.jpg" alt="County Logo">
+		powered by      <img src="images/attain_logo_2.png" alt="County Logo">
 		</div>
 		</htmlpagefooter>
 
@@ -3033,9 +3266,9 @@ function LicenceExpiryNotification($db,$cosmasRow,$rptName,$fromDate,$toDate)
 		$mpdf=new mPDF('win-1252','A4-L','','',20,15,48,25,10,10);
 		$mpdf->useOnlyCoreFonts = true;    // false is default
 		$mpdf->SetProtection(array('print'));
-		$mpdf->SetTitle("Acme Trading Co. - Invoice");
-		$mpdf->SetAuthor("Acme Trading Co.");
-		$mpdf->SetWatermarkText("County Government Of Uasin Gishu");
+		$mpdf->SetTitle("Tourism Regulatory Authority");
+		$mpdf->SetAuthor("Tourism Regulatory Authority.");
+		$mpdf->SetWatermarkText("Tourism Regulatory Authority");
 		$mpdf->showWatermarkText = true;
 		$mpdf->watermark_font = 'DejaVuSansCondensed';
 		$mpdf->watermarkTextAlpha = 0.1;
@@ -3070,7 +3303,7 @@ function LicenceExpiryNotification($db,$cosmasRow,$rptName,$fromDate,$toDate)
 
 		<htmlpagefooter name="myfooter">
 		<div style="border-top: 1px solid #000000; font-size: 9pt; text-align: center; padding-top: 3mm; ">
-		powered by      <img src="images/attain_logo_2.jpg" alt="County Logo">
+		powered by      <img src="images/attain_logo_2.png" alt="County Logo">
 		</div>
 		</htmlpagefooter>
 
@@ -3194,9 +3427,9 @@ function LicenceExpiryNotification($db,$cosmasRow,$rptName,$fromDate,$toDate)
 		$mpdf=new mPDF('win-1252','A4-L','','',20,15,48,25,10,10);
 		$mpdf->useOnlyCoreFonts = true;    // false is default
 		$mpdf->SetProtection(array('print'));
-		$mpdf->SetTitle("Acme Trading Co. - Invoice");
-		$mpdf->SetAuthor("Acme Trading Co.");
-		$mpdf->SetWatermarkText("County Government Of Uasin Gishu");
+		$mpdf->SetTitle("Tourism Regulatory Authority");
+		$mpdf->SetAuthor("Tourism Regulatory Authority");
+		$mpdf->SetWatermarkText("Tourism Regulatory Authority");
 		$mpdf->showWatermarkText = true;
 		$mpdf->watermark_font = 'DejaVuSansCondensed';
 		$mpdf->watermarkTextAlpha = 0.1;
@@ -3231,7 +3464,7 @@ function LicenceExpiryNotification($db,$cosmasRow,$rptName,$fromDate,$toDate)
 
 		<htmlpagefooter name="myfooter">
 		<div style="border-top: 1px solid #000000; font-size: 9pt; text-align: center; padding-top: 3mm; ">
-		powered by      <img src="images/attain_logo_2.jpg" alt="County Logo">
+		powered by      <img src="images/attain_logo_2.png" alt="County Logo">
 		</div>
 		</htmlpagefooter>
 
@@ -3351,9 +3584,9 @@ function LicenceExpiryNotification($db,$cosmasRow,$rptName,$fromDate,$toDate)
 		$mpdf=new mPDF('win-1252','A4-L','','',20,15,48,25,10,10);
 		$mpdf->useOnlyCoreFonts = true;    // false is default
 		$mpdf->SetProtection(array('print'));
-		$mpdf->SetTitle("Acme Trading Co. - Invoice");
-		$mpdf->SetAuthor("Acme Trading Co.");
-		$mpdf->SetWatermarkText("County Government Of Uasin Gishu");
+		$mpdf->SetTitle("Tourism Regulatory Authority");
+		$mpdf->SetAuthor("Tourism Regulatory Authority");
+		$mpdf->SetWatermarkText("Tourism Regulatory Authority");
 		$mpdf->showWatermarkText = true;
 		$mpdf->watermark_font = 'DejaVuSansCondensed';
 		$mpdf->watermarkTextAlpha = 0.1;
@@ -3388,7 +3621,7 @@ function LicenceExpiryNotification($db,$cosmasRow,$rptName,$fromDate,$toDate)
 
 		<htmlpagefooter name="myfooter">
 		<div style="border-top: 1px solid #000000; font-size: 9pt; text-align: center; padding-top: 3mm; ">
-		powered by      <img src="images/attain_logo_2.jpg" alt="County Logo">
+		powered by      <img src="images/attain_logo_2.png" alt="County Logo">
 		</div>
 		</htmlpagefooter>
 
@@ -3529,9 +3762,9 @@ function LicenceExpiryNotification($db,$cosmasRow,$rptName,$fromDate,$toDate)
 		$mpdf=new mPDF('win-1252','A4-L','','',20,15,48,25,10,10);
 		$mpdf->useOnlyCoreFonts = true;    // false is default
 		$mpdf->SetProtection(array('print'));
-		$mpdf->SetTitle("Acme Trading Co. - Invoice");
-		$mpdf->SetAuthor("Acme Trading Co.");
-		$mpdf->SetWatermarkText("County Government Of Uasin Gishu");
+		$mpdf->SetTitle("Tourism Regulatory Authority");
+		$mpdf->SetAuthor("Tourism Regulatory Authority");
+		$mpdf->SetWatermarkText("Tourism Regulatory Authority");
 		$mpdf->showWatermarkText = true;
 		$mpdf->watermark_font = 'DejaVuSansCondensed';
 		$mpdf->watermarkTextAlpha = 0.1;
@@ -3566,7 +3799,7 @@ function LicenceExpiryNotification($db,$cosmasRow,$rptName,$fromDate,$toDate)
 
 		<htmlpagefooter name="myfooter">
 		<div style="border-top: 1px solid #000000; font-size: 9pt; text-align: center; padding-top: 3mm; ">
-		powered by      <img src="images/attain_logo_2.jpg" alt="County Logo">
+		powered by      <img src="images/attain_logo_2.png" alt="County Logo">
 		</div>
 		</htmlpagefooter>
 
@@ -3720,9 +3953,9 @@ function LicenceExpiryNotification($db,$cosmasRow,$rptName,$fromDate,$toDate)
 		$mpdf=new mPDF('win-1252','A4-L','','',20,15,48,25,10,10);
 		$mpdf->useOnlyCoreFonts = true;    // false is default
 		$mpdf->SetProtection(array('print'));
-		$mpdf->SetTitle("Acme Trading Co. - Invoice");
-		$mpdf->SetAuthor("Acme Trading Co.");
-		$mpdf->SetWatermarkText("County Government Of Uasin Gishu");
+		$mpdf->SetTitle("Tourism Regulatory Authority");
+		$mpdf->SetAuthor("Tourism Regulatory Authority");
+		$mpdf->SetWatermarkText("Tourism Regulatory Authority");
 		$mpdf->showWatermarkText = true;
 		$mpdf->watermark_font = 'DejaVuSansCondensed';
 		$mpdf->watermarkTextAlpha = 0.1;
@@ -3757,7 +3990,7 @@ function LicenceExpiryNotification($db,$cosmasRow,$rptName,$fromDate,$toDate)
 
 		<htmlpagefooter name="myfooter">
 		<div style="border-top: 1px solid #000000; font-size: 9pt; text-align: center; padding-top: 3mm; ">
-		powered by      <img src="images/attain_logo_2.jpg" alt="County Logo">
+		powered by      <img src="images/attain_logo_2.png" alt="County Logo">
 		</div>
 		</htmlpagefooter>
 
@@ -3890,9 +4123,9 @@ function LicenceExpiryNotification($db,$cosmasRow,$rptName,$fromDate,$toDate)
 		$mpdf=new mPDF('win-1252','A4-L','','',20,15,48,25,10,10);
 		$mpdf->useOnlyCoreFonts = true;    // false is default
 		$mpdf->SetProtection(array('print'));
-		$mpdf->SetTitle("Acme Trading Co. - Invoice");
-		$mpdf->SetAuthor("Acme Trading Co.");
-		$mpdf->SetWatermarkText("County Government Of Uasin Gishu");
+		$mpdf->SetTitle("Tourism Regulatory Authority");
+		$mpdf->SetAuthor("Tourism Regulatory Authority");
+		$mpdf->SetWatermarkText("Tourism Regulatory Authority");
 		$mpdf->showWatermarkText = true;
 		$mpdf->watermark_font = 'DejaVuSansCondensed';
 		$mpdf->watermarkTextAlpha = 0.1;
@@ -3927,7 +4160,7 @@ function LicenceExpiryNotification($db,$cosmasRow,$rptName,$fromDate,$toDate)
 
 		<htmlpagefooter name="myfooter">
 		<div style="border-top: 1px solid #000000; font-size: 9pt; text-align: center; padding-top: 3mm; ">
-		powered by      <img src="images/attain_logo_2.jpg" alt="County Logo">
+		powered by      <img src="images/attain_logo_2.png" alt="County Logo">
 		</div>
 		</htmlpagefooter>
 
@@ -4138,7 +4371,7 @@ function LicenceExpiryNotification($db,$cosmasRow,$rptName,$fromDate,$toDate)
 
 		<htmlpagefooter name="myfooter">
 		<div style="border-top: 1px solid #000000; font-size: 9pt; text-align: center; padding-top: 3mm; ">
-		powered by      <img src="images/attain_logo_2.jpg" alt="County Logo">
+		powered by      <img src="images/attain_logo_2.png" alt="County Logo">
 		</div>
 		</htmlpagefooter>
 
@@ -4344,7 +4577,7 @@ function LicenceExpiryNotification($db,$cosmasRow,$rptName,$fromDate,$toDate)
 
 		<htmlpagefooter name="myfooter">
 		<div style="border-top: 1px solid #000000; font-size: 9pt; text-align: center; padding-top: 3mm; ">
-		powered by      <img src="images/attain_logo_2.jpg" alt="County Logo">
+		powered by      <img src="images/attain_logo_2.png" alt="County Logo">
 		</div>
 		</htmlpagefooter>
 

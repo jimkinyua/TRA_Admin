@@ -100,21 +100,52 @@ if (isset($_REQUEST['save']) && $_REQUEST['NextStatus']!='')
 			$ServiceHeaderType=$row['serviceheadertype'];
 		}
 	}
-
-		
-	  
 	
 	$s_sql="select * from Customer where CustomerID=$CustomerID";
 	$s_result=sqlsrv_query($db,$s_sql);
-	//echo $s_sql;
+	
 	if ($s_result)
 	{					
 		while ($row = sqlsrv_fetch_array( $s_result, SQLSRV_FETCH_ASSOC))
 		{			
 			$CustomerEmail=$row['Email'];
 			$CustomerName=$row['CustomerName'];
+			$PhysicalAddress = $row['PhysicalAddress'];
 		}
 	}
+
+
+
+
+			$emailSql = "select ins.UserID,ag.Email,ag.LastName,sh.SetDate,s.ServiceName 
+				from Inspections ins
+				join Agents ag on ag.AgentID = ins.UserID 
+				join ServiceHeader sh on sh.ServiceHeaderID = ins.ServiceHeaderID
+				join Services s on s.ServiceID = sh.ServiceID
+				where ins.ServiceHeaderID = $ApplicationID";
+
+			$emailResult = sqlsrv_query($db,$emailSql);
+			while($row=sqlsrv_fetch_array($emailResult, SQLSRV_FETCH_ASSOC)){
+				$toEmail = $row['Email'];
+				$Receiver = $row['LastName'];
+				$onDate = $row['SetDate'];
+				$theService = $row['ServiceName'];
+
+		        	$CustomerEmail = 'emmanuelomonso@gmail.com'; 
+          			$from = 'omonsotest@gmail.com'; 
+          			$SenderName = 'TRA Inspection';
+          			$txt = '<p>Hello '.$Receiver.',<br>
+          				You have been selected to undertake an Inspection for <strong>'.$theService.'</strong> at <strong>'.$CustomerName.'</strong> - <strong>'.$PhysicalAddress.'</strong> on <strong>'.$onDate.'</strong><br>
+          				Log into your ISpec mobile account to access the checklist and other details about this inspection assignment.
+          				<br><br>
+          				Please Note: You cannot access the inspection checklist on a date that is not <strong>'.$onDate.'<br><br>
+          				Kind Regards,<br>
+          				Inspection Team.
+          			</p>'; 
+
+          	$sendNotification=php_mailer($CustomerEmail,$from,$SenderName,'Invitation to Undertake an Inspection',$txt,'','','Message');
+		}
+
 	
 	$s_sql="select ServiceStatusID from ServiceStatus where ServiceStatusID='$NextStatus'";
 	$s_result=sqlsrv_query($db,$s_sql);
@@ -178,6 +209,7 @@ if ($s_result)
 		$CustomerID=$row['CustomerID'];
 		$CustomerName=$row['CustomerName'];
 		$ServiceID=$row['ServiceID'];
+		$ServiceStatusID = $row['ServiceStatusID'];
 		$ServiceName=$row['ServiceName'];
 		$CurrentStatus=$row['ServiceStatusID'];
 		$ServiceCategoryID=$row['ServiceCategoryID'];
@@ -557,6 +589,26 @@ if (isset($_REQUEST['InspectionDate']))
               <tr>
                 <td colspan="2" align="center" style="color:#F00"><?php echo $msg; ?></td>
             </tr>
+                              <?php 
+                  if($ServiceStatusID == 5 && $ServiceCategoryID == 2033){
+                  	?>
+                  	<tr>
+                  <td width="50%">
+                  <label>Recommendation:</label>
+					  <div class="input-control text" data-role="input-control">
+						  <p style="color: red;">Re-Inspection from the inspection team</p>						  
+					  </div>				  
+                  </td>
+                  <td width="50%">				  
+                  </td>   
+              </tr>
+              <?php
+                  }else{
+                  ?>
+                  
+                  <?php
+              }
+              ?> 
               <tr>
                  <td width="50%">
 					<label>Customer Name</label>
@@ -565,8 +617,8 @@ if (isset($_REQUEST['InspectionDate']))
 						  
 					  </div>                 	
                   </td>
-                  <td></td>                  
-              </tr>
+                  <td></td>
+              </tr>       
 			  <tr>
                   <td width="50%">
                   <label>Application No</label>
@@ -626,6 +678,7 @@ if (isset($_REQUEST['InspectionDate']))
 					  </div>				  
                   </td>
                   <td width="50%">
+
 				<label>&nbsp;</label>				  
 					<!--service_approval.php?ApplicationID='+app_id+'&app_type='+app_type+'&CurrentStatus='+current_status
 					<input name="Button" type="button" onclick="loadmypage('service_form.php?save=1&ApplicationID=<?php echo $ApplicationID ?>','content','loader','','')" value="Change">-->
@@ -1128,15 +1181,12 @@ $sql="SELECT u.Email, FirstName, Middlename, LastName UserNames
  $numrows = 0;
  
 $r_sql = "Select COUNT(UserID) AS TotalRows FROM Inspections where ServiceHeaderID ='$ApplicationID'";
-// echo $r_sql;
-// exit();
+
 $result = sqlsrv_query($db, $r_sql);
 if ($myrow = sqlsrv_fetch_array( $result, SQLSRV_FETCH_ASSOC)) 
 {		
 	$numrows = $myrow['TotalRows'];
 }
-
-
 $SetDate1 = 0;
 $ServiceType = 0;
 $d_sql = "select SetDate,ServiceCategoryID from ServiceHeader where ServiceHeaderID = '$ApplicationID'";
@@ -1170,11 +1220,10 @@ if ($myrow = sqlsrv_fetch_array( $dresult, SQLSRV_FETCH_ASSOC))
 		  	loadpage('service_approval.php?save=1&ApplicationID=<?php echo $ApplicationID ?>&CustomerName=<?php echo $CustomerName ?>&CustomerID=<?php echo $CustomerID ?>&ServiceID=<?php echo $ServiceID ?>&ServiceName=<?php echo $ServiceName ?>&CurrentStatus=<?php echo $CurrentStatus ?>&NextStatus='+this.form.NextStatus.value+'&Notes='+this.form.Notes.value+'&ServiceCategoryID=<?php echo $ServiceCategoryID ?>','content')
 		  }
 
-		  " value="Approve">
+		  "value="Approve">
 
 		  <?php
 		}elseif($ServiceType != 2033 && $numrows != 0 && (!empty($SetDate1))){
-
 		  	?>
 		  	<input type="reset" value="Cancel" onClick="loadmypage('clients_list.php?i=1','content','loader','listpages','','applications','<?php echo $_SESSION['RoleCenter'] ?>')">
 
@@ -1189,8 +1238,7 @@ if ($myrow = sqlsrv_fetch_array( $dresult, SQLSRV_FETCH_ASSOC))
 		  {
 		  	loadpage('service_approval.php?save=1&ApplicationID=<?php echo $ApplicationID ?>&CustomerName=<?php echo $CustomerName ?>&CustomerID=<?php echo $CustomerID ?>&ServiceID=<?php echo $ServiceID ?>&ServiceName=<?php echo $ServiceName ?>&CurrentStatus=<?php echo $CurrentStatus ?>&NextStatus='+this.form.NextStatus.value+'&Notes='+this.form.Notes.value+'&ServiceCategoryID=<?php echo $ServiceCategoryID ?>','content')
 		  }
-
-		  " value="Approve">
+		  "value="Approve">
 
 
 			<?php

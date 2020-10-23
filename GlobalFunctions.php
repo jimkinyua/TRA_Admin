@@ -227,19 +227,19 @@
 		try 
 		{
 			
-			$mail->SMTPDebug  = 2; 		
+			$mail->SMTPDebug  = false; 		
 			$mail->defaultCredentials='true';
 			// enables SMTP debug information (for testing)
 				
-			$mail->SMTPAuth   = false;
+			$mail->SMTPAuth   = true;
 			$mail->Mailer = "smtp";                  // enable SMTP authentication
 			$mail->isSMTP();
 			$mail->SMTPAutoTLS = false; 
 			$mail->Host = "smtp.gmail.com"; // sets the SMTP server	
 			$mail->SMTPSecure = 'ssl'; 
 			$mail->Port       = 465;                    // set the SMTP port for the GMAIL server				
-			$mail->Username = "kdbinspec@gmail.com";
-			$mail->Password = "Kdb1958*";	    
+			$mail->Username = "omonsotest@gmail.com";
+			$mail->Password = "omonso001";	    
 			
 			
 			$mail->AddReplyTo($toEmail, $fromName);	
@@ -264,7 +264,7 @@
 				$feedback[1]=$item." sent Successfully to $toEmail";
 				return $feedback;
 				
-				//return "Mail Sent Successfully to $toEmail";
+				// return "Mail Sent Successfully to $toEmail";
 			}else
 			{
 				$feedback[0]="false";
