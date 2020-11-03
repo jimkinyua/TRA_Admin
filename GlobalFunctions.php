@@ -10,6 +10,16 @@
 
 	//require_once("dompdf/dompdf_config.inc.php");
 	require_once("mPDF/mpdf.php");
+	require_once('phpSPO/src/autoloader.php');
+	use Office365\PHP\Client\Runtime\Auth\NetworkCredentialContext;
+	use Office365\PHP\Client\SharePoint\ClientContext;
+	use Office365\PHP\Client\Runtime\Auth\AuthenticationContext;
+	use Office365\PHP\Client\Runtime\Utilities\RequestOptions;
+	use Office365\PHP\Client\SharePoint\ListCreationInformation;
+	use Office365\PHP\Client\SharePoint\SPList;
+	use Office365\PHP\Client\SharePoint\Web;
+
+
 	$msg="";
 	
 	//require("phpToPDF.php"); 
@@ -229,33 +239,21 @@
 		try 
 		{
 			
-<<<<<<< HEAD
-			// $mail->SMTPDebug  = 2; 		
-			// $mail->defaultCredentials='true';
-			// // enables SMTP debug information (for testing)
-				
-			$mail->SMTPAuth   = true;
-			$mail->Mailer = "smtp";     // enable SMTP authentication
-=======
 			$mail->SMTPDebug  = false; 		
 			$mail->defaultCredentials='true';
 			// enables SMTP debug information (for testing)
 				
 			$mail->SMTPAuth   = true;
 			$mail->Mailer = "smtp";                  // enable SMTP authentication
->>>>>>> 790f831ceb22fdbe0cde6678d4e9a6f65ab773e8
 			$mail->isSMTP();
 			$mail->SMTPAutoTLS = true; 
 			$mail->Host = "smtp.gmail.com"; // sets the SMTP server	
 			$mail->SMTPSecure = 'ssl'; 
 			$mail->Port       = 465;                    // set the SMTP port for the GMAIL server				
-<<<<<<< HEAD
 			$mail->Username = "passdevelopment00@gmail.com";
 			$mail->Password = "cyvkhicsdngecuvf";	    
-=======
-			$mail->Username = "omonsotest@gmail.com";
-			$mail->Password = "omonso001";	    
->>>>>>> 790f831ceb22fdbe0cde6678d4e9a6f65ab773e8
+			// $mail->Username = "omonsotest@gmail.com";
+			// $mail->Password = "omonso001";	    
 			
 			
 			$mail->AddReplyTo($toEmail, $fromName);	
@@ -280,11 +278,8 @@
 				$feedback[1]=$item." sent Successfully to $toEmail";
 				// return $feedback;
 				
-<<<<<<< HEAD
 				return "Mail Sent Successfully to $toEmail";
-=======
 				// return "Mail Sent Successfully to $toEmail";
->>>>>>> 790f831ceb22fdbe0cde6678d4e9a6f65ab773e8
 			}else
 			{
 				$feedback[0]="false";
@@ -3856,7 +3851,6 @@ function GetClientMac(){
 
 function GetRemoteMac(){
     $ip=$_SERVER['HTTP_USER_AGENT'];
-	
 	return $ip;
 }
 
@@ -4065,7 +4059,8 @@ function GenerateInvoice($db,$ApplicationID,$UserID='')
 			$permitNo=randomNumber();//time();				
 			$expiryDate="31/12/{$validity}";
 
-			$sql="set dateformat dmy insert into Permits(permitNo,ServiceHeaderID,Validity,ExpiryDate,CreatedBy,InvoiceHeaderID,Printed) 
+			$sql="set dateformat dmy insert into Permits(permitNo,ServiceHeaderID,Validity,
+			ExpiryDate,CreatedBy,InvoiceHeaderID,Printed) 
 			values('$permitNo',$ApplicationID,'$validity','$expiryDate','$UserID','$InvoiceHeaderID',0)";
 			
 			$s_result1 = sqlsrv_query($db, $sql);						
@@ -4114,6 +4109,635 @@ function GenerateInvoice($db,$ApplicationID,$UserID='')
 	return $msg;
 }
 
+function GenerateLicenceApplicationInvoice($db,$ServiceHeaderID,$UserID)
+{	
+
+	$InvoiceHeader="";
+	$ServiceAmount=0;
+	$InvoiceAmount=0;
+	$InvoiceDate= date("d/m/Y");
+	$Chargeable=0;
+	$Sawa=true;
+	$msg='';
+	
+	//Get the ServiceId 
+	$GetServiceIDSQL = "select ServiceID
+	from ServiceHeader  WHERE ServiceHeaderId = $ServiceHeaderID";
+	// exit($GetServiceIDSQL);
+
+	//Get the LicenceNo 
+	$GetLicenceNoSQL = "select PermitNo
+	from ServiceHeader  WHERE ServiceHeaderId = $ServiceHeaderID";
+	// exit($GetServiceIDSQL);
+
+
+	$GetServiceIDSQLresult = sqlsrv_query($db, $GetServiceIDSQL);
+
+	while ($row = sqlsrv_fetch_array( $GetServiceIDSQLresult, SQLSRV_FETCH_ASSOC))
+	{							
+		$ServiceID=$row["ServiceID"];												
+	}
+
+	$GetLicenceNoSQLresult = sqlsrv_query($db, $GetLicenceNoSQL);
+
+	while ($row = sqlsrv_fetch_array( $GetLicenceNoSQLresult, SQLSRV_FETCH_ASSOC))
+	{							
+		$PermitNo=$row["PermitNo"];												
+	}
+
+	//Get Banks 
+	$sqlb="select BankName,AccountNumber from Banks";
+	$bnkr=sqlsrv_query($db,$sqlb);
+	while($bnks=sqlsrv_fetch_array($bnkr,SQLSRV_FETCH_ASSOC))
+	{
+		$bankrows.='<tr>
+			<td>'.sentence_case($bnks['BankName']).'</td>
+			<td>'.sentence_case($bnks['AccountNumber']).'</td>
+			</tr>
+		';
+	}
+
+	//Get Service Charge
+	$s_sql="select sc.amount,s.chargeable,sh.ServiceID,sh.CreatedDate,sh.CustomerID
+	 from servicecharges sc 
+	 inner join services s on sc.serviceid=s.serviceid 
+	 inner join serviceheader sh on sh.serviceid=s.serviceid
+	 join FinancialYear fy on sc.FinancialYearId=sc.FinancialYearId
+	 where sh.ServiceHeaderID=$ServiceHeaderID and fy.isCurrentYear=1";
+
+	
+	$s_result=sqlsrv_query($db,$s_sql);
+
+	if ($s_result)
+	{
+			
+		while ($row = sqlsrv_fetch_array( $s_result, SQLSRV_FETCH_ASSOC))
+		{						
+			$ServiceID=$row['ServiceID'];
+			$ServiceAmount +=$row['amount'];						
+			$ApplicationDate=$row['CreatedDate'];//date('d/m/Y',strtotime($date));
+			$ApplicationDate=date('d/m/Y',strtotime($ApplicationDate));
+			$CustomerID=$row['CustomerID'];
+		}
+	}else
+	{
+		DisplayErrors();
+	}
+
+	if ($ServiceAmount==0)
+	{				
+		$msg='The Service is set not to have charges, hence cannot be invoiced';
+		$Sawa=true;
+	}
+	else
+	{
+	      
+		
+		if ($ServiceAmount<=0)
+		{
+			$msg="The cost of the service is not set, the process therefore aborts";
+		}else
+		{
+
+			if(sqlsrv_begin_transaction($db)===false)
+			{
+				$msg=sqlsrv_errors();
+				$Sawa=false;
+			}				
+			
+			$s_sql="set dateformat dmy insert into InvoiceHeader (
+					Amount,
+					InvoiceDate,
+					ServiceHeaderID,
+					InvoiceNo,
+					CustomerID,
+					CreatedBy) 
+				Values(
+					'$ServiceAmount',
+					'$InvoiceDate',
+					'$ServiceHeaderID',
+					'$InvoiceNo',
+					 $CustomerID,
+					'$UserID') SELECT SCOPE_IDENTITY() AS ID";
+
+			$s_result1 = sqlsrv_query($db, $s_sql);
+					
+			if ($s_result1)
+			{
+				$InvoiceHeader=lastid($s_result1);				
+								
+				//insert into invoiceLines
+	
+				$s_sql="set dateformat dmy insert into InvoiceLines (
+							InvoiceHeaderID,
+							ServiceHeaderID,
+							ServiceID,
+							Description,
+							Amount,CreatedBy) 
+						Values($InvoiceHeader,$ServiceHeaderID,$ServiceID,
+						'Service Charge',
+							$ServiceAmount,
+							'$UserID')";						
+				$s_result2 = sqlsrv_query($db, $s_sql);
+				//echo 'invoiceheader lines done';	
+				$loopOkey=true;
+				$PermitCost=$ServiceAmount;
+				$InvoiceAmount+=$ServiceAmount;
+				if ($s_result2)
+				{								
+					//check whether there are carrier
+				    $sql="select s.ServiceID,s.ServiceName, Amount 
+							from ServicePlus sc 
+							join services s on sc.service_add=s.serviceid 
+							join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID 
+							and fy.isCurrentYear=1 
+							and sc.serviceid=$ServiceID";
+							// exit($sql);
+						
+					$s_result = sqlsrv_query($db, $sql);
+					while ($row = sqlsrv_fetch_array( $s_result, SQLSRV_FETCH_ASSOC))
+					{									
+						$ServiceAmount=$row["Amount"];
+						$ServiceID=$row['ServiceID'];
+						$InvoiceAmount+=$ServiceAmount;
+						
+						$s_sql="set dateformat dmy insert into InvoiceLines (
+							InvoiceHeaderID,
+						ServiceHeaderID,ServiceID,Amount,CreatedBy) 
+								Values($InvoiceHeader,$ServiceHeaderID,
+								$ServiceID,$ServiceAmount,
+								'$UserID')";
+						//echo $s_sql; exit;
+						$result3 = sqlsrv_query($db, $s_sql);
+						if (!$result3)
+						{
+							///DisplayErrors();
+							$loopOkey=false;
+							break;
+						}else{
+							//echo 'Hamna Shida';
+						}									
+					}
+					if($loopOkey==true)
+					{
+						$mail=true;																	
+					}
+
+				}else
+				{
+					
+					DisplayErrors().'<BR>';
+					$Sawa=false;
+					
+				}
+
+				//Application Fees
+			    $sql="select distinct s1.ServiceID,s1.ServiceName,sp.Amount 
+						from ServicePlus sp 
+						join ServiceHeader sh on sh.ServiceID=sp.ServiceID 
+						join Services s on sp.ServiceID=sh.ServiceID
+						join Services s1 on sp.service_add=s1.ServiceID 
+						where sh.ServiceHeaderID=$ServiceHeaderID";
+
+			    //echo $sql;
+
+			    $result=sqlsrv_query($db,$sql);
+			    while($row=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC))
+			    {
+			        $ServiceAmount=$row["Amount"];
+					$ServiceID=$row['ServiceID'];
+					$InvoiceAmount+=$ServiceAmount;
+					$ServiceName=$row['ServiceName'];
+					$s_sql="set dateformat dmy insert into InvoiceLines (
+						InvoiceHeaderID,
+						ServiceHeaderID,
+						ServiceID,
+						Description,
+						Amount,
+						CreatedBy) 
+							Values(
+								$InvoiceHeader,
+								$ServiceHeaderID,
+								$ServiceID,
+								'$ServiceName',
+								$ServiceAmount,
+								'$UserID')";
+								// exit($s_sql);
+					$result3 = sqlsrv_query($db, $s_sql);
+					if (!$result3)
+					{
+						DisplayErrors();
+						$loopOkey=false;
+						break;
+					}else{
+						//echo 'Hamna Shida';
+					}
+			    }				
+										
+			}
+			
+			$s_sql="set dateformat dmy update
+			 InvoiceHeader set Amount='$InvoiceAmount' 
+			 where InvoiceHeaderID='$InvoiceHeader'";
+		
+			$s_result3=sqlsrv_query($db,$s_sql);
+			if(!$s_result3){
+				$Sawa=false;
+			}
+			$InvoiceHeader=lastid($s_result1);				
+
+			$ChangeStatussql="Update Permits set InvoiceHeaderID='$InvoiceHeader',
+	  			where ServiceHeaderID='$ServiceHeaderID'";
+
+			$result4=sqlsrv_query($db,$ChangeStatussql);
+
+						
+			
+			if($s_result2 && $s_result3 &&  $s_result2 && $loopOkey==true && $mail==true)
+			{	
+				$rst=SaveTransaction($db,$UserID," Created Invoice Number ".$InvoiceHeader);				
+				sqlsrv_commit($db);
+				$msg="Invoice Created Successfullrr - $InvoiceHeader";
+				// EXIT('Me');
+						// 
+				// createPermit($db, $ServiceHeaderID);
+
+			
+				$name=explode(" ", $CustomerName);
+				$fname= ucfirst(strtolower($name[0]));
+				$InvoiceAmount=number_format($InvoiceAmount,2);
+
+				$SmsText="Dear $fname, your application No. $ServiceHeaderID has been approved. An invoice No. $InvoiceHeader of KSh. $InvoiceAmount has been issued to you. You may now proceed to pay";
+
+				//sendSms($MobileNo,$SmsText); 
+
+				$Sawa=true;
+			}else
+			{
+				sqlsrv_rollback($db);
+				$Sawa=false;
+			}
+		}
+	}
+	
+	return $msg;
+}
+
+function UploadDocsToSharePoint($db, $ServiceHeaderID, $UserId){
+	InitiliaseSharepoint();
+	//Get Name of Service
+	$GetServiceNameSQL="Select ServiceName from Services where ServiceID=$ServiceID";
+	$GetServiceNameResult=sqlsrv_query($db,$GetServiceNameSQL);
+	if($rw=sqlsrv_fetch_array($GetServiceNameResult,SQLSRV_FETCH_ASSOC)){
+		$ServiceName=$rw['ServiceName'];
+	}
+
+			//Upload Docs to Sharepoint
+			
+	//Get Attached Docs to this Application If Any
+	$sql="select d.DocumentName,att.*
+		from Attachments att
+		join Documents d on d.DocumentID=att.DocumentID
+		where att.ApplicationNo=2097";
+
+	$s_result=sqlsrv_query($db,$sql);
+	
+	if ($s_result){
+		while($row=sqlsrv_fetch_array($s_result,SQLSRV_FETCH_ASSOC)){
+			$DocumentID = $myrow['ID'];
+			$ApplicationNo = $myrow['ApplicationNo'];
+			$DocumentName = $myrow['DocumentName'];
+			$FileName = $myrow['AttachmentName'];
+			$FilePath = $row['FilePath'];
+
+			// Service Id will Influence the Library
+			//Ensure Folder Name Exists. If Not Create One
+			$list = ensureList($ctx->getWeb(),$ServiceName,
+						\Office365\PHP\Client\SharePoint\ListTemplateType::DocumentLibrary);
+
+
+			$TargetLibrary=$DocumentCategoryName;
+			$destination= $file_path;
+			$DocumentMetadata=array();
+
+			$DocumentMetadata = array(
+				'Name' => $Name,
+				'DocumentName' => $DocumentName,
+				'DocumentCategoryName' => $DocumentCategoryName,
+				'DocumentTypeName' => $DocumentTypeName  
+			);
+		}
+	}
+	
+
+}
+
+function ensureList(Web $web, $listTitle, $type, $clearItems = true) {
+	$ctx = $web->getContext();
+	$lists = $web->getLists()->filter("Title eq '$listTitle'")->top(1);
+	$ctx->load($lists);
+	$ctx->executeQuery();
+	if ($lists->getCount() == 1) {
+		$existingList = $lists->getData()[0];
+		if ($clearItems) {
+			//self::deleteListItems($existingList);
+		}
+		return $existingList;
+	}
+	return ListExtensions::createList($web, $listTitle, $type);
+}
+
+function InitiliaseSharepoint(){
+	try{
+		$authCtx = new NetworkCredentialContext($username, $password);
+		$authCtx->AuthType = CURLAUTH_NTLM; //NTML Auth schema
+		$ctx = new ClientContext($Url, $authCtx);
+		$site = $ctx->getSite();
+		$ctx->load($site); //load site settings            
+		$ctx->executeQuery();
+	}
+	catch (Exception $e) {
+        print 'Authentication failed: ' .  $e->getMessage(). "\n";
+    }
+
+}
+
+function createPermit($db, $ApplicationID)
+	{
+		// exit('jfu');
+		$CustomerName = '';
+		$ServiceName = '';
+		$ServiceAmount = '';	
+		$InvoiceHeaderID='';	
+		// $CountyName=$row['CountyName'];
+		// $CountyAddress=$row['PostalAddress'];
+		// $CountyTown=$row['Town'];
+		// $CountyTelephone=$row['Telephone1'];
+		// $CountyMobile=$row['Mobile1'];
+		// $CountyEmail=$row['Email'];	
+		// $CountyPostalCode=$row['PostalCode'];
+		$PlotNo="";
+		
+		$PermitNo='';
+		$BusinessID="";
+		$CustomerID="";
+		$Validity="";
+		$Expiry="";
+		$ExpityDate="";
+		$CustomerName="";
+		$BusinessName="";
+		$ServiceName="";
+		$ServiceCost="";
+		$ServiceCost_Words="";
+		$PostalAdress="";
+		$PhysicalAddress="";
+		$PostalCode="";
+		$Vat="";
+		$PIN="";
+		$Town="";
+	
+
+		//get the details for this application
+
+		$sql = "select distinct sh.ServiceHeaderID,sh.PermitNo,
+		sh.ServiceID,sh.Validity,sh.ExpiryDate,
+		ih.InvoiceHeaderID, ih.CustomerID,ih.InvoiceDate,ih.Paid,
+		 c.CustomerName,c.Mobile1,
+		c.BusinessID,c.BusinessRegistrationNumber,
+		C.CustomerID,c.PostalAddress,
+		c.PhysicalAddress,c.Telephone1,c.Telephone2,c.PostalCode,c.VatNumber,
+		c.PIN,c.Town,c.Email, s.ServiceName, il.Amount,a.FirstName+' '+a.MiddleName+' '+a.LastName 
+		IssuedBy from InvoiceHeader ih
+		join InvoiceLines il on il.InvoiceHeaderID=ih.InvoiceHeaderID 
+		join ServiceHeader sh on il.ServiceHeaderID=sh.ServiceHeaderID 
+		join Customer c on sh.CustomerID=c.CustomerID 
+		join Services s on sh.ServiceID=s.ServiceID and il.ServiceID=sh.ServiceID
+		left join Agents a on sh.CreatedBy=a.AgentID where sh.ServiceHeaderID = $ApplicationID";
+
+			// exit($sql);
+			
+
+			$qry_result=sqlsrv_query($db,$sql);	
+			  
+			if (($rrow = sqlsrv_fetch_array($qry_result,SQLSRV_FETCH_ASSOC))==false)
+			{
+				DisplayErrors();
+				die;
+			}else
+			{
+
+				$BusinessRegNo=$rrow['BusinessRegistrationNumber'];
+				$PermitNo=$rrow['PermitNo'];
+				$BusinessID=$rrow['BusinessID'];
+				$CustomerID=$rrow['CustomerID'];
+				$Validity=$rrow['Validity'];
+				$Expiry=$rrow['ExpiryDate'];
+				$ExpiryDate=$rrow['ExpiryDate'];
+				$CustomerName=$rrow['CustomerName'];
+				$BusinessName=$rrow['CustomerName'];
+				$ServiceName=$rrow['ServiceName'];
+				$ServiceCost=$rrow['Amount'];
+				$PostalAdress=$rrow['PostalAddress'];
+				$Telephone1=$rrow['Telephone1'];
+				$Telephone2=$rrow['Telephone2'];
+				$CustomerEmail=$rrow['Email'];
+				$PostalCode=$rrow['PostalCode'];
+				$PIN=$rrow['PIN'];
+				$Vat=$rrow['VatNumber'];
+				$Town=$rrow['Town'];
+				$IssuedBy=$rrow['IssuedBy'];
+				$MobileNo=$rrow['Mobile1'];
+				
+				$ServiceCost_Words=convertNumber($ServiceCost);				
+			}
+
+		//$Validity='2016';
+		$mdate=date_create($Expiry);
+		$Expiry=date_format($mdate,"d/m/Y");
+		$Validity=date_format($mdate,'Y');
+		$PostalTown='';
+		/*$Expiry='2015';	
+		$PostalAdress=0;
+		$PostalCode=0;
+		$Vat=0;
+		$PIN=0;
+		$Town='';
+		$Email='amail';*/
+		
+		$rsql="select sh.CustomerID,c.CustomerName,c.PostalAddress,c.PhysicalAddress,c.PostalCode,sh.ServiceID,s.ServiceName,s.ServiceCode, il.ServiceHeaderID,il.ServiceHeaderID,il.Amount,ih.InvoiceHeaderID,c.Email,fd.Value BDescription  
+			from invoiceLines il 
+			inner join InvoiceHeader ih on il.InvoiceHeaderID=ih.InvoiceHeaderID 
+			inner join ServiceHeader sh on	il.ServiceHeaderID=sh.ServiceHeaderID 
+			inner join Services s on sh.ServiceID=s.ServiceID and il.ServiceID=sh.ServiceID
+			inner join Customer c on sh.CustomerID=c.CustomerID 
+			join FormData fd on fd.ServiceHeaderID=sh.ServiceheaderID
+			where fd.FormColumnID=5 and sh.ServiceHeaderID=$ApplicationID";
+			
+			$rresult = sqlsrv_query($db, $rsql);	
+			
+
+			if ($rrow = sqlsrv_fetch_array( $rresult, SQLSRV_FETCH_ASSOC))
+			{
+				$CustomerName = $rrow['CustomerName'];
+				$ServiceName = $rrow['ServiceName'];
+				$ServiceAmount = $rrow['Amount'];	
+				$InvoiceHeaderID=$rrow['InvoiceHeaderID'];	
+				$Email=$rrow['Email'];
+				$BDescription=$rrow['BDescription'];
+				$ServiceCode=$rrow['ServiceCode'];
+				$PostalAddress=$rrow['PostalAddress'];
+				$PostalTown=$rrow['Town'];
+				$PostalCode=$rrow['PostalCode'];
+				$PhysicalAddress=$rrow['PhysicalAddress'];
+			}		
+		
+
+		
+		// createBarCode($PermitNo);	
+
+		$mpdf=new mPDF('win-1252','A4','','',20,15,48,25,10,10);
+		$mpdf->useOnlyCoreFonts = true;    // false is default
+		$mpdf->debugfonts = true; 
+		$mpdf->SetProtection(array('print'));
+		// $mpdf->SetTitle($CountyName."- Invoice");
+		// $mpdf->SetAuthor($CountyName);
+		$mpdf->SetWatermarkText("TRA Jim Test");
+		$mpdf->showWatermarkText = true;
+		$mpdf->watermark_font = 'DejaVuSansCondensed';
+		$mpdf->watermarkTextAlpha = 0.1;
+		$mpdf->SetDisplayMode('fullpage');
+		
+		$html='<html 
+		  <head>
+				<link rel="stylesheet" href="css/my_css.css" type="text/css"/>			
+		  </head>			
+		<body>
+				<table class="items" width="100%" style="font-size: 9pt; border-collapse: collapse; border-top:thick; " cellpadding="1">
+					<tr>
+						<td align="Center" colspan="5" style="font-size:10mm">
+							<b> '.$ServiceName.' PERMIT</b>
+						</td>
+					</tr>
+					<tr>
+						<td align="Center" colspan="5">
+							<img src="images/CountyLogo_New.png" alt="County Logo">
+						</td>
+					</tr>					
+					<tr>
+						<td style="border-right:0pt"></td>
+						<td colspan="3" align="Center"><span style="font-weight: bold; font-size: 14pt;"> TRA </span></td>
+						<td><span style="font-weight: bold; font-size: 14pt;">'.$Validity.'</span></h3></td>
+					</tr>
+					<tr>
+						<td colspan="5" align="Center"><span style="font-weight: bold; font-size: 14pt;">
+						<br>
+						GRANTS THIS BUSINESS PERMIT <BR>
+								TO
+						</span></td>
+					</tr>
+					<thead>
+						<tr>							
+							<td colspan="5"><B>'.$BusinessName.'</B></td>
+						</tr>
+						<tr>
+							<td colspan="2">Certificate of Registration NO/ID No: <br>'.$BusinessRegNo.'</td>
+							<td width=20%>Business ID No:'.$BusinessID.'</td>
+							<td>PIN NO: '.$PIN.'</td>
+							
+						</tr>
+					</thead>
+						<tr>
+							<td colspan="5" align="center">
+									<br><p><strong>To engage in the Activity/Business/Profession or Occupation of:</strong></p><br><br>									
+							</td>
+						</tr>
+					<thead>
+						<tr>
+							<td align="left" colspan="3"><strong>Business Activity Code & Description:</strong><br>('.$ServiceCode.') '.$ServiceName.'</td>
+							// <td align="right" colspan="2"><strong>Detailed Activity Description:</strong><br>'.$ServiceName.'</td>
+						</tr>
+					</thead>	
+					<tr>
+						<td colspan="5" align="center">
+							<br><p><strong>Having Paid a  Licence Fee of:</strong></p><br><br>
+						</td>					
+					</tr>
+					<tr>
+						<td></td> 
+						<td colspan="3"  align="center" style="background-color: #BEBABA; font-size:5mm">(Ksh.)<br>'.number_format($ServiceCost,2).'<br>('.$ServiceCost_Words.' only)</td>
+						<td></td> 
+					</tr>
+					<thead>
+						<tr>
+							<td>P.O Box <br> '.$PostalAddress.'</td>
+							<td>Postal Code <br> '.$PostalCode.'</td>
+							<td>Postal Town <br> '.$PostalTown.'</td>
+							<td>Business Physical Address<br> '.$PhysicalAddress.'</td>
+						</tr>
+					
+						<tr>
+							<td><strong>Mobile No</strong> <br> '.$Telephone1.'</td>
+							<td><strong>Telephone</strong> <br> '.$Telephone2.'</td>
+							<td colspan="2" align="left"><strong>Email Address</strong><br> '.$CustomerEmail.'</td>						
+						</tr>
+					</thead>
+					<tr>
+						<td colspan="2"><strong>Validity Period </strong>'.$Validity.'</td>
+						<td></td>
+						<td colspan="2" align="center"><strong>Expiry Date:</strong>'.$Expiry.'</td>
+					</tr>
+					<tr>
+						<td colspan="2"><strong>Issued By:</strong><br>Jim Kinyua</td>	
+						<td></td>						
+						<td colspan="2"></td>
+					</tr>
+					<tr>
+						<td colspan="2"><br><strong>For The Chief Officer<br>Finance And Economic Planning</strong></td>
+						<td></td>
+						<td colspan="2"><br><strong><br></td>
+					</tr>
+					<tr>
+						<td colspan="5"><hr></td>
+					</tr>
+					<tr>						
+						<td colspan="5" align="center"><img src="Images/Bar_Codes/'.$PermitNo.'.PNG"></td>
+					</tr>					
+					<thead>
+						<tr>
+							<td Colspan="5" style="text-align:justified;"> 
+							<small><strong>Notice:</strong> Granting this permit does not exempt the business identified above from
+									complying with the current regulations on Health and Safety as established by the Government of Kenya 
+									</small>
+							</td>
+						</tr>
+					</thead>
+				</table>
+				<I>Served by <B>'.$IssuedBy.'</B></I>
+		</body>
+		</html>';
+
+		/* 		echo $html;
+		exit; */
+		$mpdf->WriteHTML($html);
+		$mpdf->Output('pdfdocs/sbps/'."$ApplicationID".'.pdf','F'); 
+
+
+		//send email
+		$my_file = $ApplicationID.'.pdf';
+		$file_path = "pdfdocs/sbps/";
+		$my_name ='TRA'; //$CountyName;
+		$toEmail ='jimkinyua25@gmail.com';// $Email;
+		$fromEmail ='passdevelopment00@gmail.com';// $CountyEmail;
+		$my_subject = "Service Application Invoice";
+		$my_message="Kindly yureceive the invoice for your applied Service";
+		//$my_mail = 'cngeno11@gmail.com';
+		$result=php_mailer($toEmail,$fromEmail,
+		$CountyName,$my_subject,$my_message,$my_file,$file_path,"Permit");
+	 	return $result;
+
+		
+		
+	}
 
 
 ?>

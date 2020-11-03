@@ -169,9 +169,13 @@ while ($i<=$rows)
 								$PageID=2;
 								$myRights=getrights($db,$UserID,$PageID);						
 								if ($myRights['View']==1){  ?>
+							<button class="fluent-big-button" onClick="loadmypage('invoices_list.php?i=1','content','loader','listpages','','invoices-a','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" style="width:80px">
+                            	<span class="icon-libreoffice fg-darkBlue"></span>
+                                <span class="button-label fg-darkBlue">Licence Application Invoices</span>
+                            </button>
                          	<button class="fluent-big-button" onClick="loadmypage('invoices_list.php?i=1','content','loader','listpages','','invoices-a','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" style="width:80px">
                             	<span class="icon-libreoffice fg-darkBlue"></span>
-                                <span class="button-label fg-darkBlue">Citizen Invoices</span>
+                                <span class="button-label fg-darkBlue">Licence Renewal Invoices</span>
                             </button>
                        <?php }
 

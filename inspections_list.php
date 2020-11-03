@@ -43,6 +43,7 @@ if($_REQUEST['addinspection']==1){
 
 if($_REQUEST['submit']==1){
 	//
+	// EXIT('74');
 	$InspectionID=$_REQUEST['InspectionID'];
 	$Status=$_REQUEST['Status'];
 	$Comment=$_REQUEST['Comment'];
@@ -55,32 +56,49 @@ if($_REQUEST['submit']==1){
 	$result=sqlsrv_query($db,$sql);
 	if($rw=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC)){
 		$ApplicationID=$rw['ServiceHeaderID'];
+		// $ServiceID=$rw['ServiceID'];
+
 	}
-	// exit($ApplicationID);
-	// date('Y-m-d H:i:s')
-	$TodayDate = date("Y-m-d H:i:s");
-	$date = 31; $month =12; $year = date("Y"); //Licences Expire on 31ST Dec EveryYear
-	$ExpiryDate="$date.$month.$year";
-    $local=new datetime($ExpiryDate);
-	$sqlExpiryDate = $local->format('Y-m-d H:i:s');
-	$LicenceNumber ='KTLL/2020/TEST'.rand(87, 600);
-	$ChangeStatussql="Update ServiceHeader set ServiceStatusID=4, PermitNo='$LicenceNumber', IssuedDate='$TodayDate', ExpiryDate='$sqlExpiryDate' where ServiceHeaderID='$ApplicationID'";
+
+	//Begin Transaction
+	if(sqlsrv_begin_transaction($db)===false)
+	{
+		$msg=sqlsrv_errors();
+		$Sawa=false;
+	}
+
+	//Change Status to Approved But Waiting for Payment.
+	// Generate the Invoice Though
+
+	$ChangeStatussql="Update ServiceHeader set ServiceStatusID=3,
+	 PermitNo='$LicenceNumber', IssuedDate='$TodayDate', 
+	 ExpiryDate='$sqlExpiryDate'
+	  where ServiceHeaderID='$ApplicationID'";
 	// echo '<pre>';
 	// print_r($ChangeStatussql);
 	// exit;
-	$result=sqlsrv_query($db,$ChangeStatussql);
+	$ChangeStatusResult=sqlsrv_query($db,$ChangeStatussql);
 
 	
 
-	if($result){
-		GenerateInvoice($db,$ApplicationID,$UserID);
-	}else{
+	if($ChangeStatusResult){
+		GenerateLicenceApplicationInvoice($db,$ApplicationID,$UserID);
+	}
+	else{
+	
+		sqlsrv_rollback($db);
+		$Sawa=false;
 		DisplayErrors();
-		$msg="Failed to Issue Licence, contact the technical teamss";
+		$msg="Failed to Generate Invoice, contact the technical team";
 
 	}
 
-	
+	//Begin Transaction
+	if(sqlsrv_begin_transaction($db)===false)
+	{
+		$msg=sqlsrv_errors();
+		$Sawa=false;
+	}
 
 	$sql="Update Inspections Set InspectionStatusID=$Status,UserComment='$Comment' where InspectionID='$InspectionID'";
 	$result=sqlsrv_query($db,$sql);
@@ -92,14 +110,63 @@ if($_REQUEST['submit']==1){
 			$msg="Status Saved Successfully";
 		}else
 		{
+			sqlsrv_rollback($db);
 			DisplayErrors();
 			$msg="Failed to save Status, contact the technical teamss";
 		}
 
 	}else{
+		sqlsrv_rollback($db);
 		DisplayErrors();
 		$msg="Failed to save status, contact the technical team";
 	}
+}
+
+function IssueLicence($ApplicationId){
+	// $TodayDate = date("Y-m-d H:i:s");
+	// $date = 31; $month =12; $year = date("Y"); //Licences Expire on 31ST Dec EveryYear
+	// $ExpiryDate="$date.$month.$year";
+    // $local=new datetime($ExpiryDate);
+	// $sqlExpiryDate = $local->format('Y-m-d H:i:s');
+	// $Validity = date("Y");
+	// $LicenceNumber ='TRA/2020/'.rand(87, 600);
+	$ChangeStatussql="Update ServiceHeader set ServiceStatusID=3,
+	 PermitNo='$LicenceNumber', IssuedDate='$TodayDate', 
+	 ExpiryDate='$sqlExpiryDate'
+	  where ServiceHeaderID='$ApplicationID'";
+	// echo '<pre>';
+	// print_r($ChangeStatussql);
+	// exit;
+	// $result=sqlsrv_query($db,$ChangeStatussql);
+
+	// $InsertIntoPermitSQL="INSERT into Permits(PermitNo,
+	// 	ServiceHeaderID,
+	// 	Validity,
+	// 	ExpiryDate,
+	// 	CreatedBy,
+	// 	Printed) 
+	// 	values('$LicenceNumber',
+	// 		$ApplicationID,
+	// 		'$validity',
+	// 		'$sqlExpiryDate',
+	// 		'$UserID',
+	// 		1
+	// )";
+	
+	// $InsertIntoPermitResult = sqlsrv_query($db, $InsertIntoPermitSQL);
+
+	// if($InsertIntoPermitResult && $result ){
+		GenerateLicenceApplicationInvoice($db,$ApplicationID,$UserID);
+
+	// }
+	// else{
+	
+		// sqlsrv_rollback($db);
+		// $Sawa=false;
+		// DisplayErrors();
+		// $msg="Failed to Issue Licence, contact the technical team";
+
+	// }
 }
 
 

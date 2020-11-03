@@ -1,15 +1,21 @@
 <?php	
 //require_once('config.php');
+$SharepointUrl = 'http://172.16.100.227:80';
+$SharepintUsername ='.\Administrator';
+$SharepointPassword ='Admin@support12018';
 
 $myServer = "TRA-EDMS\SQLTRA";
 $myUser = "sa";
 $myPass = 'portalman';
 $myDB = "TRANEW";
 
+
 $params = array();
 $options =  array( "Scrollable" => SQLSRV_CURSOR_KEYSET );
 
-$connectionInfo = array("UID" => $myUser, "PWD" => $myPass, "Database"=> $myDB, "ReturnDatesAsStrings" => true,"CharacterSet" => "UTF-8");
+$connectionInfo = array("UID" => $myUser, "PWD" => $myPass,
+ "Database"=> $myDB, "ReturnDatesAsStrings" => true,
+ "CharacterSet" => "UTF-8");
 //$db = mssql_connect($myServer, $myUser, $myPass) or die("Couldn't connect to SQL Server on $myServer");
 $db = sqlsrv_connect( $myServer, $connectionInfo);
 if ($db)

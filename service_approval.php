@@ -3,6 +3,8 @@ require 'DB_PARAMS/connect.php';
 require_once('utilities.php');
 require_once('GlobalFunctions.php');
 require_once('county_details.php');
+// require_once('phpSPO-master/vendor/autoload.php');
+require_once('phpSPO/src/autoloader.php');
 
 if (!isset($_SESSION))
 {
@@ -257,20 +259,37 @@ if ($ServiceHeaderTypeID==1)
 	}	
 }else
 {
-	$ApplicationChargesSQL="select sum(sc.Amount) Amount 
-	from ApplicationCharges sc 
-	join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
-	join Services s1 on sc.ServiceID=s1.ServiceID 
-	where sh.ServiceHeaderID=$ServiceHeaderID";
+		//Get the ServiceId 
+		$GetServiceIDSQL = "select ServiceID
+		from ServiceHeader  WHERE ServiceHeaderId = $ServiceHeaderID";
+		// exit($GetServiceIDSQL);
 
-	$result=sqlsrv_query($db,$ApplicationChargesSQL);
-	while($row=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC))
-	{
-		$ApplicationCharge=$row['Amount'];
-	}
-	// echo $ApplicationChargesSQL; exit;
+		$GetServiceIDSQLresult = sqlsrv_query($db, $GetServiceIDSQL);
 
-	$ServiceCost = $ApplicationCharge;
+		while ($row = sqlsrv_fetch_array( $GetServiceIDSQLresult, SQLSRV_FETCH_ASSOC))
+		{							
+			$ServiceID=$row["ServiceID"];												
+		}
+			//Get Service Charges Using the SeriviceId
+			$GetServiceChargeSQL="select s.ServiceID,s.ServiceName, Amount 
+					from ServiceCharges sc
+					join services s on sc.ServiceID=s.serviceid                                 
+					join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID                                      
+					and fy.isCurrentYear=1
+					and sc.serviceid=$ServiceID";
+			// exit($GetServiceChargeSQL);
+			$GetServiceChargeSQLResult = sqlsrv_query($db, $GetServiceChargeSQL);
+
+			if(sqlsrv_has_rows($GetServiceChargeSQLResult)){
+				while ($row7= sqlsrv_fetch_array( $GetServiceChargeSQLResult, SQLSRV_FETCH_ASSOC))
+				{									
+					$ServiceAmount=$row7["Amount"];
+				}
+			}
+
+
+
+	$ServiceCost = $ServiceAmount;
 		// //get the subsystem
 		// $sql="select fn.Value, ss.SubSystemName from fnFormData($ServiceHeaderID) fn 
 		// 		join SubSystems ss on fn.Value=ss.SubSystemID
@@ -689,16 +708,13 @@ if (isset($_REQUEST['InspectionDate']))
 						  <input name="servicename" type="text" id="servicename" value="Add Inspection Officer" disabled="disabled" placeholder="">
 						  
 					  </div>				  
-<<<<<<< HEAD
                   </td> -->
                   <!-- <td width="50%"> -->
 				<!-- <label>&nbsp;</label>				   -->
-=======
                   </td>
                   <td width="50%">
 
 				<label>&nbsp;</label>				  
->>>>>>> 790f831ceb22fdbe0cde6678d4e9a6f65ab773e8
 					<!--service_approval.php?ApplicationID='+app_id+'&app_type='+app_type+'&CurrentStatus='+current_status
 					<input name="Button" type="button" onclick="loadmypage('service_form.php?save=1&ApplicationID=<?php echo $ApplicationID ?>','content','loader','','')" value="Change">-->
 					<!-- <input name="Button" type="button" 
@@ -1200,6 +1216,7 @@ if (isset($_REQUEST['InspectionDate']))
  $numrows = 0;
  
 $r_sql = "Select COUNT(UserID) AS TotalRows FROM Inspections where ServiceHeaderID ='$ApplicationID'";
+// exit($r_sql);
 
 $result = sqlsrv_query($db, $r_sql);
 if ($myrow = sqlsrv_fetch_array( $result, SQLSRV_FETCH_ASSOC)) 
@@ -1217,10 +1234,6 @@ if ($myrow = sqlsrv_fetch_array( $dresult, SQLSRV_FETCH_ASSOC))
 	$ServiceType = $myrow['ServiceCategoryID'];
 }
 
-$to = 'emmanuelomonso@gmail.com';
-$subject = 'this is a test email';
-$txt = 'this is a test email';
-send_email_users();
 
           ?>
 
@@ -1247,7 +1260,7 @@ send_email_users();
 		  "value="Approve">
 
 		  <?php
-		}elseif($ServiceType != 2033 && $numrows != 0 && (!empty($SetDate1))){
+			}elseif($ServiceType != 2033 && $numrows != 0 && (!empty($SetDate1))){
 		  	?>
 			   
 		  	<input type="reset" value="Cancel" onClick="loadmypage('clients_list.php?i=1','content','loader','listpages','','applications','<?php echo $_SESSION['RoleCenter'] ?>')">
