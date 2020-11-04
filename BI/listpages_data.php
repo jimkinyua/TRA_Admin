@@ -181,6 +181,41 @@ else if ($OptionValue == 'services')
 					);
 	}
 }
+//
+else if($OptionValue=='applicationinvoices-a')
+{
+	$sql = "set dateformat dmy select distinct sh.ServiceHeaderID,ih.InvoiceHeaderID, ih.CustomerID,ih.InvoiceDate [INV DATE],c.CustomerName,s.ServiceName +'('+il.[Description]+')' 		ServiceName,ih.Paid,sum(il.Amount) Amount
+			from InvoiceHeader ih
+			inner join InvoiceLines il on il.InvoiceHeaderID=ih.InvoiceHeaderID
+			inner join ServiceHeader sh on il.ServiceHeaderID=sh.ServiceHeaderID
+			inner join Customer c on sh.CustomerID=c.CustomerID	
+			inner join Services s on sh.ServiceID=s.ServiceID 
+			where il.InvoiceLineID not in (select InvoiceLineID from ConsolidateInvoice) and sh.serviceStatusID>4 
+			group by sh.ServiceHeaderID, ih.CustomerID,ih.InvoiceDate,c.CustomerName,s.ServiceName,ih.Paid,ih.InvoiceHeaderID,sh.ServiceHeaderID,il.[Description]";
+	$result = sqlsrv_query($db, $sql);	
+	while ($row = sqlsrv_fetch_array( $result, SQLSRV_FETCH_ASSOC)) 
+	{			
+		extract($row);
+		
+		$CustomerName =  '<a href="#" onClick="loadmypage(\'invoice_lines.php?ApplicationID='.$ServiceHeaderID.'&ServiceName='.$ServiceName.'\',\'content\',\'loader\',\'listpages\',\'\',\'invoices_lines\','.$ServiceHeaderID.')">'.$CustomerName.'</a>';	
+		$ViewBtn  = '<a href="view_pdf.php?report='.$InvoiceHeaderID.'&type=invoice" target="_blank">View</a>';
+		$ResetBtn   = '<a href="#" onClick="deleteConfirm2(\'Are you sure you want Reset?\',\'invoices_list.php?reset=1&ApplicationID='.$ServiceHeaderID.'\',\'content\',\'loader\',\'listpages\',\'\',\''.$OptionValue.'\')">Reset</a>';
+		
+		$actions='['.$ViewBtn.'|'.$ResetBtn.']';
+		
+		$Date 	= date('d/m/Y',strtotime($CreatedDate));
+		$channel[] = array(
+					$InvoiceHeaderID,
+					$ServiceHeaderID,
+					$CustomerName,
+					$ServiceName,
+					$Amount,
+					$Paid,
+					$actions
+		);
+	}  	
+}
+
 else if($OptionValue=='invoices-a')
 {
 	$sql = "set dateformat dmy select distinct sh.ServiceHeaderID,ih.InvoiceHeaderID, ih.CustomerID,ih.InvoiceDate [INV DATE],c.CustomerName,s.ServiceName +'('+il.[Description]+')' 		ServiceName,ih.Paid,sum(il.Amount) Amount
@@ -214,6 +249,7 @@ else if($OptionValue=='invoices-a')
 		);
 	}  	
 }
+
 else if($OptionValue=='invoices_lines')
 {
 	$sql = "select s.ServiceID,s.ServiceName,il.Amount 

@@ -79,8 +79,6 @@ if($_REQUEST['submit']==1){
 	// exit;
 	$ChangeStatusResult=sqlsrv_query($db,$ChangeStatussql);
 
-	
-
 	if($ChangeStatusResult){
 		GenerateLicenceApplicationInvoice($db,$ApplicationID,$UserID);
 	}

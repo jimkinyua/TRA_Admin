@@ -4564,7 +4564,7 @@ function createPermit($db, $ApplicationID)
 		$Town='';
 		$Email='amail';*/
 		
-		$rsql="select sh.CustomerID,c.CustomerName,c.PostalAddress,c.PhysicalAddress,c.PostalCode,sh.ServiceID,s.ServiceName,s.ServiceCode, il.ServiceHeaderID,il.ServiceHeaderID,il.Amount,ih.InvoiceHeaderID,c.Email,fd.Value BDescription  
+		$rsql="select sh.CustomerID,c.CustomerName,c.Email, c.PostalAddress,c.PhysicalAddress,c.PostalCode,sh.ServiceID,s.ServiceName,s.ServiceCode, il.ServiceHeaderID,il.ServiceHeaderID,il.Amount,ih.InvoiceHeaderID,c.Email,fd.Value BDescription  
 			from invoiceLines il 
 			inner join InvoiceHeader ih on il.InvoiceHeaderID=ih.InvoiceHeaderID 
 			inner join ServiceHeader sh on	il.ServiceHeaderID=sh.ServiceHeaderID 
@@ -4589,6 +4589,7 @@ function createPermit($db, $ApplicationID)
 				$PostalTown=$rrow['Town'];
 				$PostalCode=$rrow['PostalCode'];
 				$PhysicalAddress=$rrow['PhysicalAddress'];
+				$CustomerEmail = $rrow['Email'];
 			}		
 		
 
@@ -4599,9 +4600,9 @@ function createPermit($db, $ApplicationID)
 		$mpdf->useOnlyCoreFonts = true;    // false is default
 		$mpdf->debugfonts = true; 
 		$mpdf->SetProtection(array('print'));
-		// $mpdf->SetTitle($CountyName."- Invoice");
-		// $mpdf->SetAuthor($CountyName);
-		$mpdf->SetWatermarkText("TRA Jim Test");
+		$mpdf->SetTitle('Title Goes Here');
+		$mpdf->SetAuthor('Author Goes Here');
+		$mpdf->SetWatermarkText("Tourisim Regulatory Authority");
 		$mpdf->showWatermarkText = true;
 		$mpdf->watermark_font = 'DejaVuSansCondensed';
 		$mpdf->watermarkTextAlpha = 0.1;
@@ -4726,10 +4727,10 @@ function createPermit($db, $ApplicationID)
 		$my_file = $ApplicationID.'.pdf';
 		$file_path = "pdfdocs/sbps/";
 		$my_name ='TRA'; //$CountyName;
-		$toEmail ='jimkinyua25@gmail.com';// $Email;
+		$toEmail =$CustomerEmail; //'jimkinyua25@gmail.com';// $Email;
 		$fromEmail ='passdevelopment00@gmail.com';// $CountyEmail;
-		$my_subject = "Service Application Invoice";
-		$my_message="Kindly yureceive the invoice for your applied Service";
+		$my_subject = "TRA Licence";
+		$my_message="Kindly your receive the Licence for your applied Service";
 		//$my_mail = 'cngeno11@gmail.com';
 		$result=php_mailer($toEmail,$fromEmail,
 		$CountyName,$my_subject,$my_message,$my_file,$file_path,"Permit");
