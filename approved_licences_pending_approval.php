@@ -495,20 +495,20 @@ if (isset($_REQUEST['save']) && $_REQUEST['NextStatus']!='')
 							<tr>
 								<td width="20%"><label>From Date </label>
 										<div class="input-control text datepicker" data-role="input-control">						
-											<input type="text" id="fromDate" name="fromDate" value="<?php echo $fromDate ?>"></input>	
+											<!-- <input type="text" id="fromDate" name="fromDate" value=""></input>	 -->
 											<button class="btn-date" type="button"></button>			
 										</div>
 								</td>
 								<td width="20%"><label>To Date </label>
 									<div class="input-control text datepicker" data-role="input-control">						
-										<input type="text" id="toDate" name="toDate" value="<?php echo $toDate ?>"></input>	
+										<input type="text" id="toDate" name="toDate" value=""></input>	
 										<button class="btn-date" type="button"></button>			
 									</div>
 								</td>
 								<td width="20%"><label>Application No</label>
-									<div class="input-control text" data-role="input-control">						
-										<input type="text" id="ServiceHeaderID" name="ServiceHeaderID" value="<?php echo $ServiceHeaderID ?>"></input>									
-									</div>
+									<!-- <div class="input-control text" data-role="input-control">						
+										<input type="text" id="ServiceHeaderID" name="ServiceHeaderID" value=""></input>									
+									</div> -->
 								</td>								
 								<td><label>&nbsp;</label>
 								<input name="btnSearch" type="button" onclick="loadmypage('clients_list.php?'+

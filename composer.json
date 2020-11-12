@@ -1,3 +1,6 @@
 {
-	"phpmailer/phpmailer": "~6.0"
+	"phpmailer/phpmailer": "~6.0",
+	"require": {
+		"vgrem/php-spo": "^2.4"
+	}
 }

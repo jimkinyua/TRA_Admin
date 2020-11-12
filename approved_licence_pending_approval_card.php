@@ -98,7 +98,7 @@ if($today>$FirstDec){
         $NextStatus= $_REQUEST['NextStatus'];
         $Notes=empty($_REQUEST['Notes'])?$_REQUEST['Notes']:'tEST';
         $NextStatusID=$NextStatus;
-        $InvoiceNo=$_REQUEST['InvoiceNo'];
+        // $InvoiceNo=$_REQUEST['InvoiceNo'];
         
         if($NextStatus == 5){ //Reject
             /* Begin the transaction. */
@@ -128,7 +128,7 @@ if($today>$FirstDec){
 
             }
         }else{ //Give Them A Damn Licence
-
+            IssueLicence($db, $ApplicationID);
         }
     }
 
@@ -169,33 +169,33 @@ if($today>$FirstDec){
 			$ServiceName=$row['ServiceName'];
 			$CurrentStatus=$row['ServiceStatusID'];
 			$ServiceCategoryID=$row['ServiceCategoryID'];
-			$RegNo=$row['RegistrationNumber'];
+			// $RegNo=$row['RegistrationNumber'];
 			$PostalAddress=$row['PostalAddress'];
 			$PostalCode=$row['PostalCode'];
 			$ServiceHeaderTypeID=$row['ServiceHeaderType'];
 			$ServiceHeaderID=$row['ServiceHeaderID'];
 			$Pin=$row['PIN'];
-			$Vat=$row['VATNumber'];
+			// $Vat=$row['VATNumber'];
 			$Town=$row['Town'];
-			$Country=$row['CountyID'];
+			// $Country=$row['CountyID'];
 			$Telephone1=$row['Telephone1'];
 			$Mobile1=$row['Mobile1'];
 			$Telephone2=$row['Telephone2'];
 			$Mobile2=$row['Mobile2'];
 			$Mobile1=$row['Mobile1'];
-			$url=$row['Url'];
+			// $url=$row['Url'];
 			$Email=$row['Email'];
-			$SubCountyName=$row['SubCountyName'];
+			// $SubCountyName=$row['SubCountyName'];
 			$WardName=$row['WardName'];
 			$BusinessZone=$row['ZoneName'];
 			$SubSystemID=$row['SubSystemID'];
 			$ApplicationDate=$row['CreatedDate'];//date('d/m/Y',strtotime($date));
 			$ApplicationDate=date('d/m/Y',strtotime($ApplicationDate));
-			$LicenceNumber = $row['LicenceNo'];
-			$SubmisionDate = $row['SubmissionDate'];
-			$LicenceIssueDate = $row['IssueDate'];
-			$LicenceExpiryDate =$row['ExpiryDate'];
-			$ServiceFee = $row['RenewalFee'];
+			// $LicenceNumber = $row['LicenceNo'];
+			// $SubmisionDate = $row['SubmissionDate'];
+			// $LicenceIssueDate = $row['IssueDate'];
+			// $LicenceExpiryDate =$row['ExpiryDate'];
+			// $ServiceFee = $row['RenewalFee'];
 			$ServiceHeaderID = $row['ServiceHeaderID'];
 			
 		}
@@ -271,11 +271,11 @@ function getServiceCost($db,$ServiceID,$SubSystemID,$ServiceHeaderID){
 
 		//penalty
 		//echo 'The Business is '.$BusinessIsOld;
-		if(strtotime($ApplicationDate)>strtotime($DateLine) and $BusinessIsOld==1)
-			$penalty=.50*(double)$ServiceCost;
-		else{
-			$penalty=0;
-		}
+		// if(strtotime($ApplicationDate)>strtotime($DateLine) and $BusinessIsOld==1)
+		// 	$penalty=.50*(double)$ServiceCost;
+		// else{
+		// 	$penalty=0;
+		// }
 		//echo $ServiceCost;
 		 /* echo $ServiceCost.'<BR>';
 		echo $penalty;  */
@@ -317,8 +317,66 @@ function getServiceCost($db,$ServiceID,$SubSystemID,$ServiceHeaderID){
 	    }
 	//echo $sql;
 	//echo '<BR>'.$OtherCharge.'<BR>';
-		$ServiceCost=$ServiceCost+$OtherCharge+$penalty+$ApplicationCharge+$ConservancyCost;
+		$ServiceCost=$ServiceCost+$OtherCharge+$ApplicationCharge;
 		return $ServiceCost;
+	}
+}
+
+function IssueLicence($db,$ApplicationID){
+     /* Begin the transaction. */
+     if ( sqlsrv_begin_transaction( $db ) === false ) {
+        die( print_r( sqlsrv_errors(), true ));
+    }
+	$TodayDate = date("Y-m-d H:i:s");
+	$date = 31; $month =12; $year = date("Y"); //Licences Expire on 31ST Dec EveryYear
+	$ExpiryDate="$date.$month.$year";
+    $local=new datetime($ExpiryDate);
+	$sqlExpiryDate = $local->format('Y-m-d H:i:s');
+	$Validity = date("Y");
+    $LicenceNumber ='TRA/2020/'.rand(87, 600);
+    
+
+	$ChangeStatusSQL="Update ServiceHeader set ServiceStatusID=4,
+	 PermitNo='$LicenceNumber', IssuedDate='$TodayDate', 
+	 ExpiryDate='$sqlExpiryDate'
+	  where ServiceHeaderID=$ApplicationID";
+	// echo '<pre>';
+	// print_r($ChangeStatusSQL);
+    // exit;
+    
+	$ChangeStatusResult=sqlsrv_query($db,$ChangeStatusSQL);
+
+	$InsertIntoPermitSQL="INSERT into Permits(PermitNo,
+		ServiceHeaderID,
+		Validity,
+		ExpiryDate,
+		CreatedBy,
+		Printed) 
+		values('$LicenceNumber',
+			    $ApplicationID,
+			    '$Validity',
+			    '$sqlExpiryDate',
+			    1,
+			    1
+	    )";
+	
+	$InsertIntoPermitResult = sqlsrv_query($db, $InsertIntoPermitSQL);
+
+	if($InsertIntoPermitResult && $ChangeStatusResult ){
+        $msg="Licence";
+        sqlsrv_commit( $db );
+        //Upload Docs to SharePoint
+        // UploadDocsToSharePoint($db, $ApplicationID, 1);
+        createPermit($db, $ApplicationID);
+		// GenerateLicenceApplicationInvoice($db,$ApplicationID,$UserID);
+	}
+	else{
+	
+		sqlsrv_rollback($db);
+		$Sawa=false;
+		DisplayErrors();
+		$msg="Failed to Issue Licence, contact the technical team";
+
 	}
 }
 
@@ -565,7 +623,7 @@ if (isset($_REQUEST['InspectionDate']))
                   <td width="50%">
                   <label>Region</label>
 					  <div class="input-control text" data-role="input-control">
-						  <input name="SubSystem" type="text" id="SubSystem" value="<?php echo $SubSystemName; ?>" disabled="disabled" placeholder="">						  
+						  <input name="SubSystem" type="text" id="SubSystem" value="" disabled="disabled" placeholder="">						  
 					  </div>				  
                   </td>
                   <td width="50%">				  
@@ -621,7 +679,7 @@ if (isset($_REQUEST['InspectionDate']))
 				   <!-- <td width="50%">
 						<label>Service Cost (Ksh.)</label>
 						  <div class="input-control text" data-role="input-control">
-							  <input name="servicecost" type="text" id="servicecost" value="<?php echo $ServiceFee; ?>" disabled="disabled" placeholder="">
+							  <input name="servicecost" type="text" id="servicecost" value="" disabled="disabled" placeholder="">
 							  
 						  </div>                  	
                   </td> -->
@@ -1051,7 +1109,7 @@ if (isset($_REQUEST['InspectionDate']))
                                                         $TotalInvoiceAMount = 0;
                                                         while($row=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC))
                                                         {	
-                                                            $AmountReceivedSoFar += $row['Amount'];	
+                                                            @$AmountReceivedSoFar += $row['Amount'];	
                                                             $TotalInvoiceAMount = $row['InvoiceAmount'];								
 							
                                                             echo 
@@ -1129,7 +1187,7 @@ if (isset($_REQUEST['InspectionDate']))
 							  $s_id = $row["Id"];
                                     
 						   ?>
-						  <option value="<?php echo $s_id; ?>" <?php echo $selected; ?>><?php echo $s_name; ?></option>
+						  <option value="<?php echo $s_id; ?>" ><?php echo $s_name; ?></option>
 						<?php 
 						  }
 						}
@@ -1179,7 +1237,7 @@ if ($myrow = sqlsrv_fetch_array( $dresult, SQLSRV_FETCH_ASSOC))
 		  <input name="Button" type="button" onClick="
 		    CurrStatus=this.form.CurrentStatus.value;
 
-		  	loadpage('approved_licence_pending_approval_card.php?save=1&ApplicationID=<?php echo $ApplicationID ?>&CustomerName=<?php echo $CustomerName ?>&CustomerID=<?php echo $CustomerID ?>&ServiceID=<?php echo $ServiceID ?>&RenewalFee=<?php echo $ServiceFee ?>&ServiceHeaderID=<?php echo $ServiceHeaderID ?>&ServiceName=<?php echo $ServiceName ?>&CurrentStatus=<?php echo $CurrentStatus ?>&NextStatus='+this.form.NextStatus.value+'&Notes='+this.form.Notes.value+'&ServiceCategoryID=<?php echo $ServiceCategoryID ?>','content')
+		  	loadpage('approved_licence_pending_approval_card.php?save=1&ApplicationID=<?php echo $ApplicationID ?>&CustomerName=<?php echo $CustomerName ?>&CustomerID=<?php echo $CustomerID ?>&ServiceID=<?php echo $ServiceID ?>&RenewalFee=<?php echo 1 ?>&ServiceHeaderID=<?php echo $ServiceHeaderID ?>&ServiceName=<?php echo $ServiceName ?>&CurrentStatus=<?php echo $CurrentStatus ?>&NextStatus='+this.form.NextStatus.value+'&Notes='+this.form.Notes.value+'&ServiceCategoryID=<?php echo $ServiceCategoryID ?>','content')
 		  
 
 		    " value="Submit ">
@@ -1193,7 +1251,7 @@ if ($myrow = sqlsrv_fetch_array( $dresult, SQLSRV_FETCH_ASSOC))
 
           <span class="table_text">
           <input name="ApplicationID" type="hidden" id="ApplicationID" value="<?php echo $ApplicationID;?>" />
-  <input name="edit" type="hidden" id="edit" value="<?php echo $edit;?>" />
+            <input name="edit" type="hidden" id="edit" value="" />
   <input name="edit" type="hidden" id="CurrentStatus" value="<?php echo $CurrentStatus;?>" />
                   </span>
           <div style="margin-top: 20px">

@@ -203,7 +203,7 @@ function loadTable2(op,ID,_opv)
 function loadTable(op,ID,_opv)
 {	
 	// alert(op);
-	// alert(_opv);
+	alert(_opv);
 	$(function()
 	{
 		$('#dataTables-1').dataTable( 

@@ -1,8 +1,6 @@
 <?php	
 //require_once('config.php');
-$SharepointUrl = 'http://172.16.100.227:80';
-$SharepintUsername ='.\Administrator';
-$SharepointPassword ='Admin@support12018';
+
 
 $myServer = "TRA-EDMS\SQLTRA";
 $myUser = "sa";

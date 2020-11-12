@@ -3,21 +3,33 @@
 	require_once('utilities.php');
 	require_once('county_details.php');
 	require_once('smsgateway.php');
+	require_once('SharePoint.php');
 
- 	require("/PHPMailer/src/PHPMailer.php");
-    require("/PHPMailer/src/SMTP.php");
-    require("/PHPMailer/src/Exception.php");
+
+	require("PHPMailer/src/PHPMailer.php");
+    require("PHPMailer/src/SMTP.php");
+    require("PHPMailer/src/Exception.php");
 
 	//require_once("dompdf/dompdf_config.inc.php");
-	require_once("mPDF/mpdf.php");
-	require_once('phpSPO/src/autoloader.php');
+	// require_once("mPDF/mpdf.php");
+	// require_once('phpSPO/src/autoloader.php');
+	require_once('vendor/autoload.php');
+	// require_once('PHP-SharePoint-Lists-API-develop/SharePointAPI.php');
+	
+	// use Thybag\SharePointAPI;
 	use Office365\PHP\Client\Runtime\Auth\NetworkCredentialContext;
+	use Office365\PHP\Client\Runtime\Utilities\UserCredentials;
+	// use Office365\SharePoint\ClientContext;
+	use Office365\Runtime\Auth\ClientCredential;
 	use Office365\PHP\Client\SharePoint\ClientContext;
 	use Office365\PHP\Client\Runtime\Auth\AuthenticationContext;
 	use Office365\PHP\Client\Runtime\Utilities\RequestOptions;
 	use Office365\PHP\Client\SharePoint\ListCreationInformation;
 	use Office365\PHP\Client\SharePoint\SPList;
 	use Office365\PHP\Client\SharePoint\Web;
+	use Office365\PHP\Client\SharePoint\AttachmentCreationInformation;
+	// use Office365\PHP\Client\Runtime\Auth\AuthenticationContext;
+
 
 
 	$msg="";
@@ -4384,51 +4396,204 @@ function GenerateLicenceApplicationInvoice($db,$ServiceHeaderID,$UserID)
 }
 
 function UploadDocsToSharePoint($db, $ServiceHeaderID, $UserId){
-	InitiliaseSharepoint();
-	//Get Name of Service
-	$GetServiceNameSQL="Select ServiceName from Services where ServiceID=$ServiceID";
-	$GetServiceNameResult=sqlsrv_query($db,$GetServiceNameSQL);
-	if($rw=sqlsrv_fetch_array($GetServiceNameResult,SQLSRV_FETCH_ASSOC)){
+	// InitiliaseSharepoint();
+	// exit('Hapa');
+
+	$SharepointUrl = 'http://tra-edms/home/';//'http://tra-edms/home/Classification%20and%20Grading/Forms/AllItems.aspx';
+	$SharepointUsername ='TRA-EDMS\Administrator';
+	$SharepointPassword ='Admin@support12018';
+
+
+	try{
+	
+		$authCtx = new NetworkCredentialContext($SharepointUsername, $SharepointPassword);
+		$authCtx->AuthType = CURLAUTH_NTLM; //NTML Auth schema
+		$VerifiedContext = new ClientContext($SharepointUrl, $authCtx);
+		$site = $VerifiedContext->getSite();
+		$VerifiedContext->load($site); //load site settings
+        $VerifiedContext->executeQuery();
+		// $VerifiedContext->executeQuery();
+		// echo 'Logged In Succesfully';
+
+	}
+	catch (Exception $e) {
+        print 'SharePoint Authentication failed Because : ' .  $e->getMessage(). "\n";
+	}
+		// exit;
+		// $web = $VerifiedContext->getWeb();
+		// $lists = $web->getLists(); //init List resource
+		// // $items = $list->getItems();  //prepare a query to retrieve from the 
+		// $VerifiedContext->load($lists);  //save a query to retrieve list items from the server 
+		// $VerifiedContext->executeQuery(); //submit query to SharePoint Online REST service
+		// /** @var ListItem $item */
+		// foreach($lists->getData() as $list) {
+		// 	print "List title: '{$list->Title}'\r\n";
+		// }
+		// exit;
+		try{
+			$TestPath = "C:/Users/Administrator/Downloads/New folder/A Sample PDF.pdf";
+			$DocumentMetadata = array(
+				'Name' => 'SampleName',
+				'DocumentName' => 'DocumentName',
+				'DocumentCategoryName' => 'FileName',
+				'DocumentTypeName' => 'FileName'  
+			);
+			$targetFolderUrl ='Fleet4';// \Yii::$app->params['BenefitsFolderUrl'];
+			$list = ensureList($VerifiedContext->getWeb(), $targetFolderUrl, \Office365\PHP\Client\SharePoint\ListTemplateType::DocumentLibrary);
+			$UploadContext = $list->getContext();
+
+			$fileName = basename($TestPath); //The Uploaded Document Name
+			
+			$fileCreationInformation = new \Office365\PHP\Client\SharePoint\FileCreationInformation();
+			$fileCreationInformation->Content = file_get_contents($TestPath);
+			// echo '<pre>';
+			// print_r(file_get_contents($TestPath));
+			// exit;
+
+			$fileCreationInformation->Url = $fileName;
+
+			$uploadFile = $list->getRootFolder()->getFiles()->add($fileCreationInformation);
+		
+			$UploadContext->executeQuery(); //Upload Document
+			print "File {$uploadFile->getProperty('Name')} has been uploaded\r\n";
+			
+			$uploadFile->getListItemAllFields()->setProperty('Description',basename($TestPath));
+
+		}
+		
+		catch (Exception $e) {
+			print 'SharePoint Upload failed Because : ' .  $e->getMessage(). "\n";
+		}
+exit;
+
+	
+
+	//Get Details of Appliation
+	$GetApplicationDetailSQL="Select Services.ServiceName,
+	ServiceHeader.ServiceID,
+	ServiceGroup.ServiceGroupID,
+	ServiceGroup.ServiceGroupName,
+	ServiceCategory.CategoryName,
+	ServiceCategory.ServiceCategoryID,
+	ServiceHeader.CustomerID,
+	ServiceHeader.ServiceHeaderID as ApplicationNumber
+	from ServiceHeader
+	left join Services on Services.ServiceId  = ServiceHeader.ServiceID
+	left join ServiceCategory on ServiceCategory.ServiceCategoryID = Services.ServiceCategoryID
+	left join ServiceGroup on ServiceGroup.ServiceGroupID = ServiceCategory.ServiceGroupID
+	where ServiceHeader.ServiceHeaderID=$ServiceHeaderID";
+	$GetApplicationDetailResult=sqlsrv_query($db,$GetApplicationDetailSQL);
+	if($rw=sqlsrv_fetch_array($GetApplicationDetailResult,SQLSRV_FETCH_ASSOC)){
 		$ServiceName=$rw['ServiceName'];
+		$ServiceID=$rw['ServiceID'];
+		$ServiceClass=$rw['ServiceGroupName'];
+		$ServiceCategory=$rw['CategoryName'];
+		$CustomerID=$rw['CustomerID'];
+		$ApplicationNumber=$rw['ApplicationNumber'];
 	}
 
 			//Upload Docs to Sharepoint
 			
 	//Get Attached Docs to this Application If Any
-	$sql="select d.DocumentName,att.*
+	$GetAttachedDocsSQL="select d.DocumentName,att.*
 		from Attachments att
 		join Documents d on d.DocumentID=att.DocumentID
-		where att.ApplicationNo=2097";
+		where att.ApplicationNo=$ServiceHeaderID";
 
-	$s_result=sqlsrv_query($db,$sql);
+	$s_result=sqlsrv_query($db,$GetAttachedDocsSQL);
 	
+
+	$s = actionSend_to_sharepoint($TestPath,$DocumentMetadata, $VerifiedContext);
+	exit;
 	if ($s_result){
-		while($row=sqlsrv_fetch_array($s_result,SQLSRV_FETCH_ASSOC)){
+		while($myrow=sqlsrv_fetch_array($s_result,SQLSRV_FETCH_ASSOC)){
 			$DocumentID = $myrow['ID'];
 			$ApplicationNo = $myrow['ApplicationNo'];
 			$DocumentName = $myrow['DocumentName'];
 			$FileName = $myrow['AttachmentName'];
-			$FilePath = $row['FilePath'];
+			$FilePath = $myrow['FilePath'];
 
-			// Service Id will Influence the Library
-			//Ensure Folder Name Exists. If Not Create One
-			$list = ensureList($ctx->getWeb(),$ServiceName,
-						\Office365\PHP\Client\SharePoint\ListTemplateType::DocumentLibrary);
-
-
-			$TargetLibrary=$DocumentCategoryName;
-			$destination= $file_path;
+			$destination= $FilePath;
 			$DocumentMetadata=array();
 
+			$localFilePath = realpath ($FilePath);
+			// exit($localFilePath);
+
 			$DocumentMetadata = array(
-				'Name' => $Name,
+				'Name' => $DocumentID,
 				'DocumentName' => $DocumentName,
-				'DocumentCategoryName' => $DocumentCategoryName,
-				'DocumentTypeName' => $DocumentTypeName  
+				'DocumentCategoryName' => $FileName,
+				'DocumentTypeName' => $FileName  
 			);
+
+
+			// echo '<pre>';
+			// print_r($DocumentMetadata);
+			// exit;
 		}
 	}
 	
+
+}
+
+//SHAREPOINT UPLOAD
+function actionSend_to_sharepoint($filepath, $MetaData, $ctx)
+{  //read list
+	//$this->actionShrpnt_attach($target_file,$desc,$applicantno,$docno);
+	$localPath = $filepath;
+	try {
+	
+		
+		$targetFolderUrl ='Licensing';// \Yii::$app->params['BenefitsFolderUrl'];
+		$list = ensureList($ctx->getWeb(), $targetFolderUrl, \Office365\PHP\Client\SharePoint\ListTemplateType::DocumentLibrary);
+		// print_r($list);
+		// exit;
+		$UploadContext = $list->getContext();
+
+		$fileName = basename($localPath); //The Uploaded Document Name
+		// exit($fileName);
+		
+		$fileCreationInformation = new \Office365\PHP\Client\SharePoint\FileCreationInformation();
+		$fileCreationInformation->Content = file_get_contents($localPath);
+		// echo '<pre>';
+		// print_r(file_get_contents($localPath));
+		// exit;
+
+		$fileCreationInformation->Url = $fileName;
+
+		$uploadFile = $list->getRootFolder()->getFiles()->add($fileCreationInformation);
+		//->getFolderByServerRelativeUrl($targetFolderUrl)->getFiles()->add($fileCreationInformation);
+	
+		$UploadContext->executeQuery(); //Upload Document
+
+		ECHO 'Uploaded Succesfully!';
+		// return true;
+	
+
+
+	} 
+	
+	catch (Exception $e) {
+		print 'Upload Failed '. $e->getMessage() ;
+	}
+}
+
+
+
+function InitiliaseSharepoint(){
+	try{
+	
+		$authCtx = new NetworkCredentialContext($SharepointUsername, $SharepointPassword);
+		$authCtx->AuthType = CURLAUTH_NTLM; //NTML Auth schema
+		$ctx = new ClientContext($SharepointUrl, $authCtx);
+		$site = $ctx->getSite();
+		$ctx->load($site); //load site settings     
+		$ctx->executeQuery();
+
+	}
+	catch (Exception $e) {
+        print 'SharePoint Authentication failed Because : ' .  $e->getMessage(). "\n";
+	}
 
 }
 
@@ -4444,22 +4609,17 @@ function ensureList(Web $web, $listTitle, $type, $clearItems = true) {
 		}
 		return $existingList;
 	}
-	return ListExtensions::createList($web, $listTitle, $type);
+	return createList($web, $listTitle, $type);
 }
 
-function InitiliaseSharepoint(){
-	try{
-		$authCtx = new NetworkCredentialContext($username, $password);
-		$authCtx->AuthType = CURLAUTH_NTLM; //NTML Auth schema
-		$ctx = new ClientContext($Url, $authCtx);
-		$site = $ctx->getSite();
-		$ctx->load($site); //load site settings            
-		$ctx->executeQuery();
-	}
-	catch (Exception $e) {
-        print 'Authentication failed: ' .  $e->getMessage(). "\n";
-    }
-
+ function createList(Web $web, $listTitle, $type)
+{
+	$ctx = $web->getContext();
+	$info = new ListCreationInformation($listTitle);
+	$info->BaseTemplate = $type;
+	$list = $web->getLists()->add($info);
+	$ctx->executeQuery();
+	return $list;
 }
 
 function createPermit($db, $ApplicationID)
@@ -4621,7 +4781,7 @@ function createPermit($db, $ApplicationID)
 					</tr>
 					<tr>
 						<td align="Center" colspan="5">
-							<img src="images/CountyLogo_New.png" alt="County Logo">
+							<img src="images/logo.png" alt="TRA Logo">
 						</td>
 					</tr>					
 					<tr>
@@ -4727,7 +4887,7 @@ function createPermit($db, $ApplicationID)
 		$my_file = $ApplicationID.'.pdf';
 		$file_path = "pdfdocs/sbps/";
 		$my_name ='TRA'; //$CountyName;
-		$toEmail =$CustomerEmail; //'jimkinyua25@gmail.com';// $Email;
+		$toEmail = $CustomerEmail; //'jimkinyua25@gmail.com';// ;
 		$fromEmail ='passdevelopment00@gmail.com';// $CountyEmail;
 		$my_subject = "TRA Licence";
 		$my_message="Kindly your receive the Licence for your applied Service";
