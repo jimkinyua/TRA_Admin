@@ -55,13 +55,13 @@
 		include('BarCode/class/BCGcode39.barcode.php'); 
 
 		// Loading Font
-		$font =& new BCGFont('BarCode/class/font/Arial.ttf', 18);
+		$font = new BCGFont('BarCode/class/font/Arial.ttf', 18);
 
 		// The arguments are R, G, B for color.
-		$color_black =& new BCGColor(0, 0, 0);
-		$color_white =& new BCGColor(255, 255, 255); 
+		$color_black = new BCGColor(0, 0, 0);
+		$color_white =new BCGColor(255, 255, 255); 
 
-		$code =& new BCGcode39();
+		$code = new BCGcode39();
 		$code->setScale(2); // Resolution
 		$code->setThickness(30); // Thickness
 		$code->setForegroundColor($color_black); // Color of bars
@@ -73,7 +73,7 @@
 		/* Here is the list of the arguments
 		1 - Filename (empty : display on screen)
 		2 - Background color */
-		$drawing =& new BCGDrawing('Images/Bar_Codes/'.$No.'.png', $color_white);
+		$drawing = new BCGDrawing('Images/Bar_Codes/'.$No.'.png', $color_white);
 		$drawing->setBarcode($code);
 		$drawing->draw();
 
@@ -249,9 +249,7 @@
 		try 
 		{
 			
-<<<<<<< HEAD
 			$mail->SMTPDebug  = FALSE; 		
-=======
 
 			// $mail->SMTPDebug  = 2; 		
 			// $mail->defaultCredentials='true';
@@ -261,32 +259,26 @@
 			$mail->Mailer = "smtp";     // enable SMTP authentication
 
 			$mail->SMTPDebug  = false; 		
->>>>>>> master
 			$mail->defaultCredentials='true';
 			// enables SMTP debug information (for testing)
 				
 			$mail->SMTPAuth   = 2;
 			$mail->Mailer = "smtp";                  // enable SMTP authentication
-<<<<<<< HEAD
-=======
 
->>>>>>> master
 			$mail->isSMTP();
 			$mail->SMTPAutoTLS = false; 
 			$mail->Host = "smtp.gmail.com"; // sets the SMTP server	
 			$mail->SMTPSecure = 'ssl'; 
 			$mail->Port       = 465;                    // set the SMTP port for the GMAIL server				
-<<<<<<< HEAD
-<<<<<<< HEAD
+
 			$mail->Username = "omonsotest@gmail.com";
 			$mail->Password = "omonso001";	    
-=======
-=======
+
 			$mail->Username = "passdevelopment00@gmail.com";
 			$mail->Password = "cyvkhicsdngecuvf";	    
 			// $mail->Username = "omonsotest@gmail.com";
 			// $mail->Password = "omonso001";	    
->>>>>>> master
+
 
 			$mail->Username = "passdevelopment00@gmail.com";
 			$mail->Password = "cyvkhicsdngecuvf";	    
@@ -294,7 +286,6 @@
 			$mail->Username = "omonsotest@gmail.com";
 			$mail->Password = "omonso001";	    
 
->>>>>>> master
 			
 			
 			$mail->AddReplyTo($toEmail, $fromName);	
@@ -319,20 +310,13 @@
 				$feedback[1]=$item." sent Successfully to $toEmail";
 				return $feedback;
 				
-<<<<<<< HEAD
-<<<<<<< HEAD
-				//return "Mail Sent Successfully to $toEmail";
-=======
-=======
 				return "Mail Sent Successfully to $toEmail";
 				// return "Mail Sent Successfully to $toEmail";
->>>>>>> master
 
 				return "Mail Sent Successfully to $toEmail";
 
 				// return "Mail Sent Successfully to $toEmail";
 
->>>>>>> master
 			}else
 			{
 				$feedback[0]="false";
