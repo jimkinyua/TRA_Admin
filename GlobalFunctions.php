@@ -251,8 +251,6 @@
 		try 
 		{
 			
-<<<<<<< HEAD
-=======
 
 			// $mail->SMTPDebug  = 2; 		
 			// $mail->defaultCredentials='true';
@@ -261,28 +259,22 @@
 			$mail->SMTPAuth   = true;
 			$mail->Mailer = "smtp";     // enable SMTP authentication
 
->>>>>>> master
 			$mail->SMTPDebug  = false; 		
 			$mail->defaultCredentials='true';
 			// enables SMTP debug information (for testing)
 				
 			$mail->SMTPAuth   = true;
 			$mail->Mailer = "smtp";                  // enable SMTP authentication
-<<<<<<< HEAD
-=======
 
->>>>>>> master
 			$mail->isSMTP();
 			$mail->SMTPAutoTLS = true; 
 			$mail->Host = "smtp.gmail.com"; // sets the SMTP server	
 			$mail->SMTPSecure = 'ssl'; 
 			$mail->Port       = 465;                    // set the SMTP port for the GMAIL server				
-<<<<<<< HEAD
 			$mail->Username = "passdevelopment00@gmail.com";
 			$mail->Password = "cyvkhicsdngecuvf";	    
 			// $mail->Username = "omonsotest@gmail.com";
 			// $mail->Password = "omonso001";	    
-=======
 
 			$mail->Username = "passdevelopment00@gmail.com";
 			$mail->Password = "cyvkhicsdngecuvf";	    
@@ -290,7 +282,6 @@
 			$mail->Username = "omonsotest@gmail.com";
 			$mail->Password = "omonso001";	    
 
->>>>>>> master
 			
 			
 			$mail->AddReplyTo($toEmail, $fromName);	
@@ -315,16 +306,13 @@
 				$feedback[1]=$item." sent Successfully to $toEmail";
 				// return $feedback;
 				
-<<<<<<< HEAD
 				return "Mail Sent Successfully to $toEmail";
 				// return "Mail Sent Successfully to $toEmail";
-=======
 
 				return "Mail Sent Successfully to $toEmail";
 
 				// return "Mail Sent Successfully to $toEmail";
 
->>>>>>> master
 			}else
 			{
 				$feedback[0]="false";
