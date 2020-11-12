@@ -7,14 +7,15 @@ require 'DB_PARAMS/connect.php';
         $searchitem = $_POST['search']; 
 
 
-  $sql= "select c.CustomerName,c.CustomerID, c.Website, c.PhysicalAddress, c.Email, c.Mobile1, sh.ServiceID 
+  $sql= "select c.CustomerName,c.CustomerID, c.Website, c.BusinessZone, c.Email, c.Mobile1, sh.ServiceID 
             from ServiceHeader sh 
             join Inspections ins on sh.ServiceHeaderID = ins.ServiceHeaderID 
             join ChecklistResults cr on cr.InspectionID = ins.InspectionID 
             join Customer c on c.CustomerID = sh.CustomerID 
-            join InspectionComments ic on ic.InspectionID = ins.InspectionID 
-            where ServiceCategoryID = 2033 and ServiceStatusID = 4 and c.CustomerName like '%$searchitem%' Group By c.CustomerName,c.CustomerID,
-            c.Website,c.PhysicalAddress,c.Email,c.Mobile1,sh.ServiceID order by newid()"; 
+            join InspectionComments ic on ic.InspectionID = ins.InspectionID
+            join ServiceCategory sc on sc.ServiceCategoryID = sh.ServiceCategoryID 
+            where sc.ServiceGroupID = 11 and ServiceStatusID = 4 and c.CustomerName like '%$searchitem%' Group By c.CustomerName,c.CustomerID,
+            c.Website,c.BusinessZone,c.Email,c.Mobile1,sh.ServiceID order by newid()"; 
     // echo $sql;exit;  
             $result = sqlsrv_query($db, $sql);
             $rows = sqlsrv_has_rows($result );
@@ -401,7 +402,7 @@ require 'DB_PARAMS/connect.php';
                             $CustomerName = $row['CustomerName'];
                             $CustomerID = $row['CustomerID'];
                             $Website = $row['Website'];
-                            $Location = $row['Location'];
+                            $BusinessZone = $row['BusinessZone'];
                             $Email = $row['Email'];
                             $Mobile1 = $row['Mobile1'];
                             $ServiceID = $row['ServiceID'];
@@ -411,7 +412,14 @@ require 'DB_PARAMS/connect.php';
                         <div class="col-sm" style="border: double green; border-radius: 25px;">
                           
                         <img src="assets/img/logo1.png">
-                        <p><strong><?php echo $CustomerName; ?></strong>-<?php echo $Location; ?><br><br>
+                        <p><strong><?php echo $CustomerName; ?></strong>- <strong><?php 
+                        $locationSql = "select * from SubSystems where SubSystemID = $BusinessZone";
+                        $locationresult = sqlsrv_query($db,$locationSql);
+                        while($row = sqlsrv_fetch_array($locationresult,SQLSRV_FETCH_ASSOC)){
+                            $SubSystemName = $row['SubSystemName'];
+                        }
+                        echo $SubSystemName;
+                        ?></strong><br><br>
 
                 <?php
                  $ratingsql = " select distinct top 1 ic.AverageScore,ins.InspectionID
@@ -421,7 +429,8 @@ require 'DB_PARAMS/connect.php';
                       join Customer c on c.CustomerID = sh.CustomerID 
                       join InspectionComments ic on ic.InspectionID = ins.InspectionID 
                       left join Services s on s.ServiceID = sh.ServiceID
-                      where sh.ServiceCategoryID = 2033 and ServiceStatusID = 4 and c.CustomerID = $CustomerID order by InspectionID desc";
+                      join ServiceCategory sc on sc.ServiceCategoryID = sh.ServiceCategoryID
+                      where sc.ServiceGroupID = 11 and ServiceStatusID = 4 and c.CustomerID = $CustomerID order by InspectionID desc";
                       // exit($ratingsql);
                       $rating_result = sqlsrv_query($db, $ratingsql);
 

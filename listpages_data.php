@@ -1765,13 +1765,14 @@ else if($OptionValue=='applications')
 		
 		
 	$msql = "set dateformat dmy SELECT top 100 sh.ServiceHeaderID 
-				AS ApplicationID,sh.ServiceStatusID,ss.ServiceStatusName, s.ServiceName ,c.CustomerID, 
+				AS ApplicationID,sh.ServiceStatusID,ss.ServiceStatusName,sc.ServiceGroupID, s.ServiceName ,c.CustomerID, 
 				c.CustomerName, sh.SubmissionDate,s.ServiceID,f.ServiceHeaderType ApplicationType,s.ServiceCategoryID,s.ServiceCategoryID 
 				FROM dbo.ServiceHeader AS sh 
 				INNER JOIN dbo.Services AS s ON sh.ServiceID = s.ServiceID 
 				INNER JOIN dbo.Customer AS c ON sh.CustomerID = c.CustomerID 
 				INNER JOIN dbo.ServiceStatus ss ON sh.ServiceStatusID=ss.ServiceStatusID 
-				INNER JOIN DBO.ServiceCategory sc on s.ServiceCategoryID=sc.ServiceCategoryID 
+				INNER JOIN DBO.ServiceCategory sc on s.ServiceCategoryID=sc.ServiceCategoryID
+				inner join ServiceGroup sg on sc.ServiceGroupID = sg.ServiceGroupID 
 				INNER JOIN dbo.Forms f on sh.FormID=f.FormID 
 				where sh.ServiceStatusID =1 or (sh.ServiceStatusID = 5 and sh.ServiceCategoryID = 2033) and (sc.InvoiceStage<>sc.LastStage or sh.ServiceStatusID<>sc.LastStage) 
 				and sh.ServiceID not in (select ServiceID from ServiceTrees) order by sh.SubmissionDate desc";
@@ -1818,7 +1819,8 @@ else if($OptionValue=='applications')
 				$CustomerName,				
 				$ServiceName,
 				$SubmissionDate,
-				$RegionName	
+				$RegionName,	
+				$ServiceGroupID
 				
 		);			
 	}  	
@@ -2372,17 +2374,32 @@ else if($OptionValue=='Inspections')
 			$filter.=" and sh.CreatedDate<='$toDate'";
 		}
 		
-		$sql1 = "set dateformat dmy 
-					SELECT top 100 sh.ServiceHeaderID AS ApplicationID,ins.UserID,ins.InspectionDate,
-					s.ServiceName,c.CustomerName,ss.ServiceStatusDisplay,u.UserFullNames UserNames,ins.UserComment,ins.InspectionID
-
-					FROM ServiceHeader AS sh INNER JOIN 
-					Services AS s ON sh.ServiceID = s.ServiceID INNER JOIN
-					Customer AS c ON sh.CustomerID = c.CustomerID INNER JOIN 
-					ServiceStatus ss ON sh.ServiceStatusID=ss.ServiceStatusID INNER JOIN	
-					Inspections ins on ins.ServiceHeaderID=sh.ServiceHeaderID JOIN
-					Users u on u.AgentID=ins.UserID $filter
-					order by sh.SubmissionDate desc";
+		$sql1 = "set dateformat dmy SELECT distinct top 100 sh.SubmissionDate,sc.ServiceGroupID,sh.ServiceHeaderID 
+			AS ApplicationID,sc.ServiceGroupID,ins.UserID,ins.InspectionDate, s.ServiceName,
+			c.CustomerName,ss.ServiceStatusDisplay,u.UserFullNames UserNames,ins.UserComment,ins.InspectionID 
+			FROM ServiceHeader AS sh 
+			INNER JOIN Services AS s ON sh.ServiceID = s.ServiceID 
+			inner join ServiceCategory sc on sc.ServiceCategoryID = sh.ServiceCategoryID 
+			inner Join ServiceGroup sg on sg.ServiceGroupID = sc.ServiceGroupID 
+			INNER JOIN Customer AS c ON sh.CustomerID = c.CustomerID 
+			INNER JOIN ServiceStatus ss ON sh.ServiceStatusID=ss.ServiceStatusID 
+			INNER JOIN Inspections ins on ins.ServiceHeaderID=sh.ServiceHeaderID 
+			JOIN Users u on u.AgentID=ins.UserID 
+			where ins.InspectionStatusID>0 
+			and sh.ServiceStatusID !=1 and (sc.ServiceGroupID!=11 and sc.ServiceGroupID !=12) order by sh.SubmissionDate desc";
+			// echo $sql1;exit;
+		// "set dateformat dmy 
+		// 			SELECT distinct top 100 sh.SubmissionDate,sc.ServiceGroupID,sh.ServiceHeaderID AS ApplicationID,sc.ServiceGroupID,ins.UserID,ins.InspectionDate,
+		// 			s.ServiceName,c.CustomerName,ss.ServiceStatusDisplay,u.UserFullNames UserNames,ins.UserComment,ins.InspectionID
+		// 			FROM ServiceHeader AS sh INNER JOIN 
+		// 			Services AS s ON sh.ServiceID = s.ServiceID 
+		// 			 inner join ServiceCategory sc on sc.ServiceCategoryID = sh.ServiceCategoryID
+		// 			inner Join ServiceGroup sg on sg.ServiceGroupID = sc.ServiceGroupID 
+		// 			INNER JOIN Customer AS c ON sh.CustomerID = c.CustomerID INNER JOIN 
+		// 			ServiceStatus ss ON sh.ServiceStatusID=ss.ServiceStatusID INNER JOIN	
+		// 			Inspections ins on ins.ServiceHeaderID=sh.ServiceHeaderID JOIN
+		// 			Users u on u.AgentID=ins.UserID $filter and sh.ServiceStatusID !=1 and sc.ServiceGroupID!=12
+		// 			order by sh.SubmissionDate desc";
 					// echo $sql1;exit;
 
 		// $sql1 = "set dateformat dmy 
@@ -2399,6 +2416,94 @@ else if($OptionValue=='Inspections')
 		
 	}
 	// echo $sql1;
+	$result = sqlsrv_query($db, $sql1);	
+	while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) 
+	{
+		extract($row);
+
+		$sql="select fn.Value, w.RegionName Name
+			from fnFormData($ServiceHeaderID) fn 
+			join Regions w on fn.Value=w.RegionID
+			where fn.formcolumnid=12237
+		";
+		$res=sqlsrv_query($db,$sql);
+		while($row=sqlsrv_fetch_array($res,SQLSRV_FETCH_ASSOC))
+		{
+			$RegionName=$row['Name'];
+		}
+			
+		
+		$ViewBtn = '<a href="#" onClick="loadmypage(\'inspection_checklist.php?InspectionID='.$InspectionID.'&ApplicationID='.$ApplicationID.'\',\'content\',\'loader\',\'listpages\',\'\',\'InspectionResults\',\''.$InspectionID.'\')">View Checklist</a>';
+
+
+		//$Statement   = '<a href="#" onClick="loadmypage(\'meter_statement.php?SerialNo='.$DeviceSerialNo.'\',\'content\',\'loader\',\'listpages\',\'\',\'MeterStatement\','.$DeviceSerialNo.')">Statement</a>';
+
+		
+		$channel[] = array(			
+				$CustomerName,
+				$InspectionDate,				
+				$ServiceName,
+				$UserNames,
+				$ServiceStatusDisplay,
+				$RegionName,
+				$UserComment,
+				$ViewBtn
+		);			
+	}  	
+}
+else if($OptionValue=='ClassificationList')
+{
+	$fromDate;
+	$toDate;
+	$ApplicationID = $_REQUEST['ApplicationID'];
+
+	$filter=" where ins.InspectionStatusID>0";
+	if (strlen($exParam)>0)
+	{
+		$details=explode(':',$exParam);
+		
+		if(strlen($exParam)>2)
+		{
+			$str3=explode('=',$details[0]);
+			$role_center=1;//$str3[1];
+			
+			$str3=explode('=',$details[1]);
+			$fromDate=$str3[1];		
+			
+			$str3=explode('=',$details[2]);
+			$toDate=$str3[1];
+		}else{
+			$role_center=1;//$exParam;
+			$filter.=" and DATEDIFF(day,ins.InspectionDate,getdate())<5 ";
+		}
+
+
+		if(!$fromDate=='')
+		{
+			$filter.=" and sh.CreatedDate>='$fromDate'";
+		}
+
+		if(!$toDate=='')
+		{
+			$filter.=" and sh.CreatedDate<='$toDate'";
+		}
+		
+		$sql1 = "set dateformat dmy SELECT distinct top 100 sh.SubmissionDate,sc.ServiceGroupID,sh.ServiceHeaderID 
+			AS ApplicationID,sc.ServiceGroupID,ins.UserID,ins.InspectionDate, 
+			s.ServiceName,c.CustomerName,ss.ServiceStatusDisplay,u.UserFullNames UserNames,
+			ins.UserComment,ins.InspectionID FROM ServiceHeader AS sh 
+			INNER JOIN Services AS s ON sh.ServiceID = s.ServiceID 
+			inner join ServiceCategory sc on sc.ServiceCategoryID = sh.ServiceCategoryID 
+			inner Join ServiceGroup sg on sg.ServiceGroupID = sc.ServiceGroupID 
+			INNER JOIN Customer AS c ON sh.CustomerID = c.CustomerID 
+			INNER JOIN ServiceStatus ss ON sh.ServiceStatusID=ss.ServiceStatusID 
+			INNER JOIN Inspections ins on ins.ServiceHeaderID=sh.ServiceHeaderID 
+			JOIN Users u on u.AgentID=ins.UserID 
+			where ins.InspectionStatusID>0 and sh.ServiceHeaderID=$ApplicationID and sh.ServiceStatusID !=1 and sc.ServiceGroupID!=12 
+			order by sh.SubmissionDate desc";
+					echo $sql1;echo 'the'.$ApplicationID;exit;
+		
+	}
 	$result = sqlsrv_query($db, $sql1);	
 	while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) 
 	{

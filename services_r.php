@@ -24,6 +24,7 @@ $GlAccountNo='';
 $CreatedDate="";
 $CreatedUserID="";
 $RevenueStream="";
+$ChecklistTypeID = '';
 
 if (isset($_REQUEST['edit']))
 {	
@@ -39,6 +40,7 @@ if (isset($_REQUEST['edit']))
 		$ServiceName=$myrow['ServiceName'];
 		$ServiceCategoryID=$myrow['ServiceCategoryID'];
 		$ServiceCode=$myrow['ServiceCode'];
+        $ChecklistTypeID=$myrow['ChecklistTypeID'];
 		$DepartmentID=$myrow['DepartmentID'];
 		$Description=$myrow['Description'];
 		$GlAccountNo=$myrow['GlAccountNo'];
@@ -157,6 +159,38 @@ if (isset($_REQUEST['edit']))
                       </select>
                     
                   </div></td>
+                  <td></td>
+              </tr>
+              <tr>
+                  <td><label>Select Checklist</label>
+                    <div class="input-control select" data-role="input-control">
+                        <select name="ChecklistTypeID"  id="ChecklistTypeID">
+                  <option value="0" selected="selected"></option>
+                  <?php 
+                  $s_sql = "select * from ChecklistTypes order by 1";
+                  $s_result = sqlsrv_query($db, $s_sql);
+                  if ($s_result) 
+                  { //connection succesful 
+                      while ($row = sqlsrv_fetch_array( $s_result, SQLSRV_FETCH_ASSOC))
+                      {
+                          $s_id = $row["ChecklistTypeID"];
+                          $s_name = $row["ChecklistTypeName"];
+                          if ($ChecklistTypeID==$s_id) 
+                          {
+                              $selected = 'selected="selected"';
+                          } else
+                          {
+                              $selected = '';
+                          }                       
+                       ?>
+                  <option value="<?php echo $s_id; ?>" <?php echo $selected; ?>><?php echo $s_name; ?></option>
+                  <?php 
+                      }
+                  }
+                  ?>
+                </select>
+                    
+                  </div></td>
 			  <td></td>
 		  </tr>		  
           <tr>
@@ -187,7 +221,8 @@ if (isset($_REQUEST['edit']))
 											'&RevenueStreamID='+this.form.RevenueStreamID.value+ 
 											'&ServiceCategoryID='+this.form.ServiceCategoryID.value+ 
                                             '&Description='+this.form.Description.value+
-											'&Chargeable='+this.form.Chargeable.value+                                            
+											'&Chargeable='+this.form.Chargeable.value+
+                                            '&ChecklistTypeID='+this.form.ChecklistTypeID.value+                                            
                                             '&ServiceID='+<?php echo $ServiceID; ?>+       
         									'&save=1','content','loader','listpages','','services')" value="Save">
       <input type="reset" value="Cancel" onClick="loadmypage('services_list.php?i=1','content','loader','listpages','','services')">

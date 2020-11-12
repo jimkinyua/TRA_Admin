@@ -120,7 +120,7 @@ if (isset($_REQUEST['save']))
     <thead>
       <tr>
         <th class="text-left"><a href="#" onClick="loadmypage('servicecategory.php?add=1','content')">Add</a></th>
-        <th class="text-left"><a href="#" onClick="loadmypage('documents.php','content')">Document</a></th>
+        <th class="text-left"><a href="#" onClick="loadmypage('documents.php?i=1','content','loader','listpages','','ServiceCategories')">Document</a></th>
         <th colspan="3" class="text-center" style="color:#F00"><?php echo $msg; ?></th>
       </tr>
        <tr>

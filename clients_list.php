@@ -480,7 +480,7 @@ if (isset($_REQUEST['save']) && $_REQUEST['NextStatus']!='')
 	    </script>   
 
         <div class="example">
-        <legend>Licence Applications</legend> 
+        <legend>Service Applications</legend> 
        <!--  <input type="text" id="session" name="session" /> -->
 
 		<form>

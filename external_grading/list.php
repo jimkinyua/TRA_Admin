@@ -7,16 +7,17 @@
     }
 // print_r($_POST);exit();
 
-  $sql= "select c.CustomerName,c.CustomerID, c.Website, c.PhysicalAddress, c.Email, c.Mobile1, sh.ServiceID,
-          s.ServiceName 
+  $sql= "select c.CustomerName,c.CustomerID, c.Website, c.BusinessZone, c.Email, c.Mobile1, sh.ServiceID, s.ServiceName 
           from ServiceHeader sh 
           join Inspections ins on sh.ServiceHeaderID = ins.ServiceHeaderID 
           join ChecklistResults cr on cr.InspectionID = ins.InspectionID 
           join Customer c on c.CustomerID = sh.CustomerID 
           join InspectionComments ic on ic.InspectionID = ins.InspectionID 
-          join Services s on s.ServiceID = sh.ServiceID
-          where sh.ServiceCategoryID = 2033 and ServiceStatusID = 4 Group By c.CustomerName,c.CustomerID,
-          c.Website,c.PhysicalAddress,c.Email,c.Mobile1,sh.ServiceID,s.ServiceName order by NEWID()
+          join SubSystems sbs on sbs.SubSystemID = c.BusinessZone
+          join Services s on s.ServiceID = sh.ServiceID 
+          join ServiceCategory sc on sc.ServiceCategoryID = sh.ServiceCategoryID
+          where sc.ServiceGroupID = 11 and ServiceStatusID = 4 Group By c.CustomerName,c.CustomerID,
+          c.Website,c.BusinessZone,c.Email,c.Mobile1,sh.ServiceID,s.ServiceName order by NEWID()
           "; 
 // exit($sql);
 
@@ -118,7 +119,7 @@
             while($row=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC)){
                             $CustomerName = $row['CustomerName'];
                             $Website = $row['Website'];
-                            $Location = $row['PhysicalAddress'];
+                            $BusinessZone = $row['BusinessZone'];
                             $Email = $row['Email'];
                             $Mobile1 = $row['Mobile1'];
                             $ServiceName = $row['ServiceName'];
@@ -136,7 +137,8 @@
                       join Customer c on c.CustomerID = sh.CustomerID 
                       join InspectionComments ic on ic.InspectionID = ins.InspectionID 
                       left join Services s on s.ServiceID = sh.ServiceID
-                      where sh.ServiceCategoryID = 2033 and ServiceStatusID = 4 and c.CustomerID = $CustomerID order by InspectionID desc";
+                      join ServiceCategory sc on sc.ServiceCategoryID = sh.ServiceCategoryID
+                      where sc.ServiceGroupID = 11 and ServiceStatusID = 4 and c.CustomerID = $CustomerID order by InspectionID desc";
                       // exit($ratingsql);
                       $rating_result = sqlsrv_query($db, $ratingsql);
 
@@ -223,7 +225,15 @@
                   }                
                   ?>
                   
-                  <td><?php echo $Location; ?></td>
+                  <?php 
+                  $locationSql = "select * from SubSystems where SubSystemID = $BusinessZone";
+                  $locationresult = sqlsrv_query($db, $locationSql);
+                  while($row=sqlsrv_fetch_array($locationresult,SQLSRV_FETCH_ASSOC)){
+                    $SubSystemName = $row['SubSystemName'];
+                  }
+                  
+                  ?>
+                  <td><?php echo $SubSystemName; ?></td>
                   <td><?php echo $Mobile1; ?></td>
                   <td>
                     <?php 

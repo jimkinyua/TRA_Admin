@@ -22,6 +22,7 @@ $CreatedDate="";
 $ServiceCode='';
 
 
+
 if (isset($_REQUEST['edit']))
 {	
 	$ParameterID=	$_REQUEST['ParameterID'];
@@ -38,11 +39,52 @@ if (isset($_REQUEST['edit']))
 	}	
 }
 
+ if(!empty($_POST['typeid'])){
+
+    $paramsql = "Select * from ChecklistParameterCategories where ChecklistTypeID = ".$_POST['typeid']."";
+    $paramresult = sqlsrv_query($db,$paramsql);
+
+    echo '<option value = "">select parameter category</option>';
+    while($row=sqlsrv_fetch_array($paramresult,SQLSRV_FETCH_ASSOC)){
+     
+      echo '<option value="'.$row['ParameterCategoryID'].'">'.$row['ParameterCategoryName'].'</option>';
+    }
+    die();
+ }
 
 
 
 ?>
 <div class="example">
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js" type="text/javascript"></script>
+    <script>
+      $(document).ready(function(){
+        $('#ctid').on('change',function(){
+          var typeid = $(this).val();
+          if(typeid){
+            $.ajax({
+              type: 'POST',
+              url: 'checklistparameter.php',
+              data: 'typeid='+typeid,
+              // contentType: "application/json; charset=utf-8",
+              // dataType: "json",
+              success:function(params){
+                // params = JSON.parse(params);
+                // alert(omonso);
+                console.log(params);
+                $('#params').empty();
+                $('#params').append(params);
+
+              }
+            });
+          }else{
+            $('#paramcatlist').append('<option value="">Select Checklist Type First</option>')
+
+          }
+        });
+      });
+    </script>
+
 <form>
 	<fieldset>
 	  <legend>Edit Parameter Category</legend>
@@ -62,10 +104,11 @@ if (isset($_REQUEST['edit']))
 
                 	</td>
           	</tr>
+
           <tr>
             <td><label>Checklist Type</label>
               <div class="input-control select" data-role="input-control">
-                <select name="ChecklistTypeID"  id="ChecklistTypeID">
+                <select name="ChecklistTypeID"  id="ctid">
                   <option value="0" selected="selected"></option>
                   <?php 
                   $s_sql = "select * from ChecklistTypes order by 1";
@@ -91,38 +134,18 @@ if (isset($_REQUEST['edit']))
                   ?>
                 </select>
               </div>
-            </td>
+            </td>   
             <td>
             </td>
-          </tr> 
+          </tr>
+ 
           <tr>
             <td><label>Parameter Category</label>
               <div class="input-control select" data-role="input-control">
-                <select name="ParameterCategoryID"  id="ParameterCategoryID">
-                  <option value="0" selected="selected"></option>
-                  <?php 
-                  $s_sql = "select * from ChecklistParameterCategories order by ParameterCategoryID";
-                  $s_result = sqlsrv_query($db, $s_sql);
-                  if ($s_result) 
-                  { //connection succesful 
-                      while ($row = sqlsrv_fetch_array( $s_result, SQLSRV_FETCH_ASSOC))
-                      {
-                          $s_id = $row["ParameterCategoryID"];
-                          $s_name = $row["ParameterCategoryName"];
-                          if ($ParameterCategoryID==$s_id) 
-                          {
-                              $selected = 'selected="selected"';
-                          } else
-                          {
-                              $selected = '';
-                          }                       
-                       ?>
-                  <option value="<?php echo $s_id; ?>" <?php echo $selected; ?>><?php echo $s_name; ?></option>
-                  <?php 
-                      }
-                  }
-                  ?>
-                </select>
+                
+                  <select name="ParameterCategoryID"  id="params">
+                      <option value="">Select parameter checklist first</option>
+                  </select>
               </div>
             </td>
             <td>
