@@ -122,7 +122,12 @@ while ($i<=$rows)
 								if ($myRights['View']==1){	?>	
                          	<button class="fluent-big-button" onClick="loadmypage('clients_list.php?i=1','content','loader','listpages','','applications','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" style="width:80px">
                             	<span class="icon-layers-alt fg-darkBlue"></span>
-                                <span class="button-label fg-darkBlue">Applications</span>
+                                <span class="button-label fg-darkBlue">Licence Applications</span>
+                            </button>
+
+							<button class="fluent-big-button" onClick="loadmypage('approved_licences_pending_approval.php?i=1','content','loader','listpages','','approved_pending_approval','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" style="width:80px">
+                            	<span class="icon-layers-alt fg-darkBlue"></span>
+                                <span class="button-label fg-darkBlue">Approved Licences Pending Approval</span>
                             </button>
 
 							<button class="fluent-big-button" onClick="loadmypage('renewal_applications_list.php?i=1','content','loader','listpages','','renewalapplications','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" style="width:80px">
@@ -169,9 +174,13 @@ while ($i<=$rows)
 								$PageID=2;
 								$myRights=getrights($db,$UserID,$PageID);						
 								if ($myRights['View']==1){  ?>
+							<button class="fluent-big-button" onClick="loadmypage('licence-application-invoices.php?i=1','content','loader','listpages','','licence-application-invoices-a','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" style="width:80px">
+                            	<span class="icon-libreoffice fg-darkBlue"></span>
+                                <span class="button-label fg-darkBlue">Licence Application Invoices</span>
+                            </button>
                          	<button class="fluent-big-button" onClick="loadmypage('invoices_list.php?i=1','content','loader','listpages','','invoices-a','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" style="width:80px">
                             	<span class="icon-libreoffice fg-darkBlue"></span>
-                                <span class="button-label fg-darkBlue">Citizen Invoices</span>
+                                <span class="button-label fg-darkBlue">Licence Renewal Invoices</span>
                             </button>
                        <?php }
 

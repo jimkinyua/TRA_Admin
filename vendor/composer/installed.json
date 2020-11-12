@@ -1,0 +1,64 @@
+{
+    "packages": [
+        {
+            "name": "vgrem/php-spo",
+            "version": "v2.4.2",
+            "version_normalized": "2.4.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/vgrem/phpSPO.git",
+                "reference": "4c0bbe6219641d8ccfc0d82d26a16461e94c2e53"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/vgrem/phpSPO/zipball/4c0bbe6219641d8ccfc0d82d26a16461e94c2e53",
+                "reference": "4c0bbe6219641d8ccfc0d82d26a16461e94c2e53",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-dom": "*",
+                "ext-json": "*",
+                "ext-libxml": "*",
+                "ext-simplexml": "*",
+                "php": ">=5.5"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^5"
+            },
+            "time": "2020-08-19T19:02:06+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Office365\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Vadim Gremyachev",
+                    "email": "vvgrem@gmail.com"
+                }
+            ],
+            "description": "Office 365 library for PHP. It allows to performs CRUD operations against Office 365 resources via an REST/OData based API",
+            "keywords": [
+                "Office365",
+                "api",
+                "curl",
+                "microsoftgraph",
+                "rest"
+            ],
+            "support": {
+                "issues": "https://github.com/vgrem/phpSPO/issues",
+                "source": "https://github.com/vgrem/phpSPO/tree/v2.4.2"
+            },
+            "install-path": "../vgrem/php-spo"
+        }
+    ],
+    "dev": true,
+    "dev-package-names": []
+}
