@@ -33,13 +33,13 @@
 		include('BarCode/class/BCGcode39.barcode.php'); 
 
 		// Loading Font
-		$font = new BCGFont('BarCode/class/font/Arial.ttf', 18);
+		$font =& new BCGFont('BarCode/class/font/Arial.ttf', 18);
 
 		// The arguments are R, G, B for color.
-		$color_black = new BCGColor(0, 0, 0);
-		$color_white = new BCGColor(255, 255, 255); 
+		$color_black =& new BCGColor(0, 0, 0);
+		$color_white =& new BCGColor(255, 255, 255); 
 
-		$code = new BCGcode39();
+		$code =& new BCGcode39();
 		$code->setScale(2); // Resolution
 		$code->setThickness(30); // Thickness
 		$code->setForegroundColor($color_black); // Color of bars
@@ -51,7 +51,7 @@
 		/* Here is the list of the arguments
 		1 - Filename (empty : display on screen)
 		2 - Background color */
-		$drawing =new BCGDrawing('images/Bar_Codes/'.$No.'.png', $color_white);
+		$drawing =& new BCGDrawing('Images/Bar_Codes/'.$No.'.png', $color_white);
 		$drawing->setBarcode($code);
 		$drawing->draw();
 
@@ -214,8 +214,6 @@
 
 		return $msg;
 	}
-
-
 	
 	function php_mailer($toEmail,$from,$fromName,$subject,$msg,$attachment,$file_path,$item)
 	{
@@ -229,33 +227,19 @@
 		try 
 		{
 			
-<<<<<<< HEAD
-			// $mail->SMTPDebug  = 2; 		
-			// $mail->defaultCredentials='true';
-			// // enables SMTP debug information (for testing)
-				
-			$mail->SMTPAuth   = true;
-			$mail->Mailer = "smtp";     // enable SMTP authentication
-=======
-			$mail->SMTPDebug  = false; 		
+			$mail->SMTPDebug  = FALSE; 		
 			$mail->defaultCredentials='true';
 			// enables SMTP debug information (for testing)
 				
-			$mail->SMTPAuth   = true;
+			$mail->SMTPAuth   = 2;
 			$mail->Mailer = "smtp";                  // enable SMTP authentication
->>>>>>> 790f831ceb22fdbe0cde6678d4e9a6f65ab773e8
 			$mail->isSMTP();
-			$mail->SMTPAutoTLS = true; 
+			$mail->SMTPAutoTLS = false; 
 			$mail->Host = "smtp.gmail.com"; // sets the SMTP server	
 			$mail->SMTPSecure = 'ssl'; 
 			$mail->Port       = 465;                    // set the SMTP port for the GMAIL server				
-<<<<<<< HEAD
-			$mail->Username = "passdevelopment00@gmail.com";
-			$mail->Password = "cyvkhicsdngecuvf";	    
-=======
 			$mail->Username = "omonsotest@gmail.com";
 			$mail->Password = "omonso001";	    
->>>>>>> 790f831ceb22fdbe0cde6678d4e9a6f65ab773e8
 			
 			
 			$mail->AddReplyTo($toEmail, $fromName);	
@@ -278,13 +262,9 @@
 			{
 				$feedback[0]="true";
 				$feedback[1]=$item." sent Successfully to $toEmail";
-				// return $feedback;
+				return $feedback;
 				
-<<<<<<< HEAD
-				return "Mail Sent Successfully to $toEmail";
-=======
-				// return "Mail Sent Successfully to $toEmail";
->>>>>>> 790f831ceb22fdbe0cde6678d4e9a6f65ab773e8
+				//return "Mail Sent Successfully to $toEmail";
 			}else
 			{
 				$feedback[0]="false";
@@ -541,6 +521,9 @@
 		}
 
 		$SerialNo=$InvoiceHeaderID;
+
+
+
 		$params = array();
 		$options =  array( "Scrollable" => SQLSRV_CURSOR_KEYSET );
 
@@ -592,6 +575,7 @@
 		$ServiceAmount=$ServiceAmount+$OtherCharge;		
 		
 		createBarCode($InvoiceHeaderID);
+		
 		$mpdf=new mPDF('win-1252','A4','','',20,15,48,25,10,10);
 		$mpdf->useOnlyCoreFonts = true;    // false is default
 		$mpdf->SetProtection(array('print'));
@@ -725,8 +709,8 @@
 /* 		echo $html;
 		exit; */
 		$mpdf->WriteHTML($html);
- 		// $mpdf->Output();
-		// exit; 
+ 		$mpdf->Output();
+		exit; 
 		
 		//$mpdf->Output('pdfdocs/invoices/'.$SerialNo.'.pdf','F'); 
 		
@@ -1107,7 +1091,7 @@
 		</body>
 		</html>
 		';
-		/* 		echo $html;
+/* 		echo $html;
 		exit; */
 		$mpdf->WriteHTML($html);
  		$mpdf->Output();
@@ -3544,98 +3528,6 @@ function ReceiptMoney($db,$DepositDate,$BankID,$RefNumber,$PaymentMethod,$Invoic
 
 	return $msg1;		
 }
-
-function ReceiptLicenceRenewalMoney($db,$DepositDate,$BankID,$RefNumber,$PaymentMethod,$InvoiceHeaderID,$SlipAmount,$InvoiceAmount,$CreatedBy)
-{
-	$total=0;
-	$params = array();
-	$options =  array( "Scrollable" => SQLSRV_CURSOR_KEYSET );
-
-	$sql="select r.LicenceRenewalReceiptID,r.ReferenceNumber,sum(r.Amount)-sum(rl.Amount) Balance
-	from LicenceRenewalReceipt r 
-	join (select ReceiptID,sum(Amount) Amount from LicenceRenewalnvoiceLines group by ReceiptID) rl on  rl.ReceiptID=r.LicenceRenewalReceiptID 
-	where r.ReferenceNumber='$RefNumber' and BankID='$BankID' and [ReceiptStatusID]=1
-	group by r.ReferenceNumber,r.LicenceRenewalReceiptID";
-	// EXIT($sql);
-	$s_result = sqlsrv_query($db, $sql,$params,$options);
-
-	$rows=sqlsrv_num_rows($s_result);
-
-	if($rows>0) //Document Already exists
-	{
-		while($row=sqlsrv_fetch_array($s_result,SQLSRV_FETCH_ASSOC))
-		{
-			$Balance=(double)$row['Balance'];
-			if($Balance<=0){
-				$msg1[0] = '0';
-				$msg1[1] = 'The Receipt is already in the system, unless it is cancelled, you cannot use';
-				return $msg1;
-			}else{
-				if($InvoiceAmount>$Balance)
-				{
-					$msg1[0] = '0';
-					$msg1[1] = 'The total Invoice Amount is more than the Receipt Amount';
-					return $msg1;
-				}
-				$ReceiptID=$row['ReceiptID'];
-			}
-		}
-	}else
-	{
-		//Insert into Receipt Header
-		$DepositDate= date("Y-m-d H:i:s");
-		$query2 = "insert into  LicenceRenewalReceipt ([ReceiptDate],
-		[ReceiptMethodID],[ReferenceNumber],BankID,[Amount],[ReceiptStatusID],CreatedBy) 
-		VALUES('$DepositDate','$PaymentMethod','$RefNumber','$BankID','$SlipAmount','1','$CreatedBy') SELECT SCOPE_IDENTITY() AS ID";
-
-		// EXIT($query2);
-		$result1 = sqlsrv_query($db, $query2);
-		if ($result1)
-		{
-			$ReceiptID=lastid($result1);
-		}
-
-	}
-
-	if($ReceiptID==0)
-	{
-		$msg1[0] = '0';
-		$msg1[1] = 'The Receipt is badly formed. Kindly repost or consult the admin';
-		return $msg1;
-	}
-	$ReceiptDate= date("d/m/Y");
-
-	$query4="Insert into LicenceRenewaReceiptLines (ReceiptID,
-	InvoiceHeaderID,Amount,CreatedDate,CreatedBy)
-	VALUES('$ReceiptID','$InvoiceHeaderID','$InvoiceAmount','$ReceiptDate','$CreatedBy')";		
-	
-	// exit($query4);
-	$result2 = sqlsrv_query($db, $query4);
-	if($result2)
-	{
-
-	}else
-	{
-		DisplayErrors();
-	}
-	
-
-	if($result2)
-	{
-		$rst=SaveTransaction($db,$CreatedBy," Receipted Reference Number ".$RefNumber." Costing ".$Amount);
-
-		$msg1[0] = '1';
-		$msg1[1] = 'Receipting Done';
-	} else 
-	{
-		//DisplayErrors();
-		$msg1[0] = '0';
-		$msg1[1] = 'Receipting Failed';
-	}
-
-	return $msg1;		
-}
-
 function BillHouse($db,$ApplicationID,$CustomerID,$EstateID,$HouseNumber,$DocumentNo,$uhn,$BillAmount,$UserID,$cosmasRow)
 {
 $InvoiceNo='';
@@ -3937,7 +3829,6 @@ function GenerateInvoice($db,$ApplicationID,$UserID='')
 				$PermitCost=$ServiceAmount;
 			}	
 		}
-
 		
 		if ($ServiceAmount<=0)
 		{

@@ -93,7 +93,7 @@ if($_REQUEST['deleterate']==1){
 
 
 <div class="row">
-Create Classification and Grading Scores.
+
 	
 <form action="" name="" method="post">
 
@@ -102,7 +102,10 @@ Create Classification and Grading Scores.
 	<select name="s_id" required width="48">
         <option value="" selected="selected" >SELECT SERVICE</option>
         <?php 
-		$status_sql = "select ServiceID,ServiceName from Services where ServiceCategoryID = 2033";
+		$status_sql = "select ServiceID,ServiceName 
+		from Services s
+		join ServiceCategory sc on sc.ServiceCategoryID = s.ServiceCategoryID
+		where sc.ServiceGroupID = 11";
 		$status_result = sqlsrv_query($db, $status_sql) or die ("failed to load Status");
 
 		$selected = '';

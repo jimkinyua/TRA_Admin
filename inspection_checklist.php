@@ -34,8 +34,9 @@
         <tr>
        <?php
 
-       $s_sql = "select sh.ServiceID,s.ServiceName,s.ServiceCategoryID from ServiceHeader sh join Services s 
-        on sh.ServiceID = s.ServiceID where ServiceHeaderID = $ApplicationID";
+       $s_sql = "select sh.ServiceID,s.ServiceName,sh.ServiceStatusID,s.ServiceCategoryID,sc.ServiceGroupID from ServiceHeader sh join Services s 
+        on sh.ServiceID = s.ServiceID join ServiceCategory sc on sc.ServiceCategoryID=sh.ServiceCategoryId
+        join ServiceGroup sg on sg.ServiceGroupID=sc.ServiceGroupID where ServiceHeaderID = $ApplicationID";
         $t_result=sqlsrv_query($db,$s_sql);
         // echo $s_sql;
         if($t_result){
@@ -47,6 +48,8 @@
           $ServiceID = $row['ServiceID'];
           $ServiceName = $row['ServiceName'];
           $ServiceCategoryID = $row['ServiceCategoryID'];
+          $ServiceGroupID = $row['ServiceGroupID'];
+          $ServiceStatusID = $row['ServiceStatusID'];
         }
         // echo $ServiceCategoryID;
       }
@@ -54,7 +57,7 @@
 
 
          <?php
-         if($ServiceCategoryID == 2033){
+         if($ServiceGroupID == 11){
           $sql="select sum(cr.ParameterScore) as TotalScore, ag.FirstName,ag.LastName 
           from ChecklistResults cr join Agents ag on ag.AgentID=cr.CreatedBy join Users u on u.AgentID = ag.AgentID 
             join Inspections ins on ins.InspectionID = cr.InspectionID
@@ -108,6 +111,24 @@ $row = sqlsrv_has_rows( $s_result );
              $numrows = $myrow['OfficersNum'];
             }
 
+            $inspections = 0;
+            $i_sql = "SELECT distinct COUNT(sh.ServiceHeaderID) as inspections FROM ServiceHeader AS sh 
+                      INNER JOIN Services AS s ON sh.ServiceID = s.ServiceID 
+                      inner join ServiceCategory sc on sc.ServiceCategoryID = sh.ServiceCategoryID 
+                      inner Join ServiceGroup sg on sg.ServiceGroupID = sc.ServiceGroupID 
+                      INNER JOIN Customer AS c ON sh.CustomerID = c.CustomerID 
+                      INNER JOIN ServiceStatus ss ON sh.ServiceStatusID=ss.ServiceStatusID 
+                      INNER JOIN Inspections ins on ins.ServiceHeaderID=sh.ServiceHeaderID 
+                      JOIN Users u on u.AgentID=ins.UserID where ins.InspectionStatusID>0 and sh.ServiceHeaderID=$ApplicationID and sh.ServiceStatusID !=1 and sc.ServiceGroupID!=12";
+           // echo $r_sql; echo '<br>';
+            $iresult = sqlsrv_query($db, $i_sql);
+            if ($myrow = sqlsrv_fetch_array( $iresult, SQLSRV_FETCH_ASSOC)) 
+            {   
+             $inspections = $myrow['inspections'];
+            }
+
+
+
             $Totals = 0;
             $r_sql = "select sum(cr.ParameterScore) as Totals from ChecklistResults cr join Inspections ins on ins.InspectionID = cr.InspectionID  
             where ServiceHeaderID = $ApplicationID";
@@ -123,7 +144,7 @@ $row = sqlsrv_has_rows( $s_result );
     The average score from the inspection is: <strong> <?php echo $Average; ?> </strong>
 <?php 
 }else{
-    echo 'Continue';
+    // echo 'Continue';
   }?>
 
   </td>
@@ -139,16 +160,28 @@ $row = sqlsrv_has_rows( $s_result );
     <th colspan="3">
       <table width="100%">
         <?php 
-                  if($ServiceCategoryID == 2033 && $numrows !=3 ){
+                  if($ServiceGroupID == 11 && $numrows !=3){
                     ?>
-                    <p style="color:red;">
-                      Classification Inspection needs to be completed by 3 officers before approval
 
-                      <!-- Average: <?php echo $Average; ?><br>
-                      Application: <?php echo $ApplicationID; ?> -->
+                    <p style="color:red;">
+
+                      Classification Inspection needs to be completed by 3 officers before approval
                     </p>
-                    <?php
-                  }else{
+                  <?php
+                  }elseif($ServiceGroupID == 11 && $inspections !=3){
+                    ?>
+
+                    <p style="color:red;">
+
+                      Re-Inspection has to be conducted by 3 officers
+                    </p>
+                  <?php
+                }elseif($ServiceGroupID == 11 && $ServiceStatusID ==4 || $ServiceStatusID==1|| $ServiceStatusID==6){?>
+                    <p style="color:red;">
+                     Verdict has been given...
+                    </p>
+                   
+                  <?php }else{
                   ?>
         <tr>
               <tr>                                                          
@@ -156,7 +189,7 @@ $row = sqlsrv_has_rows( $s_result );
                   <div class="input-control select" data-role="input-control">            
                     <select name="Status" id="Status">
                       <option value="4">Pass</option>
-                      <option value="5">Re-Inspect</option>
+                      <option value="1">Re-Inspect</option>
                       <option value="6">Fail</option>
                     </select>        
                   </div>
@@ -167,7 +200,7 @@ $row = sqlsrv_has_rows( $s_result );
                     <textarea id="Comment" name="Comment" cols="20"></textarea>  
                     
                     <?php
-                      if($ServiceCategoryID == 2033){
+                      if($ServiceGroupID == 11){
                         ?>
                         <input type="hidden" name="AverageScore" value="<?php echo $Average; ?>">
                         <?php

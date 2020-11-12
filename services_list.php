@@ -45,6 +45,7 @@ if (isset($_REQUEST['delete']))
 
 if (isset($_REQUEST['save']))
 {	
+	// print_r($_REQUEST);exit;
 	$Description=$_REQUEST['Description'];
 	$ServiceCategoryID=$_REQUEST['ServiceCategoryID'];
 	$Chargeable=$_REQUEST['Chargeable'];
@@ -52,6 +53,7 @@ if (isset($_REQUEST['save']))
 	$ServiceCode=$_REQUEST['ServiceCode'];
 	$GlAccountNo=$_REQUEST['GlAccountNo'];
 	$RevenueStreamID=$_REQUEST['RevenueStreamID'];
+	$ChecklistTypeID=$_REQUEST['ChecklistTypeID'];
 	
 	if ($ServiceID=='0')
 	{		
@@ -60,6 +62,7 @@ if (isset($_REQUEST['save']))
 			  ,[ServiceCode]
 			  ,[Description]
 			  ,[ServiceCategoryID]
+			  ,[ChecklistTypeID]
 			  ,[RevenueStreamID]
 			  ,[GlAccountNo]
 			  ,[Chargeable]
@@ -70,6 +73,7 @@ if (isset($_REQUEST['save']))
 			,'$ServiceCode'
 			,'$Description'
 			,'$ServiceCategoryID'
+			,'$ChecklistTypeID'
 			,'$RevenueStreamID'
 			,'$GlAccountNo'
 			,'$Chargeable'
@@ -84,6 +88,7 @@ if (isset($_REQUEST['save']))
 					,[ServiceName]='$ServiceName'
 					,[ServiceCode]='$ServiceCode'
 					,[ServiceCategoryID]='$ServiceCategoryID'
+					,[ChecklistTypeID]='$ChecklistTypeID'
 					,RevenueStreamID='$RevenueStreamID'
 					,GlAccountNo='$GlAccountNo'
 					,[Chargeable]='$Chargeable'
