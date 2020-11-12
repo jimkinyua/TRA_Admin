@@ -1,0 +1,19 @@
+{
+    "authors": [
+        {
+            "name": "vgrem",
+            "email": "vvgrem@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Office365\\": "../src/",
+            "Office365\\Generator\\": ""
+        }
+    },
+    "name": "vgrem/php-office365-sdk-generator",
+    "require": {
+        "nikic/php-parser": "*",
+        "ext-yaml": "*"
+    }
+}
