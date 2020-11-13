@@ -16,12 +16,8 @@ $msg ='';
 // print_r($_REQUEST); 
 
 if($_REQUEST['submit']==1){
-<<<<<<< HEAD
-	// print_r($_REQUEST);
-=======
 	//
 	// EXIT('74');
->>>>>>> master
 	$InspectionID=$_REQUEST['InspectionID'];
 	$Status=$_REQUEST['Status'];
 	$Comment=$_REQUEST['Comment'];
@@ -44,17 +40,6 @@ if($_REQUEST['submit']==1){
 		$msg=sqlsrv_errors();
 		$Sawa=false;
 	}
-<<<<<<< HEAD
-	// exit($ApplicationID);
-	// date('Y-m-d H:i:s')
-	$TodayDate = date("Y-m-d H:i:s");
-	$date = 31; $month =12; $year = date("Y"); //Licences Expire on 31ST Dec EveryYear
-	$ExpiryDate="$date.$month.$year";
-    $local=new datetime($ExpiryDate);
-	$sqlExpiryDate = $local->format('Y-m-d H:i:s');
-	$LicenceNumber ='TEST/2020/LICENCE/RYWY/7'.rand(87, 600);
-	$ChangeStatussql="Update ServiceHeader set ServiceStatusID=$Status, PermitNo='$LicenceNumber', IssuedDate='$TodayDate', ExpiryDate='$sqlExpiryDate' where ServiceHeaderID='$ApplicationID'";
-=======
 
 	//Change Status to Approved But Waiting for Payment.
 	// Generate the Invoice Though
@@ -63,18 +48,11 @@ if($_REQUEST['submit']==1){
 	 PermitNo='$LicenceNumber', IssuedDate='$TodayDate', 
 	 ExpiryDate='$sqlExpiryDate'
 	  where ServiceHeaderID='$ApplicationID'";
->>>>>>> master
 	// echo '<pre>';
 	// print_r($ChangeStatussql);
 	// exit;
 	$ChangeStatusResult=sqlsrv_query($db,$ChangeStatussql);
 
-<<<<<<< HEAD
-
-	if($result){
-		GenerateInvoice($db,$ApplicationID,$UserID);
-	}else{
-=======
 	if($ChangeStatusResult){
 		GenerateLicenceApplicationInvoice($db,$ApplicationID,$UserID);
 	}
@@ -82,7 +60,6 @@ if($_REQUEST['submit']==1){
 	
 		sqlsrv_rollback($db);
 		$Sawa=false;
->>>>>>> master
 		DisplayErrors();
 		$msg="Failed to Generate Invoice, contact the technical team";
 
