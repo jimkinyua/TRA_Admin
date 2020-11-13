@@ -347,6 +347,10 @@ function convertDigit($digit)
 function DisplayErrors()
 {
      $errors = sqlsrv_errors(SQLSRV_ERR_ERRORS);
+    //  echo '<pre>';
+    //  print_r($errors);
+    //  exit;
+
      foreach( $errors as $error )
      {
           echo "Error: ".$error['message']."\n";

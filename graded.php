@@ -126,76 +126,6 @@ if ($s_result)
 }
 
 
-$sql="select fn.Value, w.WardName from fnFormData($ApplicationID) fn 
-join Wards w on fn.Value=w.WardID
-where fn.formcolumnid=11204
-";
-$res=sqlsrv_query($db,$sql);
-while($row=sqlsrv_fetch_array($res,SQLSRV_FETCH_ASSOC))
-{
-	$WardID=$row['Value'];
-}
-
-
-//get the serviceCost
-
-if ($ServiceHeaderTypeID==1)
-{
-
-	$BSql="select l.RatesPayable from LandApplication la join land l on la.PlotNo=l.PlotNo and la.LRN=l.LRN where la.ServiceHeaderID=$ApplicationID";
-	$rsult=sqlsrv_query($db,$BSql);
-	//echo $BSql;
-	if ($rsu=sqlsrv_fetch_array($rsult,SQLSRV_FETCH_ASSOC))
-	{
-		$ServiceCost=$rsu['RatesPayable'];							
-	}else
-	{
-		$ServiceCost=0;
-	}	
-}else
-{
-
-
-	//get the subsystem
-
-	$sql="select * from fnFormData($ServiceHeaderID) where formcolumnid=12237";
-	$res=sqlsrv_query($db,$sql);
-	while($row=sqlsrv_fetch_array($res,SQLSRV_FETCH_ASSOC))
-	{
-		$SubSystemID=$row['Value'];
-	}	
-	//echo $SubSystemID.'<BR>';
-	$sql="select * from fnServiceCost($ServiceID,$SubSystemID)";
-	$result=sqlsrv_query($db,$sql);
-	if ($result)
-	{
-		while($row=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC))
-		{									
-			$ServiceCost=$row['Amount'];
-		}
-		//echo $ServiceCost.'<BR>';
-		$OtherCharge=0;
-		//With other Charges?
-		$sql="select sum (distinct sc.amount)Amount
-									from ServiceCharges sc
-									join ServicePlus sp on sp.service_add=sc.ServiceID
-									join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID
-									join ServiceHeader sh on sh.ServiceID=sp.ServiceID
-									join services s1 on sp.ServiceID=s1.ServiceID
-									join services s2 on sp.service_add=s2.ServiceID
-									and sh.ServiceHeaderID=$ServiceHeaderID
-									and fy.isCurrentYear=1
-									and sc.SubSystemId=$SubSystemID";
-		
-		$s_result = sqlsrv_query($db, $sql);
-		while ($row = sqlsrv_fetch_array( $s_result, SQLSRV_FETCH_ASSOC))
-		{							
-			$OtherCharge=$row["Amount"];												
-		}
-	//echo $OtherCharge.'<BR>';
-		$ServiceCost=$ServiceCost+$OtherCharge;
-	}
-}
 
 	/* $ServiceCost=$ServiceCost-OtherCharge;
   echo $ServiceID.'<br>';
@@ -219,21 +149,14 @@ $(document).ready(function(){
 <div class="example">
 	<?php 
 
-<<<<<<< HEAD
+
 if(isset($_POST['search'])){
 	$searchItem = $_POST['search'];
 }
 
 
- 	$sql= "select c.CustomerName, sum(cr.ParameterScore) as Rating, c.Website,
-	c.PhysicalAddress, c.Email, c.Mobile1
-	from ServiceHeader sh 
-	join Inspections ins on sh.ServiceHeaderID = ins.ServiceHeaderID
-	join ChecklistResults cr on cr.InspectionID = ins.InspectionID
-	join Customer c on c.CustomerID = sh.CustomerID
-	where ServiceID = 2074 and ServiceStatusID = 4 and CustomerName like '%$searchItem%'
-	Group By c.CustomerName, c.Website, c.PhysicalAddress, c.Email, c.Mobile1"; 
-=======
+ 	
+
  	$sql= "select c.CustomerName, ic.AverageScore 
 		as Rating, c.Website, c.PhysicalAddress, c.Email, c.Mobile1,sh.ServiceCategoryID 
 		from ServiceHeader sh 
@@ -245,15 +168,15 @@ if(isset($_POST['search'])){
 		and CustomerName like '%$searchitem%' 
 		Group By c.CustomerName,c.Website,c.PhysicalAddress,c.Email,
 		c.Mobile1,sh.ServiceCategoryID,ic.AverageScore"; 
->>>>>>> Anasi-Work
+
 	// echo $sql;
 	$result = sqlsrv_query($db, $sql);
 	if($result){
 	?>
-	<form action="" method="post" name="form1">
+<!-- 	<form action="" method="post" name="form1">
 		<input type="text" name="search">
 		<input type="submit" name="search">
-	</form>
+	</form> -->
 		<table class="table table-striped" id="example">
 			<th width="20%">Name</th>
 			<th width="10%">The Score</th>

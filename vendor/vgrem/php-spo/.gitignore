@@ -1,0 +1,6 @@
+.DS_Store
+*.phpproj
+.idea/
+*.lock
+*.phar
+/vendor/*

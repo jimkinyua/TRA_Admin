@@ -72,18 +72,18 @@ if (isset($_REQUEST['save']) && $_REQUEST['NextStatus']!='')
 	
 }
 
-$s_sql="select c.*,f.ServiceHeaderType,bt.CustomerTypeName,sh.ServiceStatusID,sh.ServiceHeaderID,bz.ZoneName,w.WardName,sc.SubCountyName,s.ServiceName,sh.ServiceID,sh.SubSystemID,S.ServiceCategoryID
-	from Customer c 
-	join ServiceHeader sh on sh.CustomerID=c.CustomerID
-	join services s on sh.ServiceID=s.ServiceID
-	join Forms f on sh.FormID=f.FormID
-	left join CustomerType bt on bt.CustomerTypeID=c.BusinessTypeID 
-	left join BusinessZones bz on sh.BusinessZoneID=bz.ZoneID
-	left join Wards w on bz.wardid=w.wardid
-	left join subcounty sc on w.subcountyid=sc.subcountyid
-	
-	where sh.ServiceHeaderID=$ApplicationID";
-
+$s_sql="select c.*,f.ServiceHeaderType,bt.CustomerTypeName,sbs.SubSystemName,sh.ServiceStatusID,sh.ServiceHeaderID,bz.ZoneName,
+w.WardName,s.ServiceName,sh.ServiceID,sh.SubSystemID,S.ServiceCategoryID 
+from Customer c 
+join ServiceHeader sh on sh.CustomerID=c.CustomerID 
+join services s on sh.ServiceID=s.ServiceID 
+join Forms f on sh.FormID=f.FormID 
+left join CustomerType bt on bt.CustomerTypeID=c.BusinessTypeID 
+left join BusinessZones bz on sh.BusinessZoneID=bz.ZoneID 
+left join Wards w on bz.wardid=w.wardid 
+join SubSystems sbs on sbs.SubSystemID = Sh.SubSystemID
+where sh.ServiceHeaderID=$ApplicationID";
+// echo $s_sql;
 $s_result=sqlsrv_query($db,$s_sql);
 
 
@@ -115,7 +115,7 @@ if ($s_result)
 		$Mobile1=$row['Mobile1'];
 		$url=$row['Url'];
 		$Email=$row['Email'];
-		$SubCountyName=$row['SubCountyName'];
+		$SubSystemName=$row['SubSystemName'];
 		$WardName=$row['WardName'];
 		$BusinessZone=$row['ZoneName'];
 		$SubSystemID=$row['SubSystemID'];

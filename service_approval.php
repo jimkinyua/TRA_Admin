@@ -3,6 +3,8 @@ require 'DB_PARAMS/connect.php';
 require_once('utilities.php');
 require_once('GlobalFunctions.php');
 require_once('county_details.php');
+// require_once('phpSPO-master/vendor/autoload.php');
+require_once('phpSPO/src/autoloader.php');
 
 if (!isset($_SESSION))
 {
@@ -19,6 +21,7 @@ if (isset($_REQUEST['msg']))
 $ApplicationID='';
 $CustomerName='';
 $CustomerID="";
+$ApplicantEmail="";
 $ServiceName ='';
 $ServiceID='';
 $Charges=0;
@@ -74,7 +77,7 @@ if($today>$FirstDec){
 
 if (isset($_REQUEST['save']) && $_REQUEST['NextStatus']!='')
 {
-	
+	// print_r($_REQUEST);exit;
 	$ApplicationID=$_REQUEST['ApplicationID'];
 	$CustomerID=$_REQUEST['CustomerID'];
 	$CurrentStatus=$_REQUEST['CurrentStatus'];
@@ -113,10 +116,25 @@ if (isset($_REQUEST['save']) && $_REQUEST['NextStatus']!='')
 			$PhysicalAddress = $row['PhysicalAddress'];
 		}
 	}
+			$servicegroup = "select c.Email,sc.ServiceGroupID from 
+			ServiceHeader sh
+			 inner join ServiceCategory sc on sh.ServiceCategoryID = sc.ServiceCategoryID
+			 inner join ServiceGroup sg on sc.ServiceGroupID=sg.ServiceGroupID
+			 inner join Customer c on c.CustomerID = sh.CustomerID
+			  where sh.ServiceHeaderID=$ApplicationID";
+			  $groupres = sqlsrv_query($db,$servicegroup);
+			  while($resrow = sqlsrv_fetch_array($groupres,SQLSRV_FETCH_ASSOC)){
+			  	$GroupID = $resrow['ServiceGroupID'];
+			  	$ApplicantEmail = $resrow['Email'];
+// exit($servicegroup);
+			if($GroupID==12){
 
-
-
-
+					$CustomerEmail = 'emmanuelomonso@gmail.com'; 
+          			$from = 'omonsotest@gmail.com'; 
+          			$SenderName = 'TRA-Trade Facilitation.';
+          			$txt = $Notes;
+				  $sendNotificationforTradeFacilitation=php_mailer($CustomerEmail,$from,$SenderName,'TRA-Trade Facilitation.',$txt,'','','Message');
+			}else{
 			$emailSql = "select ins.UserID,ag.Email,ag.LastName,sh.SetDate,s.ServiceName 
 				from Inspections ins
 				join Agents ag on ag.AgentID = ins.UserID 
@@ -142,9 +160,11 @@ if (isset($_REQUEST['save']) && $_REQUEST['NextStatus']!='')
           				Kind Regards,<br>
           				Inspection Team.
           			</p>'; 
-
-          	$sendNotification=php_mailer($CustomerEmail,$from,$SenderName,'Invitation to Undertake an Inspection',$txt,'','','Message');
+          		
+          		$sendNotification=php_mailer($CustomerEmail,$from,$SenderName,'Invitation to Undertake an Inspection',$txt,'','','Message');
+          	}	
 		}
+	}
 
 	
 	$s_sql="select ServiceStatusID from ServiceStatus where ServiceStatusID='$NextStatus'";
@@ -164,7 +184,7 @@ if (isset($_REQUEST['save']) && $_REQUEST['NextStatus']!='')
 	
 	if ($s_result) 
 	{
-		if($NextStatusID==2){
+		if($NextStatusID==2 || $NextStatusID==5){
 			// $sql="insert into Inspections(ServiceHeaderID,UserID,InspectionStatusID) values($ApplicationID,$UserID,0)";
 			$sql="update Inspections set InspectionStatusID=0 where ServiceHeaderID=$ApplicationID";
 			// echo $sql; exit;
@@ -187,9 +207,11 @@ if (isset($_REQUEST['save']) && $_REQUEST['NextStatus']!='')
 $s_sql="select c.*,f.ServiceHeaderType,bt.CustomerTypeName,
 sh.ServiceStatusID,sh.ServiceHeaderID,bz.ZoneName,w.WardName,
 s.ServiceName,sh.ServiceID,sh.CreatedDate,sh.SubSystemID, sub.SubSystemName,
-S.ServiceCategoryID from Customer c join ServiceHeader sh on sh.CustomerID=c.CustomerID 
+S.ServiceCategoryID,sc.ServiceGroupID from Customer c join ServiceHeader sh on sh.CustomerID=c.CustomerID 
 join services s on sh.ServiceID=s.ServiceID 
 join Forms f on sh.FormID=f.FormID 
+ inner join ServiceCategory sc on sh.ServiceCategoryID = sc.ServiceCategoryID
+ inner join ServiceGroup sg on sc.ServiceGroupID=sg.ServiceGroupID
 left join CustomerType bt on bt.CustomerTypeID=c.BusinessTypeID
 left join BusinessZones bz on sh.BusinessZoneID=bz.ZoneID 
 LEFT JOIN SubSystems sub on sh.BusinessZoneID = sub.SubSystemID
@@ -228,7 +250,9 @@ if ($s_result)
 		$Mobile1=$row['Mobile1'];
 		$url=$row['Website'];
 		$Email=$row['Email'];
+		$ApplicantEmail = $row['Email'];
 		$SubCountyName=$row['SubCountyName'];
+		$ServiceGroupID = $row['ServiceGroupID'];
 		// $WardName=$row['WardName'];
 		// $BusinessZone=$row['ZoneName'];
 		$SubSystemID=$row['SubSystemID'];
@@ -257,20 +281,37 @@ if ($ServiceHeaderTypeID==1)
 	}	
 }else
 {
-	$ApplicationChargesSQL="select sum(sc.Amount) Amount 
-	from ApplicationCharges sc 
-	join ServiceHeader sh on sh.serviceheaderid=sc.serviceheaderid 
-	join Services s1 on sc.ServiceID=s1.ServiceID 
-	where sh.ServiceHeaderID=$ServiceHeaderID";
+		//Get the ServiceId 
+		$GetServiceIDSQL = "select ServiceID
+		from ServiceHeader  WHERE ServiceHeaderId = $ServiceHeaderID";
+		// exit($GetServiceIDSQL);
 
-	$result=sqlsrv_query($db,$ApplicationChargesSQL);
-	while($row=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC))
-	{
-		$ApplicationCharge=$row['Amount'];
-	}
-	// echo $ApplicationChargesSQL; exit;
+		$GetServiceIDSQLresult = sqlsrv_query($db, $GetServiceIDSQL);
 
-	$ServiceCost = $ApplicationCharge;
+		while ($row = sqlsrv_fetch_array( $GetServiceIDSQLresult, SQLSRV_FETCH_ASSOC))
+		{							
+			$ServiceID=$row["ServiceID"];												
+		}
+			//Get Service Charges Using the SeriviceId
+			$GetServiceChargeSQL="select s.ServiceID,s.ServiceName, Amount 
+					from ServiceCharges sc
+					join services s on sc.ServiceID=s.serviceid                                 
+					join FinancialYear fy on sc.FinancialYearId=fy.FinancialYearID                                      
+					and fy.isCurrentYear=1
+					and sc.serviceid=$ServiceID";
+			// exit($GetServiceChargeSQL);
+			$GetServiceChargeSQLResult = sqlsrv_query($db, $GetServiceChargeSQL);
+
+			if(sqlsrv_has_rows($GetServiceChargeSQLResult)){
+				while ($row7= sqlsrv_fetch_array( $GetServiceChargeSQLResult, SQLSRV_FETCH_ASSOC))
+				{									
+					$ServiceAmount=$row7["Amount"];
+				}
+			}
+
+
+
+	$ServiceCost = $ServiceAmount;
 		// //get the subsystem
 		// $sql="select fn.Value, ss.SubSystemName from fnFormData($ServiceHeaderID) fn 
 		// 		join SubSystems ss on fn.Value=ss.SubSystemID
@@ -603,7 +644,7 @@ if (isset($_REQUEST['InspectionDate']))
                 <td colspan="2" align="center" style="color:#F00"><?php echo $msg; ?></td>
             </tr>
                               <?php 
-                  if($ServiceStatusID == 5 && $ServiceCategoryID == 2033){
+                  if($ServiceStatusID == 5 && $ServiceGroupID == 11){
                   	?>
                   	<tr>
                   <td width="50%">
@@ -664,7 +705,7 @@ if (isset($_REQUEST['InspectionDate']))
               </tr>
               <tr>
                   <td width="50%">
-                  <label>Licence Applied For</label>
+                  <label>Service Applied For</label>
 					  <div class="input-control text" data-role="input-control">
 						  <input name="servicename" type="text" id="servicename" value="<?php echo $ServiceName; ?>" disabled="disabled" placeholder="">
 						  
@@ -681,30 +722,45 @@ if (isset($_REQUEST['InspectionDate']))
 
 
 
+              <?php 
+              if($ServiceGroupID == 12){
 
- 			<!-- <tr> -->
-                  <!-- <td width="50%">
+              }else{
+              ?>
+ 			 <tr> 
+                  <td width="50%">
                   <label>Add Inspection Officers</label>
 					  <div class="input-control text" data-role="input-control">
 						  <input name="servicename" type="text" id="servicename" value="Add Inspection Officer" disabled="disabled" placeholder="">
 						  
 					  </div>				  
 <<<<<<< HEAD
+
+=======
                   </td> -->
                   <!-- <td width="50%"> -->
 				<!-- <label>&nbsp;</label>				   -->
-=======
+>>>>>>> master
                   </td>
+                 <!--  <td width="50%">
+				<label>&nbsp;</label>				   
+
+                  </td> -->
                   <td width="50%">
 
 				<label>&nbsp;</label>				  
->>>>>>> 790f831ceb22fdbe0cde6678d4e9a6f65ab773e8
+<<<<<<< HEAD
+					<!-- service_approval.php?ApplicationID='+app_id+'&app_type='+app_type+'&CurrentStatus='+current_status -->
+					<!-- <input name="Button" type="button" onclick="loadmypage('service_form.php?save=1&ApplicationID=<?php echo $ApplicationID ?>','content','loader','','')" value="Change"> -->
+					<input name="Button" type="button" 
+=======
 					<!--service_approval.php?ApplicationID='+app_id+'&app_type='+app_type+'&CurrentStatus='+current_status
 					<input name="Button" type="button" onclick="loadmypage('service_form.php?save=1&ApplicationID=<?php echo $ApplicationID ?>','content','loader','','')" value="Change">-->
 					<!-- <input name="Button" type="button" 
+>>>>>>> master
 					onclick="loadmypage('add_officer.php?ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','','')" value="Add Inspection Officer">
-                  </td>    -->
-              <!-- </tr>	 -->
+                  </td>   
+              </tr>	
 
 <tr>
 
@@ -738,7 +794,7 @@ if (isset($_REQUEST['InspectionDate']))
               </tr>
 
 
-
+	
 
 			  <tr>
 				   <td width="50%">
@@ -760,6 +816,7 @@ if (isset($_REQUEST['InspectionDate']))
 						  </div>
                   </td>
 			  </tr>
+			  <?php } ?>
 				<tr>
 					<td colspan="2">
 						<HR>         
@@ -770,7 +827,10 @@ if (isset($_REQUEST['InspectionDate']))
 								<li class="active"><a href="#_page_1">Aplication Notes</a></li>
 								<li class=""><a href="#_page_3">Application Attachments</a></li>
 								<li class=""><a href="#_page_2">Notes</a></li>
+							<?php if($ServiceGroupID==12){
+								}else{?>
 								<li class=""><a href="#_page_5">Inspection Officers</a></li>
+							<?php } ?>
 							</ul>							
 							<div class="frames">
 								<div class="frame" id="_page_4" style="display: none;">
@@ -1098,6 +1158,9 @@ if (isset($_REQUEST['InspectionDate']))
 										?>            	
 									</table> 
 								  </div>
+								  <?php if($ServiceGroupID == 12){
+
+								  }else{ ?>
 								  <div class="frame" id="_page_5" style="display: none;">
 
 								  	<?php 
@@ -1150,7 +1213,7 @@ if (isset($_REQUEST['InspectionDate']))
 						</div>					
 					</td>
 				</tr>
-
+			<?php } ?>
 				<tr>
 
 					<td width="50%"><label>Notes</label>
@@ -1183,7 +1246,14 @@ if (isset($_REQUEST['InspectionDate']))
 							  $s_id = $row["ServiceStatusID"];
                                     
 						   ?>
-						  <option value="<?php echo $s_id; ?>" <?php echo $selected; ?>><?php echo $s_name; ?></option>
+						  <option value="<?php echo $s_id; ?>" <?php echo $selected; ?>>
+						  	<?php if($s_id==2 && $ServiceGroupID==12){
+						  		echo 'Trade Facilitation Application Approved';
+						  	}else{
+						  	echo $s_name; 
+						  }?>
+						  		
+						  	</option>
 						<?php 
 						  }
 						}
@@ -1200,6 +1270,7 @@ if (isset($_REQUEST['InspectionDate']))
  $numrows = 0;
  
 $r_sql = "Select COUNT(UserID) AS TotalRows FROM Inspections where ServiceHeaderID ='$ApplicationID'";
+// exit($r_sql);
 
 $result = sqlsrv_query($db, $r_sql);
 if ($myrow = sqlsrv_fetch_array( $result, SQLSRV_FETCH_ASSOC)) 
@@ -1208,26 +1279,48 @@ if ($myrow = sqlsrv_fetch_array( $result, SQLSRV_FETCH_ASSOC))
 }
 $SetDate1 = 0;
 $ServiceType = 0;
-$d_sql = "select SetDate,ServiceCategoryID from ServiceHeader where ServiceHeaderID = '$ApplicationID'";
+$d_sql = "select SetDate,sc.ServiceGroupID 
+from ServiceHeader sh
+join ServiceCategory sc on sc.ServiceCategoryID = sh.ServiceCategoryID
+where ServiceHeaderID = '$ApplicationID'";
 
 $dresult = sqlsrv_query($db, $d_sql);
 if ($myrow = sqlsrv_fetch_array( $dresult, SQLSRV_FETCH_ASSOC)) 
 {		
 	$SetDate1 = $myrow['SetDate'];
-	$ServiceType = $myrow['ServiceCategoryID'];
+	$ServiceType = $myrow['ServiceGroupID'];
 }
 
-$to = 'emmanuelomonso@gmail.com';
-$subject = 'this is a test email';
-$txt = 'this is a test email';
-send_email_users();
+<<<<<<< HEAD
+
+	if($ServiceGroupID == 12){
+		?>
+		<input type="reset" value="Cancel" onClick="loadmypage('clients_list.php?i=1','content','loader','listpages','','applications','<?php echo $_SESSION['RoleCenter'] ?>')">
+
+
+		  <input name="Button" type="button" onClick="
+		   CurrStatus=this.form.CurrentStatus.value;
+
+		  if(CurrStatus>2)
+		  {
+		  	loadmypage('clients_list.php?save=1&ApplicationID=<?php echo $ApplicationID ?>&CustomerName=<?php echo $CustomerName ?>&CustomerID=<?php echo $CustomerID ?>&ServiceID=<?php echo $ServiceID ?>&ServiceName=<?php echo $ServiceName ?>&CurrentStatus=<?php echo $CurrentStatus ?>&NextStatus='+this.form.NextStatus.value+'&Notes='+this.form.Notes.value+'&ServiceCategoryID=<?php echo $ServiceCategoryID ?>','content','loader','listpages','','applications','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')
+		  }else
+		  {
+		  	loadpage('service_approval.php?save=1&ApplicationID=<?php echo $ApplicationID ?>&CustomerName=<?php echo $CustomerName ?>&CustomerID=<?php echo $CustomerID ?>&ServiceID=<?php echo $ServiceID ?>&ServiceName=<?php echo $ServiceName ?>&CurrentStatus=<?php echo $CurrentStatus ?>&NextStatus='+this.form.NextStatus.value+'&Notes='+this.form.Notes.value+'&ServiceCategoryID=<?php echo $ServiceCategoryID ?>','content')
+		  }
+
+		  "value="Proceed">
+		<?php
+	}else{
+=======
+>>>>>>> master
 
           ?>
 
           
           <?= $CurrentStatus;?>
           <?php 
-          if($ServiceType == 2033 && $numrows == 3 && (!empty($SetDate1))){
+          if($ServiceType == 11 && $numrows == 3 && (!empty($SetDate1))){
            ?>
 		  
            <input type="reset" value="Cancel" onClick="loadmypage('clients_list.php?i=1','content','loader','listpages','','applications','<?php echo $_SESSION['RoleCenter'] ?>')">
@@ -1247,7 +1340,11 @@ send_email_users();
 		  "value="Approve">
 
 		  <?php
-		}elseif($ServiceType != 2033 && $numrows != 0 && (!empty($SetDate1))){
+<<<<<<< HEAD
+		}elseif($ServiceType != 11 && $numrows != 0 && (!empty($SetDate1))){
+=======
+			}elseif($ServiceType != 2033 && $numrows != 0 && (!empty($SetDate1))){
+>>>>>>> master
 		  	?>
 			   
 		  	<input type="reset" value="Cancel" onClick="loadmypage('clients_list.php?i=1','content','loader','listpages','','applications','<?php echo $_SESSION['RoleCenter'] ?>')">
@@ -1267,44 +1364,47 @@ send_email_users();
 
 
 			<?php
-		  }elseif($ServiceType == 2033 && $numrows !=3 && (!empty($SetDate1))){
+		  }elseif($ServiceType == 11 && $numrows !=3 && (!empty($SetDate1))){
 		  	?>
 		  	<p style="color:red;"><strong> You have to add 3 inspection officers to proceed for grading inspection!</strong></p>
 
 			<?php
-		  }elseif($ServiceType == 2033 && $numrows != 3 && (empty($SetDate1))){
+		  }elseif($ServiceType == 11 && $numrows != 3 && (empty($SetDate1))){
 		  	?>		  	<p style="color:red;"><strong>You have not set the inspection date and Inspection Officers! </strong></p>
 
 		  	<?php
-		  }elseif($ServiceType != 2033 && $numrows < 1 && (empty($SetDate1))){
+		  }elseif($ServiceType != 11 && $numrows < 1 && (empty($SetDate1))){
 		  	?>		  	<p style="color:red;"><strong>You have not set the inspection date and saved Inspection officers! </strong></p>
 
 		  	 	<?php
-		  }elseif($ServiceType != 2033 && $numrows < 1 && (!empty($SetDate1))){
+		  }elseif($ServiceType != 11 && $numrows < 1 && (!empty($SetDate1))){
 		  	?>		  	<p style="color:red;"><strong>You have not saved Inspection officers! </strong></p>
 
 
 		  	 	<?php
-		  }elseif($ServiceType != 2033 && $numrows > 1 && (empty($SetDate1))){
+		  }elseif($ServiceType != 11 && $numrows > 1 && (empty($SetDate1))){
 		  	?>		  	<p style="color:red;"><strong>You have not set the inspection date  </strong></p>
 
 
 		  	
 
 		  	<?php
-		  }elseif($ServiceType == 2033 && $numrows == 3 && (empty($SetDate1))){
+		  }elseif($ServiceType == 11 && $numrows == 3 && (empty($SetDate1))){
 		  	?>		  	<p style="color:red;"><strong>You have not set the inspection date! </strong></p>
 		  	<?php
-		  }elseif($ServiceType != 2033 && $numrows > 0 && (empty($SetDate1))){
+		  }elseif($ServiceType != 11 && $numrows > 0 && (empty($SetDate1))){
 		  	?>		  	<p style="color:red;"><strong>You have not set the inspection date! </strong></p>
 
 		  	<?php
-		  }elseif($ServiceType == 2033 && $numrows == 3 && (!empty($SetDate1))){
+		  }elseif($ServiceType == 11 && $numrows == 3 && (!empty($SetDate1))){
 		  	?>
 		  	<p style="color:red; size: "><strong>Save the inspection date and add inspection officers to proceed! </strong></p>
 		  	<?php
 		  }
+
 		  ?>
+<!-- end of the if condition for checking whether the application is a trade facilitation application -->
+		  <?php } ?>
 
           <span class="table_text">
           <input name="ApplicationID" type="hidden" id="ApplicationID" value="<?php echo $ApplicationID;?>" />

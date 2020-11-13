@@ -30,7 +30,7 @@ function save_roles(url,destination,loader,op,id,opv,exPM)
 }
 function loadoptionalpage(app_id,app_type,current_status,destination,loader,op,id,opv,exPM)
 {
-	alert(destination);
+	// alert(destination);
 	// alert(opv);
 	// alert(op);
 	var mypage='';
@@ -65,6 +65,13 @@ function loadoptionalpage(app_id,app_type,current_status,destination,loader,op,i
 		//mypage='hire_application.php?ApplicationID='+app_id+'&app_type='+app_type+'&CurrentStatus='+current_status;
 		opv='LicenceRenewalCard';
 	}
+
+	else if(app_type==7)
+	{
+		mypage='approved_licence_pending_approval_card.php?ApplicationID='+app_id+'&app_type='+app_type+'&CurrentStatus='+current_status;
+		//mypage='hire_application.php?ApplicationID='+app_id+'&app_type='+app_type+'&CurrentStatus='+current_status;
+		opv='LicenceFinalApprovalCard';
+	}
 	else
 	{
 		mypage='service_approval.php?ApplicationID='+app_id+'&app_type='+app_type+'&CurrentStatus='+current_status;
@@ -74,8 +81,11 @@ function loadoptionalpage(app_id,app_type,current_status,destination,loader,op,i
 }
 function loadoptionalpage2(service_id,inv_hdr,service_hdr,destination,loader,op,id,opv,exPM)
 {
-	// alert (service_id);
 	var mypage='';
+	if(opv == 'invoices_lines'){
+		mypage='invoice_lines1.php?InvoiceHeaderID='+inv_hdr+'&ServiceHeaderID='+service_hdr;
+		opv='renewal_invoices_lines'
+	}
 	if (service_id==1603)
 	{
 		mypage='land_invoice_edit.php?InvoiceHeaderID='+inv_hdr+'&ServiceHeaderID='+service_hdr;
@@ -84,12 +94,16 @@ function loadoptionalpage2(service_id,inv_hdr,service_hdr,destination,loader,op,
 		mypage='renewal_invoice_lines.php?InvoiceHeaderID='+inv_hdr+'&ServiceHeaderID='+service_hdr;
 		opv='renewal_invoices_lines'
 	}
+	
 	else
 	{
 		mypage='invoice_lines.php?InvoiceHeaderID='+inv_hdr+'&ServiceHeaderID='+service_hdr;
 		opv='invoices_lines';
 	}
-	mylink=mypage	
+
+	mylink=mypage
+	alert (mylink);
+	
 	loadmypage(mylink,destination,loader,op,id,opv,exPM);	
 }
 function check_all()
@@ -189,7 +203,7 @@ function loadTable2(op,ID,_opv)
 function loadTable(op,ID,_opv)
 {	
 	// alert(op);
-	// alert(_opv);
+	alert(_opv);
 	$(function()
 	{
 		$('#dataTables-1').dataTable( 
