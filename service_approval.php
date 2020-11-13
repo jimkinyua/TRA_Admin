@@ -734,13 +734,6 @@ if (isset($_REQUEST['InspectionDate']))
 						  <input name="servicename" type="text" id="servicename" value="Add Inspection Officer" disabled="disabled" placeholder="">
 						  
 					  </div>				  
-<<<<<<< HEAD
-
-=======
-                  </td> -->
-                  <!-- <td width="50%"> -->
-				<!-- <label>&nbsp;</label>				   -->
->>>>>>> master
                   </td>
                  <!--  <td width="50%">
 				<label>&nbsp;</label>				   
@@ -749,15 +742,9 @@ if (isset($_REQUEST['InspectionDate']))
                   <td width="50%">
 
 				<label>&nbsp;</label>				  
-<<<<<<< HEAD
 					<!-- service_approval.php?ApplicationID='+app_id+'&app_type='+app_type+'&CurrentStatus='+current_status -->
 					<!-- <input name="Button" type="button" onclick="loadmypage('service_form.php?save=1&ApplicationID=<?php echo $ApplicationID ?>','content','loader','','')" value="Change"> -->
 					<input name="Button" type="button" 
-=======
-					<!--service_approval.php?ApplicationID='+app_id+'&app_type='+app_type+'&CurrentStatus='+current_status
-					<input name="Button" type="button" onclick="loadmypage('service_form.php?save=1&ApplicationID=<?php echo $ApplicationID ?>','content','loader','','')" value="Change">-->
-					<!-- <input name="Button" type="button" 
->>>>>>> master
 					onclick="loadmypage('add_officer.php?ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','','')" value="Add Inspection Officer">
                   </td>   
               </tr>	
@@ -1291,7 +1278,6 @@ if ($myrow = sqlsrv_fetch_array( $dresult, SQLSRV_FETCH_ASSOC))
 	$ServiceType = $myrow['ServiceGroupID'];
 }
 
-<<<<<<< HEAD
 
 	if($ServiceGroupID == 12){
 		?>
@@ -1312,8 +1298,6 @@ if ($myrow = sqlsrv_fetch_array( $dresult, SQLSRV_FETCH_ASSOC))
 		  "value="Proceed">
 		<?php
 	}else{
-=======
->>>>>>> master
 
           ?>
 
@@ -1340,11 +1324,7 @@ if ($myrow = sqlsrv_fetch_array( $dresult, SQLSRV_FETCH_ASSOC))
 		  "value="Approve">
 
 		  <?php
-<<<<<<< HEAD
 		}elseif($ServiceType != 11 && $numrows != 0 && (!empty($SetDate1))){
-=======
-			}elseif($ServiceType != 2033 && $numrows != 0 && (!empty($SetDate1))){
->>>>>>> master
 		  	?>
 			   
 		  	<input type="reset" value="Cancel" onClick="loadmypage('clients_list.php?i=1','content','loader','listpages','','applications','<?php echo $_SESSION['RoleCenter'] ?>')">

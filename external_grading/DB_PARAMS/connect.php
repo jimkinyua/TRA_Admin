@@ -1,8 +1,8 @@
 <?php	
 //require_once('config.php');
 
-$myServer = "TRA\SQL2017";
-$myUser = "portalman";
+$myServer = "TRA-EDMS\SQLTRA";
+$myUser = "sa";
 $myPass = 'portalman';
 $myDB = "TRANEW";
 
