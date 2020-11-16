@@ -810,7 +810,8 @@ if (isset($_REQUEST['InspectionDate']))
 						<div class="tab-control" data-role="tab-clontrol">
 						<div class="tab-control" data-role="tab-control">
 							<ul class="tabs">
-								<li class=""><a href="#_page_4">Applicant's Details</a></li>	
+								<li class=""><a href="#_page_4">Applicant's Details</a></li>
+								<li class=""><a href="#_page_6">Applicant's Directors</a></li>	
 								<li class="active"><a href="#_page_1">Aplication Notes</a></li>
 								<li class=""><a href="#_page_3">Application Attachments</a></li>
 								<li class=""><a href="#_page_2">Notes</a></li>
@@ -972,7 +973,7 @@ if (isset($_REQUEST['InspectionDate']))
 										?>             	
 									  </table>              
 								  </div>
-							  <div class="frame" id="_page_3" style="display: none;">
+								  <div class="frame" id="_page_3" style="display: none;">
 									<table class="hovered" cellpadding="3" cellspacing="1">
 										<?php 
 											$sql="select d.DocumentName,att.ID
@@ -993,6 +994,40 @@ if (isset($_REQUEST['InspectionDate']))
 													}
 										?>             	
 									  </table> 
+								  </div>
+								  <div class="frame" id="_page_6" style="display: none;">
+								  <table class="table striped hovered dataTable" id="dataTables-1">
+            	 <tr>
+                    <th  class="text-left"> Director's Name</th>
+                    <th  class="text-left">Date Added</th>                   
+                    <th  class="text-left" width="20%">ID No.</th>
+                    <th  class="text-left">KRA PIN</th>					
+                </tr>
+            <?php 
+            $sql1 = "select * from Directors where CompanyID =$CustomerID";
+					// echo $sql1;exit;
+		
+	$result = sqlsrv_query($db, $sql1);	
+	while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) 
+	{
+		$FirstName = $row['FirstName'];
+		$LastName = $row['LastName'];
+		$Created_at = $row['created_at'];
+		$IDNO = $row['IDNO'];
+		$KRAPIN = $row['KRAPIN'];
+
+		?>
+		<tr>
+			<td><?php echo $FirstName; ?>&nbsp;<?php echo $LastName; ?></td>
+			<td><?php echo $Created_at; ?></td>
+			<td><?php echo $IDNO; ?></td>
+			<td><?php echo $KRAPIN; ?></td>
+		</tr>
+		<?php
+		}
+		?>				  
+				
+            </table> 
 								  </div>
 								  <div class="frame" id="_page_1" style="display: none;">
 									<table width="50%">
