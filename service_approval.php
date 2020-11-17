@@ -126,7 +126,7 @@ if (isset($_REQUEST['save']) && $_REQUEST['NextStatus']!='')
 			  while($resrow = sqlsrv_fetch_array($groupres,SQLSRV_FETCH_ASSOC)){
 			  	$GroupID = $resrow['ServiceGroupID'];
 			  	$ApplicantEmail = $resrow['Email'];
-// exit($servicegroup);
+				// exit($servicegroup);
 			if($GroupID==12){
 
 					$CustomerEmail = 'emmanuelomonso@gmail.com'; 
@@ -734,13 +734,6 @@ if (isset($_REQUEST['InspectionDate']))
 						  <input name="servicename" type="text" id="servicename" value="Add Inspection Officer" disabled="disabled" placeholder="">
 						  
 					  </div>				  
-<<<<<<< HEAD
-
-=======
-                  </td> -->
-                  <!-- <td width="50%"> -->
-				<!-- <label>&nbsp;</label>				   -->
->>>>>>> master
                   </td>
                  <!--  <td width="50%">
 				<label>&nbsp;</label>				   
@@ -749,15 +742,9 @@ if (isset($_REQUEST['InspectionDate']))
                   <td width="50%">
 
 				<label>&nbsp;</label>				  
-<<<<<<< HEAD
 					<!-- service_approval.php?ApplicationID='+app_id+'&app_type='+app_type+'&CurrentStatus='+current_status -->
 					<!-- <input name="Button" type="button" onclick="loadmypage('service_form.php?save=1&ApplicationID=<?php echo $ApplicationID ?>','content','loader','','')" value="Change"> -->
 					<input name="Button" type="button" 
-=======
-					<!--service_approval.php?ApplicationID='+app_id+'&app_type='+app_type+'&CurrentStatus='+current_status
-					<input name="Button" type="button" onclick="loadmypage('service_form.php?save=1&ApplicationID=<?php echo $ApplicationID ?>','content','loader','','')" value="Change">-->
-					<!-- <input name="Button" type="button" 
->>>>>>> master
 					onclick="loadmypage('add_officer.php?ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','','')" value="Add Inspection Officer">
                   </td>   
               </tr>	
@@ -823,7 +810,8 @@ if (isset($_REQUEST['InspectionDate']))
 						<div class="tab-control" data-role="tab-clontrol">
 						<div class="tab-control" data-role="tab-control">
 							<ul class="tabs">
-								<li class=""><a href="#_page_4">Applicant's Details</a></li>	
+								<li class=""><a href="#_page_4">Applicant's Details</a></li>
+								<li class=""><a href="#_page_6">Applicant's Directors</a></li>	
 								<li class="active"><a href="#_page_1">Aplication Notes</a></li>
 								<li class=""><a href="#_page_3">Application Attachments</a></li>
 								<li class=""><a href="#_page_2">Notes</a></li>
@@ -985,7 +973,7 @@ if (isset($_REQUEST['InspectionDate']))
 										?>             	
 									  </table>              
 								  </div>
-							  <div class="frame" id="_page_3" style="display: none;">
+								  <div class="frame" id="_page_3" style="display: none;">
 									<table class="hovered" cellpadding="3" cellspacing="1">
 										<?php 
 											$sql="select d.DocumentName,att.ID
@@ -1006,6 +994,40 @@ if (isset($_REQUEST['InspectionDate']))
 													}
 										?>             	
 									  </table> 
+								  </div>
+								  <div class="frame" id="_page_6" style="display: none;">
+								  <table class="table striped hovered dataTable" id="dataTables-1">
+            	 <tr>
+                    <th  class="text-left"> Director's Name</th>
+                    <th  class="text-left">Date Added</th>                   
+                    <th  class="text-left" width="20%">ID No.</th>
+                    <th  class="text-left">KRA PIN</th>					
+                </tr>
+            <?php 
+            $sql1 = "select * from Directors where CompanyID =$CustomerID";
+					// echo $sql1;exit;
+		
+	$result = sqlsrv_query($db, $sql1);	
+	while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) 
+	{
+		$FirstName = $row['FirstName'];
+		$LastName = $row['LastName'];
+		$Created_at = $row['created_at'];
+		$IDNO = $row['IDNO'];
+		$KRAPIN = $row['KRAPIN'];
+
+		?>
+		<tr>
+			<td><?php echo $FirstName; ?>&nbsp;<?php echo $LastName; ?></td>
+			<td><?php echo $Created_at; ?></td>
+			<td><?php echo $IDNO; ?></td>
+			<td><?php echo $KRAPIN; ?></td>
+		</tr>
+		<?php
+		}
+		?>				  
+				
+            </table> 
 								  </div>
 								  <div class="frame" id="_page_1" style="display: none;">
 									<table width="50%">
@@ -1291,6 +1313,29 @@ if ($myrow = sqlsrv_fetch_array( $dresult, SQLSRV_FETCH_ASSOC))
 	$ServiceType = $myrow['ServiceGroupID'];
 }
 
+<<<<<<< HEAD
+=======
+
+	if($ServiceGroupID == 12){
+		?>
+		<input type="reset" value="Cancel" onClick="loadmypage('clients_list.php?i=1','content','loader','listpages','','applications','<?php echo $_SESSION['RoleCenter'] ?>')">
+
+
+		  <input name="Button" type="button" onClick="
+		   CurrStatus=this.form.CurrentStatus.value;
+
+		  if(CurrStatus>2)
+		  {
+		  	loadmypage('clients_list.php?save=1&ApplicationID=<?php echo $ApplicationID ?>&CustomerName=<?php echo $CustomerName ?>&CustomerID=<?php echo $CustomerID ?>&ServiceID=<?php echo $ServiceID ?>&ServiceName=<?php echo $ServiceName ?>&CurrentStatus=<?php echo $CurrentStatus ?>&NextStatus='+this.form.NextStatus.value+'&Notes='+this.form.Notes.value+'&ServiceCategoryID=<?php echo $ServiceCategoryID ?>','content','loader','listpages','','applications','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')
+		  }else
+		  {
+		  	loadpage('service_approval.php?save=1&ApplicationID=<?php echo $ApplicationID ?>&CustomerName=<?php echo $CustomerName ?>&CustomerID=<?php echo $CustomerID ?>&ServiceID=<?php echo $ServiceID ?>&ServiceName=<?php echo $ServiceName ?>&CurrentStatus=<?php echo $CurrentStatus ?>&NextStatus='+this.form.NextStatus.value+'&Notes='+this.form.Notes.value+'&ServiceCategoryID=<?php echo $ServiceCategoryID ?>','content')
+		  }
+
+		  "value="Proceed">
+		<?php
+	}else{
+>>>>>>> 8849a5110d19901d2580db2cc900d31b50d237c7
 
           ?>
 
@@ -1317,7 +1362,11 @@ if ($myrow = sqlsrv_fetch_array( $dresult, SQLSRV_FETCH_ASSOC))
 		  "value="Approve">
 
 		  <?php
+<<<<<<< HEAD
 			}elseif($ServiceType != 2033 && $numrows != 0 && (!empty($SetDate1))){
+=======
+		}elseif($ServiceType != 11 && $numrows != 0 && (!empty($SetDate1))){
+>>>>>>> 8849a5110d19901d2580db2cc900d31b50d237c7
 		  	?>
 			   
 		  	<input type="reset" value="Cancel" onClick="loadmypage('clients_list.php?i=1','content','loader','listpages','','applications','<?php echo $_SESSION['RoleCenter'] ?>')">

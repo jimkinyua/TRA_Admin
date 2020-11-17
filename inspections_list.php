@@ -15,13 +15,39 @@ $msg ='';
 
 // print_r($_REQUEST); 
 
+if($_REQUEST['addinspection']==1){
+	$c_id = $_REQUEST['c_id'];
+	$s_id = $_REQUEST['s_id'];
+	$ServiceStatusID = $_REQUEST['ServiceStatusID'];
+	$ServiceHeaderType = $_REQUEST['ServiceHeaderType'];
+	$ServiceCategoryID = $_REQUEST['ServiceCategoryID'];
+	$SubmissionDate = $_REQUEST['SubmissionDate'];
+	$ss_id = $_REQUEST['ss_id'];
+	$Notes = $_REQUEST['Notes'];
+	$formID = $_REQUEST['formID'];
+
+	$sql = "insert into ServiceHeader (CustomerID,ServiceID,ServiceStatusID,ServiceHeaderType,ServiceCategoryID,SubmissionDate,SubSystemID,Notes,FormID) Values ($c_id,$s_id,$ServiceStatusID,$ServiceHeaderType,$ServiceCategoryID,$SubmissionDate,$ss_id,'$Notes',$formID)";
+	// exit($sql);
+	$result=sqlsrv_query($db,$sql);
+		if($result){
+			$msg="Rating Saved Successfully";
+		}else
+		{
+			DisplayErrors();
+			$msg="Failed to save rating, contact the technical teamss";
+		}
+
+}
+
+
+
 if($_REQUEST['submit']==1){
 	//
 	// EXIT('74');
 	$InspectionID=$_REQUEST['InspectionID'];
 	$Status=$_REQUEST['Status'];
 	$Comment=$_REQUEST['Comment'];
-	$AverageScore = $_REQUEST['AverageScore'];
+	$AverageScore=$_REQUEST['AverageScore'];
 	if($Comment==''){
 		$Comment='Cleared for Payment and Licencing';
 	}
@@ -75,7 +101,8 @@ if($_REQUEST['submit']==1){
 	$sql="Update Inspections Set InspectionStatusID=$Status,UserComment='$Comment' where InspectionID='$InspectionID'";
 	$result=sqlsrv_query($db,$sql);
 	if($result){
-		$sql="Insert into InspectionComments (InspectionID,UserID,AverageScore,InspectionStatusID,UserComment) Values($InspectionID,$UserID,$AverageScore,$Status,'$Comment')";
+		$sql="Insert into InspectionComments (InspectionID,UserID,InspectionStatusID,UserComment,AverageScore) Values($InspectionID,$UserID,$Status,'$Comment',$AverageScore)";
+		// exit($sql);
 		$result=sqlsrv_query($db,$sql);
 		if($result){
 			$msg="Status Saved Successfully";
@@ -161,12 +188,17 @@ checkSession($db,$UserID);
         <div class="example">
         <legend>SBP Applications</legend>
        <!--  <input type="text" id="session" name="session" /> -->
-	  <input name="Button" type="button" 
-					onclick="loadmypage('setrating.php?ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','listpages','','Inspections','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" value="Set Rating for Classification and Grading"> || 
-	 <input name="Button" type="button" 
-					onclick="loadmypage('tradefacilitation_list.php?ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','listpages','','Inspections','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" value="Trade And Facilitation Applications">||
-	<input name="Button" type="button" 
-					onclick="loadmypage('classification_list.php?ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','listpages','','Inspections','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" value="Classification and Grading Applications">
+
+
+       <input name="Button" type="button" 
+					onclick="loadmypage('graded.php?ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','','')" value="View Grades">
+	   <input name="Button" type="button" 
+					onclick="loadmypage('setrating.php?CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','','')" value="Set Ratings">
+
+		<input name="Button" type="button" 
+					onclick="loadmypage('create_inspection.php?CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','','')" value="Initiate Inspection">
+
+
 		<form>
             <table class="table striped hovered dataTable" id="dataTables-1">
                 <thead>
