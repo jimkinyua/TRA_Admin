@@ -126,7 +126,7 @@ if (isset($_REQUEST['save']) && $_REQUEST['NextStatus']!='')
 			  while($resrow = sqlsrv_fetch_array($groupres,SQLSRV_FETCH_ASSOC)){
 			  	$GroupID = $resrow['ServiceGroupID'];
 			  	$ApplicantEmail = $resrow['Email'];
-// exit($servicegroup);
+				// exit($servicegroup);
 			if($GroupID==12){
 
 					$CustomerEmail = 'emmanuelomonso@gmail.com'; 
