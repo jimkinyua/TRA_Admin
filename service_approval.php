@@ -1313,8 +1313,6 @@ if ($myrow = sqlsrv_fetch_array( $dresult, SQLSRV_FETCH_ASSOC))
 	$ServiceType = $myrow['ServiceGroupID'];
 }
 
-<<<<<<< HEAD
-=======
 
 	if($ServiceGroupID == 12){
 		?>
@@ -1335,8 +1333,7 @@ if ($myrow = sqlsrv_fetch_array( $dresult, SQLSRV_FETCH_ASSOC))
 		  "value="Proceed">
 		<?php
 	}else{
->>>>>>> 8849a5110d19901d2580db2cc900d31b50d237c7
-
+	}
           ?>
 
           
@@ -1362,11 +1359,7 @@ if ($myrow = sqlsrv_fetch_array( $dresult, SQLSRV_FETCH_ASSOC))
 		  "value="Approve">
 
 		  <?php
-<<<<<<< HEAD
-			}elseif($ServiceType != 2033 && $numrows != 0 && (!empty($SetDate1))){
-=======
 		}elseif($ServiceType != 11 && $numrows != 0 && (!empty($SetDate1))){
->>>>>>> 8849a5110d19901d2580db2cc900d31b50d237c7
 		  	?>
 			   
 		  	<input type="reset" value="Cancel" onClick="loadmypage('clients_list.php?i=1','content','loader','listpages','','applications','<?php echo $_SESSION['RoleCenter'] ?>')">

@@ -249,10 +249,7 @@
 		try 
 		{
 			
-<<<<<<< HEAD
-=======
 			$mail->SMTPDebug  = FALSE; 		
->>>>>>> 8849a5110d19901d2580db2cc900d31b50d237c7
 
 			// $mail->SMTPDebug  = 2; 		
 			// $mail->defaultCredentials='true';
@@ -267,23 +264,12 @@
 				
 			$mail->SMTPAuth   = 2;
 			$mail->Mailer = "smtp";                  // enable SMTP authentication
-<<<<<<< HEAD
-=======
-
->>>>>>> 8849a5110d19901d2580db2cc900d31b50d237c7
 			$mail->isSMTP();
 			$mail->SMTPAutoTLS = false; 
 			$mail->Host = "smtp.gmail.com"; // sets the SMTP server	
 			$mail->SMTPSecure = 'ssl'; 
 			$mail->Port       = 465;                    // set the SMTP port for the GMAIL server				
 
-<<<<<<< HEAD
-			$mail->Username = "passdevelopment00@gmail.com";
-			$mail->Password = "cyvkhicsdngecuvf";	    
-			// $mail->Username = "omonsotest@gmail.com";
-			// $mail->Password = "omonso001";	    
-
-=======
 			$mail->Username = "omonsotest@gmail.com";
 			$mail->Password = "omonso001";	    
 
@@ -299,7 +285,6 @@
 			$mail->Username = "omonsotest@gmail.com";
 			$mail->Password = "omonso001";	    
 
->>>>>>> 8849a5110d19901d2580db2cc900d31b50d237c7
 			
 			
 			$mail->AddReplyTo($toEmail, $fromName);	
@@ -324,14 +309,10 @@
 				$feedback[1]=$item." sent Successfully to $toEmail";
 				return $feedback;
 				
-<<<<<<< HEAD
-				//return "Mail Sent Successfully to $toEmail";
-=======
 				return "Mail Sent Successfully to $toEmail";
 				// return "Mail Sent Successfully to $toEmail";
 
 				return "Mail Sent Successfully to $toEmail";
->>>>>>> 8849a5110d19901d2580db2cc900d31b50d237c7
 
 
 			}else
