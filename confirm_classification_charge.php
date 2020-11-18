@@ -250,17 +250,28 @@ $(document).ready(function(){
 					
                   </td>   
 			</tr>
-			<tr>
-                  <td width="50%">
-					  <label>Select Date for Inspection</label>
-						  <div class="input-control select" data-role="input-control">
-							<input type="date" name="SetDate" value="">
-					  </div>				  
+			
+			<!-- <tr>
+				   <td width="50%">
+						<label>Service Cost (Ksh.)</label>
+						  <div class="input-control text" data-role="input-control">
+							  <input name="servicecost" type="text" id="servicecost" value="<?php echo $ServiceCost; ?>" disabled="disabled" placeholder="">
+							  
+						  </div>                  	
                   </td>
-                  <td width="50%">	
-					
-                  </td>   
-			</tr>
+                  <td>
+                  			<label>&nbsp</label>
+						  <div class="input-control text" data-role="input-control">
+							  <input id="addCharges" name="Button" type="button" 
+								data-app-id="<?php echo $ApplicationID; ?>"
+								data-ss-id="<?php echo $SubSystemID; ?>"
+								data-s-id="<?php echo $ServiceID; ?>"
+							 value="Add Charges">
+							  
+						  </div>
+                  </td>
+			  </tr> -->
+			  
 			
             		
           </table> 
@@ -268,7 +279,7 @@ $(document).ready(function(){
           
           <input type="reset" value="Cancel" onClick="loadmypage('Inspection_date.php?ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','listpages','','applications','<?php echo $_SESSION['RoleCenter'] ?>')">
 
-<input type="button" value="Save Date" onClick="deleteConfirm2('Are you sure you want to save the date','service_approval.php?InspectionDate=1&ApplicationID=<?php echo $ApplicationID; ?>&UserID=<?php echo $UserID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>&SetDate='+this.form.SetDate.value+'','content','loader','listpages','','applications','<?php echo $_SESSION['RoleCenter'] ?>')"> 
+<input type="button" value="Save Date" onClick="deleteConfirm2('Are you sure you want to save the date','service_approval.php?generateinvoice=1&ApplicationID=<?php echo $ApplicationID; ?>&UserID=<?php echo $UserID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>&SetDate='+this.form.SetDate.value+'','content','loader','listpages','','applications','<?php echo $_SESSION['RoleCenter'] ?>')"> 
 
 
   <!--	<input name="Button" type="button" onclick="loadmypage('pdf.php.php?save=1,'content','loader','clients')" value="View"> -->

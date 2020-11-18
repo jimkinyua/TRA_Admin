@@ -4057,7 +4057,7 @@ function GenerateInvoice($db,$ApplicationID,$UserID='')
 
 function GenerateLicenceApplicationInvoice($db,$ServiceHeaderID,$UserID)
 {	
-
+ 
 	$InvoiceHeader="";
 	$ServiceAmount=0;
 	$InvoiceAmount=0;
