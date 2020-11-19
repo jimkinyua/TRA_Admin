@@ -46,7 +46,7 @@ if($_REQUEST['submit']==1){
 	$InspectionID=$_REQUEST['InspectionID'];
 	$Status=$_REQUEST['Status'];
 	$Comment=$_REQUEST['Comment'];
-	$ServiceGroupID=$_REQUEST['ServiceGroupID'];
+	// $ServiceGroupID=$_REQUEST['ServiceGroupID'];
 	$AverageScore=$_REQUEST['AverageScore'];
 	if($Comment==''){
 		$Comment='Cleared for Payment and Licencing';

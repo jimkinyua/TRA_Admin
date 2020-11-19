@@ -1614,9 +1614,9 @@ if ($myrow = sqlsrv_fetch_array( $dresult, SQLSRV_FETCH_ASSOC))
 		  }elseif($ServiceType == 11 && $numrows == 3 && (empty($SetDate1))){
 		  	?>		  	<p style="color:red;"><strong>You have not set the inspection date! </strong></p>
 		  	<?php
-		  }elseif($ServiceType != 11 && $numrows > 0 && (empty($SetDate1))){
+		  }elseif($ServiceType != 11 || $ServiceType != 12 && $numrows > 0 && (empty($SetDate1))){
 		  	?>		  	
-			  <!-- <p style="color:red;"><strong>You have not set the inspection date!22 </strong></p> -->
+			  <p style="color:red;"><strong>You have not set the inspection date! </strong></p>
 		  	<?php
 		  }elseif($ServiceType == 11 && $numrows == 3 && (!empty($SetDate1))){
 		  	?>
