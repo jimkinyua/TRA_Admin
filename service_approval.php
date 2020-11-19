@@ -811,23 +811,10 @@ $s_result=sqlsrv_query($db,$sql);
 			  </td>   
 		  </tr>
 		 <?php
-		 if($ServiceGroupID == 11 && $ServiceGroupID == 12){
+		 if($ServiceGroupID == 11 && $ServiceGroupID != 12){
 		 ?>
 		  <tr>
-<?php
-$sql="select SetDate from ServiceHeader where ServiceHeaderID = $ApplicationID";
-$s_result=sqlsrv_query($db,$sql);
-	if ($s_result){
-		?>
-		
-		<?php
-		while($row=sqlsrv_fetch_array($s_result,SQLSRV_FETCH_ASSOC))
-			{									
-				$SetDate = $row['SetDate'];
-			}
-		}
-		?>
-			  <td width="50%">
+		    <td width="50%">
 			  <label>Generate the Invoice</label>
 				  <div class="input-control text" data-role="input-control">
 					  <input name="servicename" type="text" id="servicename" value="<?php echo $ServiceCost; ?>" disabled="disabled" placeholder="">
@@ -879,8 +866,8 @@ $s_result=sqlsrv_query($db,$sql);
 								<li class=""><a href="#_page_6"> Directors</a></li>	
 								<li class="active"><a href="#_page_1">Aplication Notes</a></li>
 								<li class=""><a href="#_page_3">Attachments</a></li>
-								<li class=""><a href="#_page_5">Inspection Officers</a></li>
 								<li class=""><a href="#_page_2">Notes</a></li>
+								<li class=""><a href="#_page_5">Inspection Officers</a></li>
 							<?php if($ServiceGroupID==12){
 								}elseif($ServiceGroupID==11){?>
 									<li class=""><a href="#_page_7">Invoice Details</a></li>
@@ -964,6 +951,7 @@ $s_result=sqlsrv_query($db,$sql);
                                         </tbody>
                                     </table>              
                                 </div>
+								
 								<div class="frame" id="_page_8" style="display: none;">
 								<?php 
                                         
@@ -1439,15 +1427,7 @@ $s_result=sqlsrv_query($db,$sql);
 												{
 													echo $sql;
 												}						
-
-
-
 										?>
-
-
-
-
-
 									  </table>  -->
 								  </div>
 
@@ -1459,6 +1439,10 @@ $s_result=sqlsrv_query($db,$sql);
 					</td>
 				</tr>
 			<?php } ?>
+			</table>
+			</div>
+			<div>
+			<table>
 				<tr>
 
 					<td width="50%"><label>Notes</label>

@@ -42,11 +42,11 @@ if($_REQUEST['addinspection']==1){
 
 
 if($_REQUEST['submit']==1){
-	//
-	// EXIT('74');
+	// print_r($_REQUEST);exit;
 	$InspectionID=$_REQUEST['InspectionID'];
 	$Status=$_REQUEST['Status'];
 	$Comment=$_REQUEST['Comment'];
+	$ServiceGroupID=$_REQUEST['ServiceGroupID'];
 	$AverageScore=$_REQUEST['AverageScore'];
 	if($Comment==''){
 		$Comment='Cleared for Payment and Licencing';
@@ -186,7 +186,7 @@ checkSession($db,$UserID);
 	    </script>   
 
         <div class="example">
-        <legend>SBP Applications</legend>
+        <legend>SBP Applications <?php echo 'the'.$ServiceGroupID; ?></legend>
        <!--  <input type="text" id="session" name="session" /> -->
 	   <input name="Button" type="button" 
 					onclick="loadmypage('setrating.php?ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','listpages','','Inspections','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" value="Set Rating for Classification and Grading"> || 

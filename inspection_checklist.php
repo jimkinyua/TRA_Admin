@@ -203,10 +203,12 @@ $row = sqlsrv_has_rows( $s_result );
                       if($ServiceGroupID == 11){
                         ?>
                         <input type="hidden" name="AverageScore" value="<?php echo $Average; ?>">
+                        <input type="hidden" name="ServiceGroupID" value="<?php echo $ServiceGroupID; ?>">
                         <?php
                       }else{
                     ?>  
                     <input type="hidden" name="AverageScore" value="0">
+                    
                       <?php
                       }
                       ?>
@@ -228,6 +230,7 @@ $row = sqlsrv_has_rows( $s_result );
 
                       deleteConfirm2('Are you sure you want to submit?','inspections_list.php?'+
                       'InspectionID=<?= $InspectionID ?>'+
+                      'ServiceGroupID='+this.form.ServiceGroupID.value+
                       '&Status='+this.form.Status.value+                
                       '&Comment='+this.form.Comment.value+
                       '&AverageScore='+this.form.AverageScore.value+
