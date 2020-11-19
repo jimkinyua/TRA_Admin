@@ -188,15 +188,12 @@ checkSession($db,$UserID);
         <div class="example">
         <legend>SBP Applications</legend>
        <!--  <input type="text" id="session" name="session" /> -->
-
-
-       <input name="Button" type="button" 
-					onclick="loadmypage('graded.php?ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','','')" value="View Grades">
 	   <input name="Button" type="button" 
-					onclick="loadmypage('setrating.php?CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','','')" value="Set Ratings">
-
-		<input name="Button" type="button" 
-					onclick="loadmypage('create_inspection.php?CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','','')" value="Initiate Inspection">
+					onclick="loadmypage('setrating.php?ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','listpages','','Inspections','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" value="Set Rating for Classification and Grading"> || 
+	 <input name="Button" type="button" 
+					onclick="loadmypage('tradefacilitation_list.php?ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','listpages','','Inspections','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" value="Trade And Facilitation Applications">||
+	<input name="Button" type="button" 
+					onclick="loadmypage('classification_list.php?ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','listpages','','Inspections','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" value="Classification and Grading Applications">
 
 
 		<form>
