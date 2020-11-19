@@ -2145,8 +2145,9 @@ else if($OptionValue=='approved_pending_approval')
 	and sh.ServiceID not in (select ServiceID from ServiceTrees) 
 	and sh.ServiceID<>1603 
 	and sh.ServiceStatusID = 3
-	and c.BusinessZone = 2
+	
 	order by sh.SubmissionDate desc";
+	// exit($sql);
 	//$ApproverRegionID
 	//echo $msql; 	
 	//".$filter.$locationcondition."

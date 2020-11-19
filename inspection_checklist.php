@@ -176,7 +176,7 @@ $row = sqlsrv_has_rows( $s_result );
                       Re-Inspection has to be conducted by 3 officers
                     </p>
                   <?php
-                }elseif($ServiceGroupID == 11 && $ServiceStatusID ==4 || $ServiceStatusID==1|| $ServiceStatusID==6){?>
+                }elseif($ServiceGroupID == 11 && $ServiceStatusID ==4 || $ServiceStatusID==1|| $ServiceStatusID==6 || $ServiceStatusID==3){?>
                     <p style="color:red;">
                      Verdict has been given...
                     </p>
