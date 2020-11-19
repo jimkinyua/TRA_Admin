@@ -23,7 +23,9 @@ $CreatedUserID = $_SESSION['UserID'];
  	join agents ag on ca.AgentID=ag.AgentID 
  	where ca.CustomerID=$CustomerID";
  	$qry=sqlsrv_query($db,$sql);
- 	//exit($sql);
+	 
+	 //exit($sql);
+	 
  	while($row=sqlsrv_fetch_array($qry,SQLSRV_FETCH_ASSOC))
  	{
  		$IdNO=$row['IDNO'];

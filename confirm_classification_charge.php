@@ -279,7 +279,7 @@ $(document).ready(function(){
           
           <input type="reset" value="Cancel" onClick="loadmypage('Inspection_date.php?ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','listpages','','applications','<?php echo $_SESSION['RoleCenter'] ?>')">
 
-<input type="button" value="Save Date" onClick="deleteConfirm2('Are you sure you want to save the date','service_approval.php?generateinvoice=1&ApplicationID=<?php echo $ApplicationID; ?>&UserID=<?php echo $UserID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>&SetDate='+this.form.SetDate.value+'','content','loader','listpages','','applications','<?php echo $_SESSION['RoleCenter'] ?>')"> 
+<input type="button" value="Send Invoice" onClick="deleteConfirm2('Are you sure you want to send the invoice','service_approval.php?generateinvoice=1&ApplicationID=<?php echo $ApplicationID; ?>&UserID=<?php echo $UserID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','listpages','','applications','<?php echo $_SESSION['RoleCenter'] ?>')"> 
 
 
   <!--	<input name="Button" type="button" onclick="loadmypage('pdf.php.php?save=1,'content','loader','clients')" value="View"> -->

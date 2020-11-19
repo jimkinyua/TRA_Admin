@@ -12,7 +12,7 @@
           join Inspections ins on sh.ServiceHeaderID = ins.ServiceHeaderID 
           join ChecklistResults cr on cr.InspectionID = ins.InspectionID 
           join Customer c on c.CustomerID = sh.CustomerID 
-          join InspectionComments ic on ic.InspectionID = ins.InspectionID 
+          left join InspectionComments ic on ic.InspectionID = ins.InspectionID 
           join SubSystems sbs on sbs.SubSystemID = c.BusinessZone
           join Services s on s.ServiceID = sh.ServiceID 
           join ServiceCategory sc on sc.ServiceCategoryID = sh.ServiceCategoryID

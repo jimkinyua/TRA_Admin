@@ -565,7 +565,7 @@ if (isset($_REQUEST['generateinvoice']))
 	{
 		if($ServiceGroupID == 11){
 			GenerateLicenceApplicationInvoice($db,$ApplicationID,$UserID);
-			$msg ="The Inspection Date Has Been Set";
+			$msg ="The Invoice has Been Sent Successfully";
 		}else{
 			DisplayErrors();
 		  }

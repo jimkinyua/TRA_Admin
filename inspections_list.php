@@ -98,12 +98,14 @@ if($_REQUEST['submit']==1){
 		$Sawa=false;
 	}
 
-	$sql="Update Inspections Set InspectionStatusID=$Status,UserComment='$Comment' where InspectionID='$InspectionID'";
+	$sql="Update Inspections Set InspectionStatusID=$Status,
+	UserComment='$Comment' where InspectionID='$InspectionID'";
+	// exit($sql);
 	$result=sqlsrv_query($db,$sql);
 	if($result){
-		$sql="Insert into InspectionComments (InspectionID,UserID,InspectionStatusID,UserComment,AverageScore) Values($InspectionID,$UserID,$Status,'$Comment',$AverageScore)";
+		$sql1="Insert into InspectionComments (InspectionID,UserID,InspectionStatusID,UserComment,AverageScore) Values($InspectionID,$UserID,$Status,'$Comment',$AverageScore)";
 		// exit($sql);
-		$result=sqlsrv_query($db,$sql);
+		$result=sqlsrv_query($db,$sql1);
 		if($result){
 			$msg="Status Saved Successfully";
 		}else
@@ -118,6 +120,12 @@ if($_REQUEST['submit']==1){
 		DisplayErrors();
 		$msg="Failed to save status, contact the technical team";
 	}
+	if($sql && $sql1)
+			{	
+				$rst=SaveTransaction($db,$UserID,"okay");				
+				sqlsrv_commit($db);
+				$msg="Success";
+			}
 }
 
 function IssueLicence($ApplicationId){
@@ -165,6 +173,7 @@ function IssueLicence($ApplicationId){
 		// $msg="Failed to Issue Licence, contact the technical team";
 
 	// }
+	
 }
 
 
