@@ -11,17 +11,17 @@ $CreatedUserID = $_SESSION['UserID'];
 
  if ($_REQUEST['reset']=="1")
  {
-
  	$CustomerID=$_REQUEST['CustomerID'];
  	$CustomerName=$_REQUEST['CustomerName'];
  	$IDNO=$_REQUEST['IDNO'];
  	$Email=$_REQUEST['Email'];
 
- 	$sql=
- 	"select ag.IDNO 
+	$sql=
+   "select ag.IDNO 
  	from CustomerAgents ca 
  	join agents ag on ca.AgentID=ag.AgentID 
- 	where ca.CustomerID=$CustomerID";
+	where ca.CustomerID=$CustomerID";
+
  	$qry=sqlsrv_query($db,$sql);
 	 
 	 //exit($sql);
@@ -34,13 +34,15 @@ $CreatedUserID = $_SESSION['UserID'];
        
  		$qr2=sqlsrv_query($db,$sql);
  		if($qr2)
- 		{
+ 		 {
  			$msg="Account Reset Successfully";
             echo $msg;
- 		}else{
+		 }else
+		 {
             $msg="Reset failed";
-        }
- 	}
+         }
+	 }
+	 
  }
 
 
