@@ -992,6 +992,23 @@ if (isset($_REQUEST['InspectionDate']))
 															</tr>";
 															}
 													}
+													$GetCompanyDocumentsSQL="select * from BusinessAttachements Bt
+																join BusinessRegistrationDocumentTypes as BRT on BRT.DocTypeID = Bt.DocTypeID
+																	where Bt.BusinessNo=$CustomerID";
+													//
+													// EXIT($GetCompanyDocumentsSQL);
+
+												$GetCompanyDocumentsResult=sqlsrv_query($db,$GetCompanyDocumentsSQL);
+													
+												if ($GetCompanyDocumentsResult){
+													while($row=sqlsrv_fetch_array($GetCompanyDocumentsResult,SQLSRV_FETCH_ASSOC)){									
+														echo "<tr>
+															<td>
+																<a href='documentdownload.php?BusinessDocId=".$row["BusinessRegistationDocID"]."' target='_blank' >".$row["DocumentName"]." </a>
+															</td>
+														</tr>";
+														}
+												}
 										?>             	
 									  </table> 
 								  </div>

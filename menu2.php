@@ -486,14 +486,23 @@ while ($i<=$rows)
 					
 					if ($myRights['View']==1){ ?>
 
-                    <div class="tab-panel-group">
+					<div class="tab-panel-group">
                     	<div class="tab-group-content">
-                    		<button class="fluent-big-button" onClick="loadmypage('waiverperiods_list.php?i=1','content','loader','listpages','','WaiverPeriods')">
+                    		<button class="fluent-big-button" onClick="loadmypage('county_list.php?i=1','content','loader','listpages','','Counties')">
                             	<span class="icon-grid fg-darkBlue"></span>
-                                <span class="button-label fg-darkBlue">Waiver Periods</span>
+                                <span class="button-label fg-darkBlue">TRA Regions Set Up</span>
                             </button>
                     	</div>
                     </div>
+
+                    <!-- <div class="tab-panel-group">
+                    	<div class="tab-group-content">
+                    		<button class="fluent-big-button" onClick="loadmypage('waiverperiods_list.php?i=1','content','loader','listpages','','WaiverPeriods')">
+                            	<span class="icon-grid fg-darkBlue"></span>
+                                <span class="button-label fg-darkBlue">TRA Regions Set Up</span>
+                            </button>
+                    	</div>
+                    </div> -->
 
                     <?php }
                     $PageID=61;
@@ -530,7 +539,7 @@ while ($i<=$rows)
 					$myRights=getrights($db,$UserID,$PageID);					
 					
 					if ($myRights['View']==1){ ?>
-
+<!-- 
 					<div class="tab-panel-group">
                     	<div class="tab-group-content">
                          	<button class="fluent-big-button" onClick="loadmypage('countyDetails.php?i=1','content')" style="width:80px">
@@ -538,7 +547,7 @@ while ($i<=$rows)
                                 <span class="button-label fg-darkBlue">Organization Details</span>
                             </button>     							
 						</div>                        
-					</div>
+					</div> -->
 
 					<div class="tab-panel-group">
                     	<div class="tab-group-content">
@@ -549,8 +558,19 @@ while ($i<=$rows)
 						</div>                        
 					</div>
 
+					<div class="tab-panel-group">
+                    	<div class="tab-group-content">
+                         	<button class="fluent-big-button" onClick="loadmypage('Business_Documents.php?i=1','content','loader','listpages','','BusinessDocuments')" style="width:80px">
+                            	<span class="icon-folder fg-darkBlue fg-darkBlue"></span>
+                                <span class="button-label fg-darkBlue">Business Registration Documents Set Up</span>
+                            </button>     							
+						</div>                        
+					</div>
+
 					<?php } ?> 
-					
+						
+                   
+
                     <div class="tab-panel-group">                     	
                         <div class="tab-content-segment">
                             <button class="fluent-big-button dropdown-toggle">
