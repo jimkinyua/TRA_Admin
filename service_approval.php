@@ -604,6 +604,28 @@ if (isset($_REQUEST['InspectionDate']))
 	}
 }
 
+if (isset($_REQUEST['generateinvoice']))
+{	
+	// print_r($_REQUEST);exit;
+	$ApplicationID=$_REQUEST['ApplicationID'];
+	$UserID=$_REQUEST['UserID'];
+	
+	if($CurrentStatus>4){
+		$msg="The Application Cannot Be modified at this stage";
+	}
+	else
+	{
+		GenerateLicenceApplicationInvoice($db,$ApplicationID,$UserID);
+			if(1==1)
+			{
+				$msg ="The Invoice Has Been Generated";
+			}else{
+				DisplayErrors();
+
+			}
+	}
+}
+
 
 
 	 //$ServiceCost=$ServiceCost-OtherCharge;
@@ -727,6 +749,38 @@ if (isset($_REQUEST['InspectionDate']))
 
               }else{
               ?>
+			
+			<tr>
+
+	<?php
+	$sql="select SetDate from ServiceHeader where ServiceHeaderID = $ApplicationID";
+	$s_result=sqlsrv_query($db,$sql);
+		if ($s_result){
+			?>
+			
+			<?php
+			while($row=sqlsrv_fetch_array($s_result,SQLSRV_FETCH_ASSOC))
+				{									
+					$SetDate = $row['SetDate'];
+				}
+			}
+			?>
+                  <td width="50%">
+                  <label>Generate Invoice</label>
+					  <div class="input-control text" data-role="input-control">
+						  <input name="servicename" type="text" id="servicename" value="<?php echo $ServiceCost; ?>" disabled="disabled" placeholder="">
+						  
+					  </div>				  
+                  </td>
+                  <td width="50%">
+				<label>&nbsp;</label>				  
+					<!--service_approval.php?ApplicationID='+app_id+'&app_type='+app_type+'&CurrentStatus='+current_status
+					<input name="Button" type="button" onclick="loadmypage('service_form.php?save=1&ApplicationID=<?php echo $ApplicationID ?>','content','loader','','')" value="Change">-->
+					<input name="Button" type="button" 
+					onclick="loadmypage('generate_invoice.php?ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','','')" value="Generate Invoice">
+                  </td>   
+              </tr>
+
  			 <tr> 
                   <td width="50%">
                   <label>Add Inspection Officers</label>
@@ -1226,6 +1280,7 @@ if (isset($_REQUEST['InspectionDate']))
 
 
 									  </table>  -->
+									  </table>
 								  </div>
 
 								</div>
