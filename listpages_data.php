@@ -2145,7 +2145,10 @@ else if($OptionValue=='approved_pending_approval')
 	and sh.ServiceID not in (select ServiceID from ServiceTrees) 
 	and sh.ServiceID<>1603 
 	and sh.ServiceStatusID = 3
+<<<<<<< HEAD
 	
+=======
+>>>>>>> master
 	order by sh.SubmissionDate desc";
 	// exit($sql);
 	//$ApproverRegionID
@@ -3096,6 +3099,29 @@ else if ($OptionValue=='Forms')
 	} 
 	
 }
+else if ($OptionValue=='BusinessDocuments')
+{
+	$sql = "select * from BusinessRegistrationDocumentTypes";
+			
+	$result = sqlsrv_query($db, $sql);	
+	while ($row = sqlsrv_fetch_array( $result, SQLSRV_FETCH_ASSOC)) 
+	{
+		extract($row);
+		// $ColumnBtn ='<a href="#" onClick="loadmypage(\'licence_renewal_form_columns_list.php?FormID='.$DocTypeID.'&FormName='.$DocumentName.'\',\'content\',\'loader\',\'listpages\',\'\',\'LicenceRenewalFormColumns\','.$DocTypeID.')">Columns</a>';
+		// $SectionBtn ='<a href="#" onClick="loadmypage(\'licence_renewal_form_sections_list.php?FormID='.$DocTypeID.'&FormName='.$DocumentName.'\',\'content\',\'loader\',\'listpages\',\'\',\'LicenceRenewalFormSections\','.$DocTypeID.')">Sections</a>';
+		$EditBtn = '<a href="#" onClick="loadpage(\'BusinessRegistrationDocument.php?edit=1&DocTypeID='.$DocTypeID.'\',\'content\')">Edit Document</a>';
+		$DeleteBtn  = '<a href="#" onClick="deleteConfirm2(\'Are you sure you want to Delete?\',\'Business_Documents.php?delete=1&DocTypeID='.$DocTypeID.'\',\'content\',\'loader\',\'listpages\',\'\',\''.$OptionValue.'\')">Delete</a>';
+		$actions=$EditBtn.'|'.$DeleteBtn.']';
+	
+		$channel[] = array(	
+					$DocTypeID,		
+					$DocumentName,
+					$actions
+		);
+		
+	} 
+	
+}
 else if ($OptionValue=='LicenceRenewalForm')
 {
 	$sql = "select * from LicenenceRenewalForm";
@@ -3119,6 +3145,7 @@ else if ($OptionValue=='LicenceRenewalForm')
 	} 
 	
 }
+
 else if ($OptionValue=='FormSections')
 {
 	$sql = "select fs.*,f.FormName from FormSections fs inner join Forms f on fs.FormID=f.FormID where f.FormID=$exParam";
@@ -4814,6 +4841,31 @@ else if($OptionValue=='Houses')
 		
 	}  	
 }
+
+
+else if($OptionValue=='Counties')
+{
+	$sql = "select *  from Counties as C
+	join SubSystems as SubSys on SubSys.SubSystemID = C.TraRegionCode";
+	$result = sqlsrv_query($db, $sql);	
+	while ($row = sqlsrv_fetch_array( $result, SQLSRV_FETCH_ASSOC)) 
+	{
+		extract($row);
+		$EditBtn = '<a href="#" onClick="loadpage(\'county.php?edit=1&CountyID='.$CountyId.'\',\'content\')">Edit</a>';			
+		// $DeleteBtn = '<a href="#" onClick="deleteConfirm2(\'Are you sure you want to Delete?\',\'waiverperiods_list.php?delete=1&CountyID='.$CountyId.'\',\'content\',\'loader\',\'listpages\',\'\',\''.$OptionValue.'\')">Delete</a>';
+
+		$actions='['.$EditBtn.']';
+		$StartDate=date("d/m/Y",strtotime($StartDate));
+		$EndDate=date("d/m/Y",strtotime($EndDate));
+		$channel[] = array(			
+					$CountyName,
+					$SubSystemName,
+					$actions
+		);
+		
+	}  	
+}
+
 else if($OptionValue=='ApprovalRequests')
 {
 	$fromDate;

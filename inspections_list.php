@@ -129,13 +129,13 @@ if($_REQUEST['submit']==1){
 }
 
 function IssueLicence($ApplicationId){
-	// $TodayDate = date("Y-m-d H:i:s");
-	// $date = 31; $month =12; $year = date("Y"); //Licences Expire on 31ST Dec EveryYear
-	// $ExpiryDate="$date.$month.$year";
-    // $local=new datetime($ExpiryDate);
-	// $sqlExpiryDate = $local->format('Y-m-d H:i:s');
-	// $Validity = date("Y");
-	// $LicenceNumber ='TRA/2020/'.rand(87, 600);
+	$TodayDate = date("Y-m-d H:i:s");
+	$date = 31; $month =12; $year = date("Y"); //Licences Expire on 31ST Dec EveryYear
+	$ExpiryDate="$date.$month.$year";
+    $local=new datetime($ExpiryDate);
+	$sqlExpiryDate = $local->format('Y-m-d H:i:s');
+	$Validity = date("Y");
+	$LicenceNumber ='TRA/2020/'.rand(87, 600);
 	$ChangeStatussql="Update ServiceHeader set ServiceStatusID=3,
 	 PermitNo='$LicenceNumber', IssuedDate='$TodayDate', 
 	 ExpiryDate='$sqlExpiryDate'
@@ -143,37 +143,41 @@ function IssueLicence($ApplicationId){
 	// echo '<pre>';
 	// print_r($ChangeStatussql);
 	// exit;
-	// $result=sqlsrv_query($db,$ChangeStatussql);
+	$result=sqlsrv_query($db,$ChangeStatussql);
 
-	// $InsertIntoPermitSQL="INSERT into Permits(PermitNo,
-	// 	ServiceHeaderID,
-	// 	Validity,
-	// 	ExpiryDate,
-	// 	CreatedBy,
-	// 	Printed) 
-	// 	values('$LicenceNumber',
-	// 		$ApplicationID,
-	// 		'$validity',
-	// 		'$sqlExpiryDate',
-	// 		'$UserID',
-	// 		1
-	// )";
+	$InsertIntoPermitSQL="INSERT into Permits(PermitNo,
+		ServiceHeaderID,
+		Validity,
+		ExpiryDate,
+		CreatedBy,
+		Printed) 
+		values('$LicenceNumber',
+			$ApplicationID,
+			'$validity',
+			'$sqlExpiryDate',
+			'$UserID',
+			1
+	)";
 	
-	// $InsertIntoPermitResult = sqlsrv_query($db, $InsertIntoPermitSQL);
+	$InsertIntoPermitResult = sqlsrv_query($db, $InsertIntoPermitSQL);
 
-	// if($InsertIntoPermitResult && $result ){
+	if($InsertIntoPermitResult && $result ){
 		GenerateLicenceApplicationInvoice($db,$ApplicationID,$UserID);
 
-	// }
-	// else{
+	}
+	else{
 	
-		// sqlsrv_rollback($db);
-		// $Sawa=false;
-		// DisplayErrors();
-		// $msg="Failed to Issue Licence, contact the technical team";
+		sqlsrv_rollback($db);
+		$Sawa=false;
+		DisplayErrors();
+		$msg="Failed to Issue Licence, contact the technical team";
 
+<<<<<<< HEAD
 	// }
 	
+=======
+	}
+>>>>>>> master
 }
 
 

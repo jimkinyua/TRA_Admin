@@ -59,7 +59,7 @@ if (isset($_REQUEST['ServiceAmount'])){$ServiceCharge=$_REQUEST['ServiceAmount']
 		  </tr>
 			<tr>
                 <td width="50%">
-                	<label>Service Name</label>
+                	<label>Service Name1</label>
                 	<div class="input-control textarea" data-role="input-control">
                     	<textarea name="ServiceName" id="ServiceName" disabled="disabled"><?php echo $ServiceName; ?></textarea>
                         <button class="btn-clear" tabindex="-1"></button>

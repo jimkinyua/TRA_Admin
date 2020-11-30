@@ -326,7 +326,20 @@ function IssueLicence($db,$ApplicationID){
      /* Begin the transaction. */
      if ( sqlsrv_begin_transaction( $db ) === false ) {
         die( print_r( sqlsrv_errors(), true ));
-    }
+	}
+	
+	//Get Invoice That is related to theis Application
+	$GetInvoiceNoSQL = "  SELECT InvoiceHeader.InvoiceHeaderID from InvoiceHeader 
+							where InvoiceHeader.ServiceHeaderID = $ApplicationID
+							 AND InvoiceHeader.Amount!=0";
+
+	$GetInvoiceNoSQLResult=sqlsrv_query($db,$GetInvoiceNoSQL);
+	while($row = sqlsrv_fetch_array( $GetInvoiceNoSQLResult, SQLSRV_FETCH_ASSOC)) 
+		{
+			$InvoiceHeaderID = $row['InvoiceHeaderID'];
+
+		}
+
 	$TodayDate = date("Y-m-d H:i:s");
 	$date = 31; $month =12; $year = date("Y"); //Licences Expire on 31ST Dec EveryYear
 	$ExpiryDate="$date.$month.$year";
@@ -351,12 +364,14 @@ function IssueLicence($db,$ApplicationID){
 		Validity,
 		ExpiryDate,
 		CreatedBy,
+		InvoiceHeaderID,
 		Printed) 
 		values('$LicenceNumber',
 			    $ApplicationID,
 			    '$Validity',
 			    '$sqlExpiryDate',
 			    1,
+				$InvoiceHeaderID,
 			    1
 	    )";
 	
@@ -364,7 +379,7 @@ function IssueLicence($db,$ApplicationID){
 
 	if($InsertIntoPermitResult && $ChangeStatusResult ){
         $msg="Licence";
-        sqlsrv_commit( $db );
+        // sqlsrv_commit( $db );
         //Upload Docs to SharePoint
         // UploadDocsToSharePoint($db, $ApplicationID, 1);
         createPermit($db, $ApplicationID);

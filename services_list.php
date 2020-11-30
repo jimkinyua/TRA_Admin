@@ -55,6 +55,7 @@ if (isset($_REQUEST['save']))
 	$GlAccountNo=$_REQUEST['GlAccountNo'];
 	$RevenueStreamID=$_REQUEST['RevenueStreamID'];
 	$ChecklistTypeID=$_REQUEST['ChecklistTypeID'];
+	$IsAppliedByIndividuals = $_REQUEST['IsAppliedByIndividuals'];
 	
 	if ($ServiceID=='0')
 	{		
@@ -67,7 +68,11 @@ if (isset($_REQUEST['save']))
 			  ,[RevenueStreamID]
 			  ,[GlAccountNo]
 			  ,[Chargeable]
+<<<<<<< HEAD
 			  ,[ApplicantType]
+=======
+			  ,[IsAppliedByIndividuals]
+>>>>>>> master
 			  ,CreatedBy
 			) VALUES 
 			(  
@@ -79,7 +84,11 @@ if (isset($_REQUEST['save']))
 			,'$RevenueStreamID'
 			,'$GlAccountNo'
 			,'$Chargeable'
+<<<<<<< HEAD
 			,'$ApplicantType'
+=======
+			,'$IsAppliedByIndividuals'
+>>>>>>> master
 			,'$CreatedUserID'
 				) SELECT SCOPE_IDENTITY() AS ID
 			" ;
@@ -97,6 +106,7 @@ if (isset($_REQUEST['save']))
 					,[Chargeable]='$Chargeable'
 					,[ApplicantType]='$ApplicantType'
 					,[CreatedBy]='$CreatedUserID'
+					,[IsAppliedByIndividuals] = '$IsAppliedByIndividuals'
 					 where ServiceID='$ServiceID'";		
 	}	 
 	$result = sqlsrv_query($db, $sql);
