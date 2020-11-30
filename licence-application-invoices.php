@@ -127,7 +127,7 @@ if (isset($_REQUEST['reset']))
                     <th width="12%" class="text-left">ServiceName</th>
                     <th width="12%" class="text-left">Invoice Amount</th>
                     <th width="12%" class="text-left">Paid</th>
-					<th width="12%" class="text-left">Paid</th>
+					<th width="12%" class="text-left">Action</th>
                 </tr>
                 </thead>
 	

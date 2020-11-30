@@ -29,9 +29,10 @@ function getrights($db,$UserID,$PageID)
 
 	$sql=" select [View],[Edit],[Add],[Delete] from vwuserroles where AgentID=$UserID and PageID=$PageID";
 	
-    // if($PageID==25){
+    // // if($PageID==25){
     //     echo $sql;
-    // }
+    //     exit;
+    // // }
      
     
 	$params = array();

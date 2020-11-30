@@ -47,7 +47,7 @@ if (isset($_REQUEST['edit']))
 		$Chargeable=$myrow['Chargeable'];
 		$ServiceGroupID=$myrow['ServiceGroupID'];
 		$RevenueStreamID=$myrow['RevenueStreamID'];
-		
+		$IsAppliedByIndividuals = $myrow['IsAppliedByIndividuals'];
 	}	
 }
 ?>
@@ -212,7 +212,29 @@ if (isset($_REQUEST['edit']))
                   </div></td>
                   <td>
                   </td>
-          </tr>		                     
+
+          </tr>	
+
+          <tr>
+          <td><label>Is The Service Applied By Individuals?</label>
+                    <div class="input-control select" data-role="input-control">
+                    	<select name="IsAppliedByIndividuals"  id="IsAppliedByIndividuals">
+						<?php 
+							$selected="";
+							if ($IsAppliedByIndividuals=="1")
+							{
+								$selected="selected";
+							}							
+							
+						?>
+                        <option value="0" <?php echo $selected; ?>>No</option>
+                        <option value="1" <?php echo $selected; ?>>Yes</option>
+                      </select>
+					  
+                  </div></td>
+                  <td>
+                  </td>
+          </tr>	                     
                      
         </table>
 		<input name="Button" type="button" onclick="loadmypage('services_list.php?'+
@@ -221,7 +243,8 @@ if (isset($_REQUEST['edit']))
 											'&RevenueStreamID='+this.form.RevenueStreamID.value+ 
 											'&ServiceCategoryID='+this.form.ServiceCategoryID.value+ 
                                             '&Description='+this.form.Description.value+
-											'&Chargeable='+this.form.Chargeable.value+
+                                            '&Chargeable='+this.form.Chargeable.value+
+                                            '&IsAppliedByIndividuals='+this.form.IsAppliedByIndividuals.value+
                                             '&ChecklistTypeID='+this.form.ChecklistTypeID.value+                                            
                                             '&ServiceID='+<?php echo $ServiceID; ?>+       
         									'&save=1','content','loader','listpages','','services')" value="Save">
