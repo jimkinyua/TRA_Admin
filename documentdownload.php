@@ -6,6 +6,19 @@ require_once 'utilities.php';
 
 $fileID=$_REQUEST["id"];
 
+if(isset($_REQUEST["BusinessDocId"])){
+	$BusinessDocId=$_REQUEST["BusinessDocId"];
+
+	$BusinessDocSQL="select DocumentPath  from BusinessAttachements
+	 where BusinessRegistationDocID=$BusinessDocId";
+	$BusinessDocSQLResult=sqlsrv_query($db,$BusinessDocSQL);
+	while($rw=sqlsrv_fetch_array($BusinessDocSQLResult,SQLSRV_FETCH_ASSOC)){
+		extract($rw);
+	}
+	ViewDocumentOnTheBrowser($DocumentPath);
+
+}
+
 $sql="select filePath  from Attachments where ID=$fileID";
 $result=sqlsrv_query($db,$sql);
 while($rw=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC)){

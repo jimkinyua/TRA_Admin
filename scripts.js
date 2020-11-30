@@ -32,7 +32,7 @@ function loadoptionalpage(app_id,app_type,current_status,destination,loader,op,i
 {
 	// alert(destination);
 	// alert(opv);
-	// alert(op);
+	// alert(app_type);
 	var mypage='';
 	if (app_type==1)
 	{
@@ -72,6 +72,21 @@ function loadoptionalpage(app_id,app_type,current_status,destination,loader,op,i
 		//mypage='hire_application.php?ApplicationID='+app_id+'&app_type='+app_type+'&CurrentStatus='+current_status;
 		opv='LicenceFinalApprovalCard';
 	}
+
+	else if(app_type==50) //Submitted Apps For Officers
+	{
+		mypage='SubmittedLicenceApplicationCard.php?ApplicationID='+app_id+'&app_type='+app_type+'&CurrentStatus='+current_status;
+		//mypage='hire_application.php?ApplicationID='+app_id+'&app_type='+app_type+'&CurrentStatus='+current_status;
+		opv='SubmittedLicenceApplicationCard';
+	}
+
+	else if(app_type==51) //Submitted Apps For Chief Officer
+	{
+		mypage='LicenceAppliactionApprovedByOfficerCard.php?ApplicationID='+app_id+'&app_type='+app_type+'&CurrentStatus='+current_status;
+		//mypage='hire_application.php?ApplicationID='+app_id+'&app_type='+app_type+'&CurrentStatus='+current_status;
+		opv='LicenceAppliactionApprovedByOfficer';
+	}
+
 	else
 	{
 		mypage='service_approval.php?ApplicationID='+app_id+'&app_type='+app_type+'&CurrentStatus='+current_status;
@@ -203,7 +218,7 @@ function loadTable2(op,ID,_opv)
 function loadTable(op,ID,_opv)
 {	
 	// alert(op);
-	alert(_opv);
+	// alert(_opv);
 	$(function()
 	{
 		$('#dataTables-1').dataTable( 
@@ -439,7 +454,7 @@ function loadmypage(url,destination,loader,op,id,opv,exPM,SiD)
 	// loadmypage(mylink,destination,loader,op,id,opv,app_id);
 	// mypage='licence_renewal_card.php?ApplicationID='+app_id+'&app_type='+app_type+'&CurrentStatus='+current_status;
 	
-	// alert(url);
+	// alert(opv);
 	
 	//exit;
 	
@@ -502,6 +517,28 @@ function deleteConfirm2(msg, url ,destination,loader,option,id,opv)
 	Op = option;
 	ID = id;
 	_opv = opv;
+ 
+ 	if (a) 
+ 	{ 
+ 		loadmypage(url,dest,Loader,Op,ID,_opv);
+		return true;		
+	}
+ 	else 
+	{ 
+		return false; 
+	}
+}
+
+function LoadAnotherTable(msg, url ,destination,loader,option,id,opv) 
+{
+ 	var a = true; // confirm(msg);
+	
+	dest = destination;
+	Loader = loader;
+	Op = option;
+	ID = id;
+	_opv = opv;
+	alert(_opv);
  
  	if (a) 
  	{ 

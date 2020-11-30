@@ -19,9 +19,9 @@
 	// use Thybag\SharePointAPI;
 	use Office365\PHP\Client\Runtime\Auth\NetworkCredentialContext;
 	use Office365\PHP\Client\Runtime\Utilities\UserCredentials;
-	// use Office365\SharePoint\ClientContext;
+	use Office365\SharePoint\ClientContext;
 	use Office365\Runtime\Auth\ClientCredential;
-	use Office365\PHP\Client\SharePoint\ClientContext;
+	// use Office365\PHP\Client\SharePoint\ClientContext;
 	use Office365\PHP\Client\Runtime\Auth\AuthenticationContext;
 	use Office365\PHP\Client\Runtime\Utilities\RequestOptions;
 	use Office365\PHP\Client\SharePoint\ListCreationInformation;
@@ -4315,6 +4315,21 @@ function GenerateLicenceApplicationInvoice($db,$ServiceHeaderID,$UserID)
 	return $msg;
 }
 
+
+function uploadFileAlt(ClientContext $ctx, $sourceFilePath, $targetFileUrl)
+{
+	$fileContent = file_get_contents($sourceFilePath);
+
+    try {
+		Office365\SharePoint\File::saveBinary($ctx, $targetFileUrl, $fileContent);
+		exit('Nding');
+        print "File has been uploaded\r\n";
+    } catch (Exception $e) {
+		echo $e->getMessage();
+        print "File upload failed:\r\n";
+    }
+}
+
 function UploadDocsToSharePoint($db, $ServiceHeaderID, $UserId){
 	// InitiliaseSharepoint();
 	// exit('Hapa');
@@ -4324,22 +4339,15 @@ function UploadDocsToSharePoint($db, $ServiceHeaderID, $UserId){
 	$SharepointPassword ='Admin@support12018';
 
 
-	try{
-	
-		$authCtx = new NetworkCredentialContext($SharepointUsername, $SharepointPassword);
-		$authCtx->AuthType = CURLAUTH_NTLM; //NTML Auth schema
-		$VerifiedContext = new ClientContext($SharepointUrl, $authCtx);
-		$site = $VerifiedContext->getSite();
-		$VerifiedContext->load($site); //load site settings
-        $VerifiedContext->executeQuery();
-		// $VerifiedContext->executeQuery();
-		// echo 'Logged In Succesfully';
 
-	}
-	catch (Exception $e) {
-        print 'SharePoint Authentication failed Because : ' .  $e->getMessage(). "\n";
-	}
-		// exit;
+	
+		
+		// $VerifiedContextTest = new ClientContext($Url,$authCtx);
+
+		// echo 'Logged In Well';	
+
+	
+		// // exit;
 		// $web = $VerifiedContext->getWeb();
 		// $lists = $web->getLists(); //init List resource
 		// // $items = $list->getItems();  //prepare a query to retrieve from the 
@@ -4351,16 +4359,44 @@ function UploadDocsToSharePoint($db, $ServiceHeaderID, $UserId){
 		// }
 		// exit;
 		try{
+		
 			$TestPath = "C:/Users/Administrator/Downloads/New folder/A Sample PDF.pdf";
+
+			$authCtx = new NetworkCredentialContext($SharepointUsername, $SharepointPassword);
+			$authCtx->AuthType = CURLAUTH_NTLM; //NTML Auth schema
+			// $VerifiedContextTest = new ClientContext($SharepointUrl,$authCtx);
+			$VerifiedContextTest = ClientContext::connectWithUserCredentials($SharepointUrl,$SharepointUsername,$SharepointPassword);
+			uploadFileAlt($VerifiedContextTest,$TestPath, 'http://tra-edms/home/Sample/Test');
+			try {
+				// $localPath = "../data/";
+				$targetLibraryTitle = "Sample";
+				$targetList = $VerifiedContextTest->getWeb()->getLists()->getByTitle($targetLibraryTitle);
+			
+				// $searchPrefix = $localPath . '*.*';
+				// foreach(glob($searchPrefix) as $filename) {
+					$uploadFile = $targetList->getRootFolder()->uploadFile(basename($TestPath),file_get_contents($TestPath));
+					$VerifiedContextTest->executeQuery();
+					print "File {$uploadFile->getServerRelativeUrl()} has been uploaded\r\n";
+				// }
+			
+			}
+			catch (Exception $e) {
+				echo 'Error: ',  $e->getMessage(), "\n";
+			}
+
+
+			// uploadFileAlt($VerifiedContextTest, $TestPath, urlencode('http://tra-edms/home/Sample/Test'));
+			exit;
+
 			$DocumentMetadata = array(
 				'Name' => 'SampleName',
 				'DocumentName' => 'DocumentName',
 				'DocumentCategoryName' => 'FileName',
 				'DocumentTypeName' => 'FileName'  
 			);
-			$targetFolderUrl ='Fleet4';// \Yii::$app->params['BenefitsFolderUrl'];
-			$list = ensureList($VerifiedContext->getWeb(), $targetFolderUrl, \Office365\PHP\Client\SharePoint\ListTemplateType::DocumentLibrary);
-			$UploadContext = $list->getContext();
+			$TargetFolderTest ='Licensing';// \Yii::$app->params['BenefitsFolderUrl'];
+			// $list = ensureList($VerifiedContextTest->getWeb(), $TargetLibrary, \Office365\PHP\Client\SharePoint\ListTemplateType::DocumentLibrary);
+			// $UploadContext = $VerifiedContextTest->getWeb();
 
 			$fileName = basename($TestPath); //The Uploaded Document Name
 			
@@ -4370,21 +4406,44 @@ function UploadDocsToSharePoint($db, $ServiceHeaderID, $UserId){
 			// print_r(file_get_contents($TestPath));
 			// exit;
 
-			$fileCreationInformation->Url = $fileName;
+			$fileCreationInformation->Url = basename($TestPath);
+			// echo '<pre>';
+			// print_r($fileCreationInformation);
+			// exit;
 
-			$uploadFile = $list->getRootFolder()->getFiles()->add($fileCreationInformation);
+		// 	echo '<pre>';
+		// 	print_r($UploadContext
+		// 	->getFolderByServerRelativeUrl($TargetFolderTest)
+		// 	->getFiles()
+		// );
+			// exit;
 		
-			$UploadContext->executeQuery(); //Upload Document
+			$uploadFile = $VerifiedContextTest->getweb() //->getRootFolder()->getFiles()->add($fileCreationInformation);
+					->getFolderByServerRelativeUrl($TargetFolderTest)
+					->getFiles()->add($fileCreationInformation);
+
+			
+
+			$VerifiedContextTest->executeQuery(); //Upload Document
+			// $uploadFile->getListItemAllFields() ; //Returns associated list item entity
+			// $uploadFile->getListItemAllFields()->setProperty('Description',basename($TestPath));
+			// $uploadFile->getListItemAllFields()->update();
+			// $VerifiedContextTest->executeQuery(); //Upload Document
+
 			print "File {$uploadFile->getProperty('Name')} has been uploaded\r\n";
 			
-			$uploadFile->getListItemAllFields()->setProperty('Description',basename($TestPath));
 
 		}
 		
 		catch (Exception $e) {
+			// echo $e->getMessage();
+			// var_dump($e->getMessage());
+			// $data['exception'] = $e->getMessage();
+			// echo json_encode($data);
+			// exit;
 			print 'SharePoint Upload failed Because : ' .  $e->getMessage(). "\n";
 		}
-exit;
+		exit;
 
 	
 
