@@ -30,7 +30,10 @@ checkSession($db,$UserID);
 
 if (isset($_REQUEST['save']) && $_REQUEST['NextStatus']!='')
 {
-	
+	// echo '<pre>';
+	// print_r($_REQUEST);
+	// exit;
+
 	$ApplicationID=$_REQUEST['ApplicationID'];
 	$CustomerID=$_REQUEST['CustomerID'];
 	$CurrentStatus=$_REQUEST['CurrentStatus'];

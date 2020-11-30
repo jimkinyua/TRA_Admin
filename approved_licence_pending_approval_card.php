@@ -328,8 +328,13 @@ function IssueLicence($db,$ApplicationID){
         die( print_r( sqlsrv_errors(), true ));
 	}
 	
-	//Get Invoice That is related to theis Application
-	$GetInvoiceNoSQL = "  SELECT InvoiceHeader.InvoiceHeaderID from InvoiceHeader 
+	
+		//Get Receipt Amount and Invoice Amount. If Invoice Amount is Greater than 
+		//Receipt Amount, Reject Isuance of Licence
+
+
+	//Get Invoice That is related to this Application
+	$GetInvoiceNoSQL = "  SELECT InvoiceHeader.InvoiceHeaderID, InvoiceHeader.Amount from InvoiceHeader 
 							where InvoiceHeader.ServiceHeaderID = $ApplicationID
 							 AND InvoiceHeader.Amount!=0";
 
@@ -337,62 +342,84 @@ function IssueLicence($db,$ApplicationID){
 	while($row = sqlsrv_fetch_array( $GetInvoiceNoSQLResult, SQLSRV_FETCH_ASSOC)) 
 		{
 			$InvoiceHeaderID = $row['InvoiceHeaderID'];
+			$InvoiceAmount = $row['Amount'];
+
+		}
+		// exit($InvoiceAmount);
+
+	//Get Receipt Amount That is related to this Invoice
+	$GetReceiptAmountSQL = "  SELECT ReceiptLines.Amount from ReceiptLines 
+							where ReceiptLines.InvoiceHeaderID = $InvoiceHeaderID
+							 ";
+
+							//  EXIT($GetReceiptAmountSQL);
+
+	$GetReceiptAmountSQLResult=sqlsrv_query($db,$GetReceiptAmountSQL);
+	while($row = sqlsrv_fetch_array( $GetReceiptAmountSQLResult, SQLSRV_FETCH_ASSOC)) 
+		{
+			$ReceiptAmount += $row['Amount'];
 
 		}
 
-	$TodayDate = date("Y-m-d H:i:s");
-	$date = 31; $month =12; $year = date("Y"); //Licences Expire on 31ST Dec EveryYear
-	$ExpiryDate="$date.$month.$year";
-    $local=new datetime($ExpiryDate);
-	$sqlExpiryDate = $local->format('Y-m-d H:i:s');
-	$Validity = date("Y");
-    $LicenceNumber ='TRA/2020/'.rand(87, 600);
+	if($InvoiceAmount > $ReceiptAmount){ //Means Not Fully Paid
+		 $msg="Failed to Issue Licence, The Licence has not Beeen fully Paid ";
+	}else{
+		$TodayDate = date("Y-m-d H:i:s");
+		$date = 31; $month =12; $year = date("Y"); //Licences Expire on 31ST Dec Every Year
+		$ExpiryDate="$date.$month.$year";
+		$local=new datetime($ExpiryDate);
+		$sqlExpiryDate = $local->format('Y-m-d H:i:s');
+		$Validity = date("Y");
+		$LicenceNumber ='TRA/2020/'.rand(87, 600);
+
+		$ChangeStatusSQL="Update ServiceHeader set ServiceStatusID=4,
+		PermitNo='$LicenceNumber', IssuedDate='$TodayDate', 
+		ExpiryDate='$sqlExpiryDate'
+		where ServiceHeaderID=$ApplicationID";
+		// echo '<pre>';
+		// print_r($ChangeStatusSQL);
+		// exit;
     
+		$ChangeStatusResult=sqlsrv_query($db,$ChangeStatusSQL);
 
-	$ChangeStatusSQL="Update ServiceHeader set ServiceStatusID=4,
-	 PermitNo='$LicenceNumber', IssuedDate='$TodayDate', 
-	 ExpiryDate='$sqlExpiryDate'
-	  where ServiceHeaderID=$ApplicationID";
-	// echo '<pre>';
-	// print_r($ChangeStatusSQL);
-    // exit;
-    
-	$ChangeStatusResult=sqlsrv_query($db,$ChangeStatusSQL);
-
-	$InsertIntoPermitSQL="INSERT into Permits(PermitNo,
-		ServiceHeaderID,
-		Validity,
-		ExpiryDate,
-		CreatedBy,
-		InvoiceHeaderID,
-		Printed) 
-		values('$LicenceNumber',
-			    $ApplicationID,
-			    '$Validity',
-			    '$sqlExpiryDate',
-			    1,
-				$InvoiceHeaderID,
-			    1
-	    )";
+		$InsertIntoPermitSQL="INSERT into Permits(PermitNo,
+			ServiceHeaderID,
+			Validity,
+			ExpiryDate,
+			CreatedBy,
+			InvoiceHeaderID,
+			Printed) 
+			values('$LicenceNumber',
+					$ApplicationID,
+					'$Validity',
+					'$sqlExpiryDate',
+					1,
+					$InvoiceHeaderID,
+					1
+			)";
 	
-	$InsertIntoPermitResult = sqlsrv_query($db, $InsertIntoPermitSQL);
+		$InsertIntoPermitResult = sqlsrv_query($db, $InsertIntoPermitSQL);
 
-	if($InsertIntoPermitResult && $ChangeStatusResult ){
-        $msg="Licence";
-        // sqlsrv_commit( $db );
-        //Upload Docs to SharePoint
-        // UploadDocsToSharePoint($db, $ApplicationID, 1);
-        createPermit($db, $ApplicationID);
-		// GenerateLicenceApplicationInvoice($db,$ApplicationID,$UserID);
-	}
-	else{
-	
-		sqlsrv_rollback($db);
-		$Sawa=false;
-		DisplayErrors();
-		$msg="Failed to Issue Licence, contact the technical team";
+		if($InsertIntoPermitResult && $ChangeStatusResult ){
+			$msg="Licence";
+			sqlsrv_commit( $db );
+			//Upload Docs to SharePoint
+			// UploadDocsToSharePoint($db, $ApplicationID, 1);
+			createPermit($db, $ApplicationID);
+			// GenerateLicenceApplicationInvoice($db,$ApplicationID,$UserID);
+		}
+		else{
+		
+			sqlsrv_rollback($db);
+			$Sawa=false;
+			DisplayErrors();
+			$msg="Failed to Issue Licence, contact the technical team";
+
+		}
 
 	}
+
+	
 }
 
 
@@ -597,7 +624,7 @@ if (isset($_REQUEST['InspectionDate']))
 	});
 </script>
 <div class="example">
-   <legend>Licence Renewal Approval</legend>
+   <legend>Licence  Approval</legend>
    <form>
       <fieldset>
           <table width="100%" border="0" cellspacing="0" cellpadding="3">

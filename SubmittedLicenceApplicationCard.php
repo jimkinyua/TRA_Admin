@@ -102,137 +102,50 @@ if (isset($_REQUEST['save']) && $_REQUEST['NextStatus']!='')
 	while ($row=sqlsrv_fetch_array($GetRoleCenterSQLResult,SQLSRV_FETCH_ASSOC)) 
 	{
 		$RoleCenter=$row['RoleCenterID'];
-	}
+    }
+    
+    $s_sql="select ServiceStatusID from ServiceStatus where ServiceStatusID='$NextStatus'";
+    $s_result=sqlsrv_query($db,$s_sql);
 
-	// if($RoleCenter == 2014 &&  $NextStatusID ==11 ){ //TRA Officer has Rejected
-	// }
-	if($RoleCenter == 2014){ 
+    if ($s_result){
+        while ($row = sqlsrv_fetch_array( $s_result, SQLSRV_FETCH_ASSOC))
+        {			
+            $NextStatusID=$row['ServiceStatusID'];
+        }
+    }
+
+	if($RoleCenter == 2014 &&  $NextStatusID ==11 ){ //TRA Officer has Rejected
+        $UpdateServiceHeaderSQL="Update ServiceHeader set ServiceStatusID=$NextStatus where ServiceHeaderID=$ApplicationID";	
+		$UpdateServiceHeaderSQLResult = sqlsrv_query($db, $UpdateServiceHeaderSQL);
+		if($UpdateServiceHeaderSQLResult){
+			$rst=SaveTransaction($db,$UserID," Rejected Application Number $ApplicationID ");
+            $msg="Transaction Succesful";
+
+
+		}else{
+			
+            DisplayErrors();
+            $msg="Transaction failed";
+		}
+    }
+	if($RoleCenter == 2014 &&  $NextStatusID ==12){  //Approved
+
 		$UpdateServiceHeaderSQL="Update ServiceHeader set ServiceStatusID=$NextStatus where ServiceHeaderID=$ApplicationID";	
 		$UpdateServiceHeaderSQLResult = sqlsrv_query($db, $UpdateServiceHeaderSQL);
 		if($UpdateServiceHeaderSQLResult){
 			$rst=SaveTransaction($db,$UserID," Rejected Application Number $ApplicationID ");
-			Header ("Location:clients_list.php");
+            $msg="Transaction Succesful";
 
 		}else{
-			return $msg = "Failed to Save";
-		}
-		
-	}
-
-	exit('8595');
-	$sql="select f.serviceheadertype from Forms f 
-	  join ServiceHeader sh on sh.FormID=f.formid 
-	  where sh.ServiceHeaderID='$ApplicationID'";
-	$s_result=sqlsrv_query($db,$sql);
-	//echo $s_sql;
-	if ($s_result)
-	{					
-		while ($row = sqlsrv_fetch_array( $s_result, SQLSRV_FETCH_ASSOC))
-		{			
-			$ServiceHeaderType=$row['serviceheadertype'];
-		}
-	}
-	
-	$s_sql="select * from Customer where CustomerID=$CustomerID";
-	$s_result=sqlsrv_query($db,$s_sql);
-	
-	if ($s_result)
-	{					
-		while ($row = sqlsrv_fetch_array( $s_result, SQLSRV_FETCH_ASSOC))
-		{			
-			$CustomerEmail=$row['Email'];
-			$CustomerName=$row['CustomerName'];
-			$PhysicalAddress = $row['PhysicalAddress'];
-		}
-	}
-		$servicegroup = "select c.Email,sc.ServiceGroupID from 
-		ServiceHeader sh
-			inner join ServiceCategory sc on sh.ServiceCategoryID = sc.ServiceCategoryID
-			inner join ServiceGroup sg on sc.ServiceGroupID=sg.ServiceGroupID
-			inner join Customer c on c.CustomerID = sh.CustomerID
-			where sh.ServiceHeaderID=$ApplicationID";
-			$groupres = sqlsrv_query($db,$servicegroup);
-			while($resrow = sqlsrv_fetch_array($groupres,SQLSRV_FETCH_ASSOC)){
-			$GroupID = $resrow['ServiceGroupID'];
-			$ApplicantEmail = $resrow['Email'];
-			// exit($servicegroup);
-		if($GroupID==12){
-
-				$CustomerEmail = 'emmanuelomonso@gmail.com'; 
-				$from = 'omonsotest@gmail.com'; 
-				$SenderName = 'TRA-Trade Facilitation.';
-				$txt = $Notes;
-				$sendNotificationforTradeFacilitation=php_mailer($CustomerEmail,$from,$SenderName,'TRA-Trade Facilitation.',$txt,'','','Message');
-		}else{
-		$emailSql = "select ins.UserID,ag.Email,ag.LastName,sh.SetDate,s.ServiceName 
-			from Inspections ins
-			join Agents ag on ag.AgentID = ins.UserID 
-			join ServiceHeader sh on sh.ServiceHeaderID = ins.ServiceHeaderID
-			join Services s on s.ServiceID = sh.ServiceID
-			where ins.ServiceHeaderID = $ApplicationID";
-
-		$emailResult = sqlsrv_query($db,$emailSql);
-		while($row=sqlsrv_fetch_array($emailResult, SQLSRV_FETCH_ASSOC)){
-			$toEmail = $row['Email'];
-			$Receiver = $row['LastName'];
-			$onDate = $row['SetDate'];
-			$theService = $row['ServiceName'];
-
-				$CustomerEmail = 'emmanuelomonso@gmail.com'; 
-				$from = 'omonsotest@gmail.com'; 
-				$SenderName = 'TRA Inspection';
-				$txt = '<p>Hello '.$Receiver.',<br>
-					You have been selected to undertake an Inspection for <strong>'.$theService.'</strong> at <strong>'.$CustomerName.'</strong> - <strong>'.$PhysicalAddress.'</strong> on <strong>'.$onDate.'</strong><br>
-					Log into your ISpec mobile account to access the checklist and other details about this inspection assignment.
-					<br><br>
-					Please Note: You cannot access the inspection checklist on a date that is not <strong>'.$onDate.'<br><br>
-					Kind Regards,<br>
-					Inspection Team.
-				</p>'; 
 			
-			$sendNotification=php_mailer($CustomerEmail,$from,$SenderName,'Invitation to Undertake an Inspection',$txt,'','','Message');
-		}	
+            DisplayErrors();
+            $msg="Transaction failed";
 		}
-	}
-
-	
-	$s_sql="select ServiceStatusID from ServiceStatus where ServiceStatusID='$NextStatus'";
-	$s_result=sqlsrv_query($db,$s_sql);
-
-	if ($s_result){
-		while ($row = sqlsrv_fetch_array( $s_result, SQLSRV_FETCH_ASSOC))
-		{			
-			$NextStatusID=$row['ServiceStatusID'];
-		}
+		
 	}
 
 		
 	
-	$initQry="Insert into ServiceApprovalActions(ServiceHeaderID,ServiceStatusID,NextServiceStatusID,Notes,CreatedBy) 
-	Values ($ApplicationID,$CurrentStatus,$NextStatusID,'$Notes','$UserID')";	
-	//echo 'insert actions';
-	$s_result = sqlsrv_query($db, $initQry);
-	
-	if ($s_result) 
-	{
-		if($NextStatusID==2 || $NextStatusID==5){
-			// $sql="insert into Inspections(ServiceHeaderID,UserID,InspectionStatusID) values($ApplicationID,$UserID,0)";
-			$sql="update Inspections set InspectionStatusID=0 where ServiceHeaderID=$ApplicationID";
-			// echo $sql; exit;
-			$result = sqlsrv_query($db, $sql);
-
-			if($result){
-				Header ("Location:clients_list.php");
-			}
-		}					
-		$sql="Update ServiceHeader set ServiceStatusID=$NextStatus where ServiceHeaderID=$ApplicationID";	
-		$s_result = sqlsrv_query($db, $sql);					
-	}else
-	{
-		
-		DisplayErrors();
-		$msg="Transaction failed to initialize";
-	}
 }
 
 $s_sql="select c.*,f.ServiceHeaderType,bt.CustomerTypeName,
@@ -667,7 +580,7 @@ if (isset($_REQUEST['InspectionDate']))
 	});
 </script>
 <div class="example">
-   <legend>Service Approval</legend>
+   <legend> Submmitted Test</legend>
    <form>
       <fieldset>
           <table width="100%" border="0" cellspacing="0" cellpadding="3">
@@ -758,58 +671,58 @@ if (isset($_REQUEST['InspectionDate']))
 
               }else{
               ?>
- 			 <tr> 
+ 			 <!-- <tr> 
                   <td width="50%">
                   <label>Add Inspection Officers</label>
 					  <div class="input-control text" data-role="input-control">
 						  <input name="servicename" type="text" id="servicename" value="Add Inspection Officer" disabled="disabled" placeholder="">
 						  
 					  </div>				  
-                  </td>
+                  </td> -->
                  <!--  <td width="50%">
 				<label>&nbsp;</label>				   
 
                   </td> -->
-                  <td width="50%">
+                  <!-- <td width="50%"> -->
 
-				<label>&nbsp;</label>				  
+				<!-- <label>&nbsp;</label>				   -->
 					<!-- service_approval.php?ApplicationID='+app_id+'&app_type='+app_type+'&CurrentStatus='+current_status -->
 					<!-- <input name="Button" type="button" onclick="loadmypage('service_form.php?save=1&ApplicationID=<?php echo $ApplicationID ?>','content','loader','','')" value="Change"> -->
-					<input name="Button" type="button" 
+					<!-- <input name="Button" type="button" 
 					onclick="loadmypage('add_officer.php?ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','','')" value="Add Inspection Officer">
                   </td>   
-              </tr>	
+              </tr>	 -->
 
-<tr>
+<!-- <tr> -->
 
 	<?php
-	$sql="select SetDate from ServiceHeader where ServiceHeaderID = $ApplicationID";
-	$s_result=sqlsrv_query($db,$sql);
+        $sql="select SetDate from ServiceHeader where ServiceHeaderID = $ApplicationID";
+        $s_result=sqlsrv_query($db,$sql);
 		if ($s_result){
-			?>
+	?>
 			
-			<?php
-			while($row=sqlsrv_fetch_array($s_result,SQLSRV_FETCH_ASSOC))
-				{									
-					$SetDate = $row['SetDate'];
-				}
-			}
-			?>
-                  <td width="50%">
+    <?php
+    while($row=sqlsrv_fetch_array($s_result,SQLSRV_FETCH_ASSOC))
+        {									
+            $SetDate = $row['SetDate'];
+        }
+    }
+    ?>
+                  <!-- <td width="50%">
                   <label>Inspection Date</label>
 					  <div class="input-control text" data-role="input-control">
 						  <input name="servicename" type="text" id="servicename" value="<?php echo isset($SetDate)?$SetDate:'Not Set'; ?>" disabled="disabled" placeholder="">
 						  
 					  </div>				  
-                  </td>
-                  <td width="50%">
-				<label>&nbsp;</label>				  
-					<!--service_approval.php?ApplicationID='+app_id+'&app_type='+app_type+'&CurrentStatus='+current_status
-					<input name="Button" type="button" onclick="loadmypage('service_form.php?save=1&ApplicationID=<?php echo $ApplicationID ?>','content','loader','','')" value="Change">-->
-					<input name="Button" type="button" 
-					onclick="loadmypage('inspection_date.php?ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','','')" value="Set Inspection Date">
-                  </td>   
-              </tr>
+                  </td> -->
+                  <!-- <td width="50%"> -->
+				<!-- <label>&nbsp;</label>				   -->
+					<!-- service_approval.php?ApplicationID='+app_id+'&app_type='+app_type+'&CurrentStatus='+current_status -->
+					<!-- <input name="Button" type="button" onclick="loadmypage('service_form.php?save=1&ApplicationID=<?php echo $ApplicationID ?>','content','loader','','')" value="Change"> -->
+					<!-- <input name="Button" type="button" 
+					onclick="loadmypage('inspection_date.php?ApplicationID=<?php echo $ApplicationID; ?>&app_type=50&CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','','')" value="Set Inspection Date">
+                  </td>    -->
+              <!-- </tr> -->
 
 
 	
@@ -1305,8 +1218,9 @@ if (isset($_REQUEST['InspectionDate']))
 					//Get Role Center Of Logged In User
 					$UserID = $_SESSION['UserID'];
 					$GetRoleCenterSQL = "Select RoleCenterID FROM UserRoles where UserID= $UserID";
-
-					// exit($GetZoneSQL );
+					// echo '<pre>';
+					// print_r($GetZoneSQL );
+					// exit;
 					$GetRoleCenterSQLResult=sqlsrv_query($db,$GetRoleCenterSQL);
 					while ($row=sqlsrv_fetch_array($GetRoleCenterSQLResult,SQLSRV_FETCH_ASSOC)) 
 					{
@@ -1442,7 +1356,7 @@ if ($myrow = sqlsrv_fetch_array( $dresult, SQLSRV_FETCH_ASSOC))
           ?>
 
           
-          <?= $CurrentStatus;?>
+         
           <?php 
           if($ServiceType == 11 && $numrows == 3 && (!empty($SetDate1))){
            ?>
@@ -1458,10 +1372,10 @@ if ($myrow = sqlsrv_fetch_array( $dresult, SQLSRV_FETCH_ASSOC))
 		  	loadmypage('clients_list.php?save=1&ApplicationID=<?php echo $ApplicationID ?>&CustomerName=<?php echo $CustomerName ?>&CustomerID=<?php echo $CustomerID ?>&ServiceID=<?php echo $ServiceID ?>&ServiceName=<?php echo $ServiceName ?>&CurrentStatus=<?php echo $CurrentStatus ?>&NextStatus='+this.form.NextStatus.value+'&Notes='+this.form.Notes.value+'&ServiceCategoryID=<?php echo $ServiceCategoryID ?>','content','loader','listpages','','applications','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')
 		  }else
 		  {
-		  	loadpage('service_approval.php?save=1&ApplicationID=<?php echo $ApplicationID ?>&CustomerName=<?php echo $CustomerName ?>&CustomerID=<?php echo $CustomerID ?>&ServiceID=<?php echo $ServiceID ?>&ServiceName=<?php echo $ServiceName ?>&CurrentStatus=<?php echo $CurrentStatus ?>&NextStatus='+this.form.NextStatus.value+'&Notes='+this.form.Notes.value+'&ServiceCategoryID=<?php echo $ServiceCategoryID ?>','content')
+		  	loadpage('SubmittedLicenceApplicationCard.php?save=1&ApplicationID=<?php echo $ApplicationID ?>&CustomerName=<?php echo $CustomerName ?>&CustomerID=<?php echo $CustomerID ?>&ServiceID=<?php echo $ServiceID ?>&ServiceName=<?php echo $ServiceName ?>&CurrentStatus=<?php echo $CurrentStatus ?>&NextStatus='+this.form.NextStatus.value+'&Notes='+this.form.Notes.value+'&ServiceCategoryID=<?php echo $ServiceCategoryID ?>','content')
 		  }
 
-		  "value="Approve">
+		  "value="Save">
 
 		  <?php
 		}elseif($ServiceType != 11 && $numrows != 0 && (!empty($SetDate1))){
@@ -1480,7 +1394,7 @@ if ($myrow = sqlsrv_fetch_array( $dresult, SQLSRV_FETCH_ASSOC))
 		  {
 		  	loadpage('service_approval.php?save=1&ApplicationID=<?php echo $ApplicationID ?>&CustomerName=<?php echo $CustomerName ?>&CustomerID=<?php echo $CustomerID ?>&ServiceID=<?php echo $ServiceID ?>&ServiceName=<?php echo $ServiceName ?>&CurrentStatus=<?php echo $CurrentStatus ?>&NextStatus='+this.form.NextStatus.value+'&Notes='+this.form.Notes.value+'&ServiceCategoryID=<?php echo $ServiceCategoryID ?>','content')
 		  }
-		  "value="Approve">
+		  "value="Save">
 
 
 			<?php

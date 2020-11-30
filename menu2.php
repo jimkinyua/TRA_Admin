@@ -42,7 +42,7 @@ while ($i<=$rows)
 
 
 // $PageID=12;
-// $myRights=getrights($db,$UserID,$PageID);
+$myRights=getrights($db,$UserID,$PageID);
 // if ($myRights)
 // {
 // 	$View=$myRights['View'];
@@ -51,7 +51,7 @@ while ($i<=$rows)
 // 	$Delete=$myRights['Delete'];
 // }
 
-// print_r($myRights); exit;
+// echo '<pre>'; print_r($myRights); exit;
 
 ?>
         <div class="fluent-menu" data-role="fluentmenu">
@@ -108,41 +108,87 @@ while ($i<=$rows)
                 	<div class="tab-panel-group">
                     	<div class="tab-group-content">
                     		<?php 
-                    			$PageID=30;
+                    			$PageID=14;
 								$myRights=getrights($db,$UserID,$PageID);						
-								if ($myRights['View']==1){  ?>
+								if ($myRights['View']==1){  
+							?>
 
-                         	<!-- <button class="fluent-big-button" onClick="loadmypage('customer_services_list.php?i=1','content','loader','listpages','','Customers','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" style="width:80px">
+								<button class="fluent-big-button" onClick="loadmypage('approved_licences_pending_approval.php?i=1','content','loader','listpages','','approved_pending_approval','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" style="width:80px">
+									<span class="icon-layers-alt fg-darkBlue"></span>
+									<span class="button-label fg-darkBlue">Approved Licences Pending Approval</span>
+								</button> 
+							<?php } 	
+							?>
+
+										<?php 
+                    		$PageID=69; //Regional Officer Views
+								$myRights=getrights($db,$UserID,$PageID);	
+								// echo '<pre>';
+								// print_r($UserID);
+								// exit;					
+								if ($myRights['View']==1){  
+							?>
+
+								<button class="fluent-big-button" onClick="loadmypage('approved_licences_pending_approval.php?i=1','content','loader','listpages','','approved_pending_approval','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" style="width:80px">
+									<span class="icon-layers-alt fg-darkBlue"></span>
+									<span class="button-label fg-darkBlue">Approved Licences Pending Approval</span>
+								</button> 
+							
+							<?php } 	
+							?>	
+
+							<?php 
+                    		$PageID=68; //Chief Officer Views
+								$myRights=getrights($db,$UserID,$PageID);
+								
+
+								if ($myRights['View']==1){  
+							?>
+
+							<button class="fluent-big-button" onClick="loadmypage('licences_approved_by_officer.php?i=1','content','loader','listpages','','LicenceApplicationApprovedByOfficer','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" style="width:80px">
                             	<span class="icon-layers-alt fg-darkBlue"></span>
-                                <span class="button-label fg-darkBlue">Customers and Services</span>
-                            </button>   -->
-							<?php } 
-								$PageID=1;
-								$myRights=getrights($db,$UserID,$PageID);						
-								if ($myRights['View']==1){	?>	
-                         	<button class="fluent-big-button" onClick="loadmypage('clients_list.php?i=1','content','loader','listpages','','applications','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" style="width:80px">
-                            	<span class="icon-layers-alt fg-darkBlue"></span>
-                                <span class="button-label fg-darkBlue">Licence Applications</span>
+                                <span class="button-label fg-darkBlue"> Licence Applications</span>
                             </button>
-
-							<button class="fluent-big-button" onClick="loadmypage('approved_licences_pending_approval.php?i=1','content','loader','listpages','','approved_pending_approval','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" style="width:80px">
-                            	<span class="icon-layers-alt fg-darkBlue"></span>
-                                <span class="button-label fg-darkBlue">Approved Licences Pending Approval</span>
-                            </button>
-
+							
 							<button class="fluent-big-button" onClick="loadmypage('renewal_applications_list.php?i=1','content','loader','listpages','','renewalapplications','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" style="width:80px">
                             	<span class="icon-layers-alt fg-darkBlue"></span>
                                 <span class="button-label fg-darkBlue">Licence Renewal Applications</span>
                             </button>
 
-                            <?php } 
+							<button class="fluent-big-button" onClick="loadmypage('inspections_list.php?i=1','content','loader','listpages','','Inspections','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" style="width:80px">
+									<span class="icon-layers-alt fg-darkBlue"></span>
+									<span class="button-label fg-darkBlue">Inspections</span>
+							</button>
+							
+							<?php } 	
+							?>
+
+							<?php
+
+								$PageID=1;
+								$myRights=getrights($db,$UserID,$PageID);						
+								if ($myRights['View']==1){	?>	
+                         	<button class="fluent-big-button" onClick="loadmypage('SubmittedApplications.php?i=1','content','loader','listpages','','SubmittedApplications','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" style="width:80px">
+                            	<span class="icon-layers-alt fg-darkBlue"></span>
+                                <span class="button-label fg-darkBlue"> Submitted Licence Application 1s</span>
+                            </button>
+							
+							
+							<button class="fluent-big-button" onClick="loadmypage('renewal_applications_list.php?i=1','content','loader','listpages','','renewalapplications','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" style="width:80px">
+                            	<span class="icon-layers-alt fg-darkBlue"></span>
+                                <span class="button-label fg-darkBlue"> Submitted Licence Renewal Applications</span>
+                            </button>
+
+							<?php } 
+							
+							
 								$PageID=57;
 								$myRights=getrights($db,$UserID,$PageID);						
 								if ($myRights['View']==1){	?>	
-                         	<button class="fluent-big-button" onClick="loadmypage('inspections_list.php?i=1','content','loader','listpages','','Inspections','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" style="width:80px">
-                            	<span class="icon-layers-alt fg-darkBlue"></span>
-                                <span class="button-label fg-darkBlue">Inspections</span>
-                            </button>
+								<button class="fluent-big-button" onClick="loadmypage('inspections_list.php?i=1','content','loader','listpages','','Inspections','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" style="width:80px">
+									<span class="icon-layers-alt fg-darkBlue"></span>
+									<span class="button-label fg-darkBlue">Inspections</span>
+								</button>
                              <?php } ?>
                              	   							
 						</div>                        

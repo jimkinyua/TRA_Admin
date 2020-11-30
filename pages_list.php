@@ -54,7 +54,7 @@ if (isset($_REQUEST['delete']))
 		$msg = "Page Saved Successfully";			
 	} else
 	{
-		//DisplayErrors();
+		DisplayErrors();
 		$msg = "Details Failed to save";
 		echo '<br>'.$sql;
 			
