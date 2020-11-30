@@ -49,6 +49,7 @@ if (isset($_REQUEST['save']))
 	$Description=$_REQUEST['Description'];
 	$ServiceCategoryID=$_REQUEST['ServiceCategoryID'];
 	$Chargeable=$_REQUEST['Chargeable'];
+	$ApplicantType=$_REQUEST['ApplicantType'];
 	$ServiceName=$_REQUEST['ServiceName'];
 	$ServiceCode=$_REQUEST['ServiceCode'];
 	$GlAccountNo=$_REQUEST['GlAccountNo'];
@@ -66,6 +67,7 @@ if (isset($_REQUEST['save']))
 			  ,[RevenueStreamID]
 			  ,[GlAccountNo]
 			  ,[Chargeable]
+			  ,[ApplicantType]
 			  ,CreatedBy
 			) VALUES 
 			(  
@@ -77,6 +79,7 @@ if (isset($_REQUEST['save']))
 			,'$RevenueStreamID'
 			,'$GlAccountNo'
 			,'$Chargeable'
+			,'$ApplicantType'
 			,'$CreatedUserID'
 				) SELECT SCOPE_IDENTITY() AS ID
 			" ;
@@ -92,6 +95,7 @@ if (isset($_REQUEST['save']))
 					,RevenueStreamID='$RevenueStreamID'
 					,GlAccountNo='$GlAccountNo'
 					,[Chargeable]='$Chargeable'
+					,[ApplicantType]='$ApplicantType'
 					,[CreatedBy]='$CreatedUserID'
 					 where ServiceID='$ServiceID'";		
 	}	 
@@ -175,7 +179,7 @@ if (isset($_REQUEST['save']))
 
 ?>
 <div class="example">
-<legend>County Services </legend>
+<legend>TRA Services </legend>
 
 <table class="table striped hovered dataTable" id="tableToolsTable" width="100%">
     <thead>

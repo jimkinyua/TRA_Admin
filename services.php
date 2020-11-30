@@ -242,7 +242,8 @@ if (isset($_REQUEST['edit']))
                   </div></td>
                   <td>
                   </td>
-          </tr>		                     
+          </tr>		  
+       		                     
                      
         </table>
 		<input name="Button" type="button" onclick="loadmypage('services_list.php?'+

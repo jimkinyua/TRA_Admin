@@ -212,7 +212,28 @@ if (isset($_REQUEST['edit']))
                   </div></td>
                   <td>
                   </td>
-          </tr>		                     
+          </tr>	
+
+          <tr>
+			  <td><label>Applicant Type</label>
+                    <div class="input-control select" data-role="input-control">
+                    	<select name="ApplicantType"  id="ApplicantType">
+						<?php 
+							$selected="";
+							if ($ApplicantType=="1")
+							{
+								$selected="selected";
+							}							
+							
+						?>
+                        <option value="0" <?php echo $selected; ?>>Establishment</option>
+                        <option value="1" <?php echo $selected; ?>>Individual</option>
+                      </select>
+					  
+                  </div></td>
+                  <td>
+                  </td>
+          </tr>	                    
                      
         </table>
 		<input name="Button" type="button" onclick="loadmypage('services_list.php?'+
@@ -222,6 +243,7 @@ if (isset($_REQUEST['edit']))
 											'&ServiceCategoryID='+this.form.ServiceCategoryID.value+ 
                                             '&Description='+this.form.Description.value+
 											'&Chargeable='+this.form.Chargeable.value+
+                                            '&ApplicantType='+this.form.ApplicantType.value+
                                             '&ChecklistTypeID='+this.form.ChecklistTypeID.value+                                            
                                             '&ServiceID='+<?php echo $ServiceID; ?>+       
         									'&save=1','content','loader','listpages','','services')" value="Save">
