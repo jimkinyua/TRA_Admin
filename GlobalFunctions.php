@@ -4055,7 +4055,7 @@ function GenerateLicenceApplicationInvoice($db,$ServiceHeaderID,$UserID)
 	//Get the ServiceId 
 	$GetServiceIDSQL = "select ServiceID
 	from ServiceHeader  WHERE ServiceHeaderId = $ServiceHeaderID";
-	// exit($GetServiceIDSQL);
+	// exit($ServiceHeaderID);
 
 	//Get the LicenceNo 
 	$GetLicenceNoSQL = "select PermitNo

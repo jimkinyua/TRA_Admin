@@ -293,7 +293,7 @@ $(document).ready(function(){
           
           <input type="reset" value="Cancel" onClick="loadmypage('add_officer.php?ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','listpages','','applications','<?php echo $_SESSION['RoleCenter'] ?>')">
 
-<input type="button" value="Add Officer" onClick="deleteConfirm2('Are you sure you want to add the officer','service_approval.php?addofficer=1&ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>&User_ID='+this.form.User_ID.value+'','content','loader','listpages','','applications','<?php echo $_SESSION['RoleCenter'] ?>')"> 
+<input type="button" value="Add Officer" onClick="deleteConfirm2('Are you sure you want to add the officer','LicenceAppliactionApprovedByOfficerCard.php?addofficer=1&ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>&User_ID='+this.form.User_ID.value+'','content','loader','listpages','','applications','<?php echo $_SESSION['RoleCenter'] ?>')"> 
 
 
   <!--	<input name="Button" type="button" onclick="loadmypage('pdf.php.php?save=1,'content','loader','clients')" value="View"> -->

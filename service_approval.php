@@ -646,11 +646,11 @@ if (isset($_REQUEST['generateinvoice']))
 	}
 	else
 	{
-
+// exit($ApplicationID);
 		GenerateLicenceApplicationInvoice($db,$ApplicationID,$UserID);
 
 			// echo $sql;
-			
+			 
 			
 			if(1==1)
 			{
@@ -786,74 +786,15 @@ if (isset($_REQUEST['generateinvoice']))
               }else{
               ?>
 			  
- 			 <tr> 
-                  <td width="50%">
-                  <label>Add Inspection Officers</label>
-					  <div class="input-control text" data-role="input-control">
-						  <input name="servicename" type="text" id="servicename" value="Add Inspection Officer" disabled="disabled" placeholder="">
-						  
-					  </div>				  
-                  </td>
-                 <!--  <td width="50%">
-				<label>&nbsp;</label>				   
-
-                  </td> -->
-                  <td width="50%">
-
-				<label>&nbsp;</label>				  
-					<!-- service_approval.php?ApplicationID='+app_id+'&app_type='+app_type+'&CurrentStatus='+current_status -->
-					<!-- <input name="Button" type="button" onclick="loadmypage('service_form.php?save=1&ApplicationID=<?php echo $ApplicationID ?>','content','loader','','')" value="Change"> -->
-					<input name="Button" type="button" 
-					onclick="loadmypage('add_officer.php?ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','','')" value="Add Inspection Officer">
-                  </td>   
-              </tr>	
-
+ 			 
 			  <tr>
 
+	
 <?php
-$sql="select SetDate from ServiceHeader where ServiceHeaderID = $ApplicationID";
-$s_result=sqlsrv_query($db,$sql);
-	if ($s_result){
-		?>
-		
-		<?php
-		while($row=sqlsrv_fetch_array($s_result,SQLSRV_FETCH_ASSOC))
-			{									
-				$SetDate = $row['SetDate'];
-			}
-		}
-		?>
-			  <td width="50%">
-			  <label>Inspection Date</label>
-				  <div class="input-control text" data-role="input-control">
-					  <input name="servicename" type="text" id="servicename" value="<?php echo isset($SetDate)?$SetDate:'Not Set'; ?>" disabled="disabled" placeholder="">
-					  
-				  </div>				  
-			  </td>
-			  <td width="50%">
-			<label>&nbsp;</label>				  
-				<!--service_approval.php?ApplicationID='+app_id+'&app_type='+app_type+'&CurrentStatus='+current_status
-				<input name="Button" type="button" onclick="loadmypage('service_form.php?save=1&ApplicationID=<?php echo $ApplicationID ?>','content','loader','','')" value="Change">-->
-				<input name="Button" type="button" 
-				onclick="loadmypage('inspection_date.php?ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','','')" value="Set Inspection Date">
-			  </td>   
-		  </tr>
-
-		  <tr>
-
-<?php
-$sql="select SetDate from ServiceHeader where ServiceHeaderID = $ApplicationID";
-$s_result=sqlsrv_query($db,$sql);
-	if ($s_result){
-		?>
-		
-		<?php
-		while($row=sqlsrv_fetch_array($s_result,SQLSRV_FETCH_ASSOC))
-			{									
-				$SetDate = $row['SetDate'];
-			}
-		}
-		?>
+	if($ServiceGroupID != 11)
+	{}else{
+?>
+<tr>
 			  <td width="50%">
 			  <label>Generate Invoice</label>
 				  <div class="input-control text" data-role="input-control">
@@ -869,7 +810,7 @@ $s_result=sqlsrv_query($db,$sql);
 				onclick="loadmypage('generateinvoice.php?ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','','')" value="Generate Invoice">
 			  </td>   
 		  </tr>
-	
+	<?php } ?>
 
 			  <tr>
 				   <td width="50%">
@@ -898,17 +839,177 @@ $s_result=sqlsrv_query($db,$sql);
 						<div class="tab-control" data-role="tab-clontrol">
 						<div class="tab-control" data-role="tab-control">
 							<ul class="tabs">
-								<li class=""><a href="#_page_4">Applicant's Details</a></li>
-								<li class=""><a href="#_page_6">Applicant's Directors</a></li>	
+								<li class=""><a href="#_page_4">Details</a></li>
+								<li class=""><a href="#_page_6">Directors</a></li>	
 								<li class="active"><a href="#_page_1">Aplication Notes</a></li>
-								<li class=""><a href="#_page_3">Application Attachments</a></li>
+								<li class=""><a href="#_page_3">Attachments</a></li>
 								<li class=""><a href="#_page_2">Notes</a></li>
+								<?php 
+								if($ServiceGroupID == 11){
+								?>
+								<li class=""><a href="#_page_7">Invoice Details</a></li>
+								<li class=""><a href="#_page_8">Receipt Details</a></li>
+								<?php
+								}else{}
+								?>
 							<?php if($ServiceGroupID==12){
 								}else{?>
-								<li class=""><a href="#_page_5">Inspection Officers</a></li>
+								<!-- <li class=""><a href="#_page_5">Inspection Officers</a></li> -->
 							<?php } ?>
 							</ul>							
 							<div class="frames">
+							<div class="frame" id="_page_8" style="display: block;">
+                                    <?php 
+                                        
+                                        $GetInvoiceidSQL = "
+                                            Select InvoiceHeaderID from InvoiceHeader
+                                        where ServiceHeaderID =$ApplicationID
+                                        ";
+                                        $GetInvoiceidResult = sqlsrv_query($db, $GetInvoiceidSQL);
+                                        while($row=sqlsrv_fetch_array($GetInvoiceidResult,SQLSRV_FETCH_ASSOC))
+                                        {
+                                            $InvoiceNumber=$row['InvoiceHeaderID'];
+                                        }
+                                                    
+                                            
+                                    ?>
+                                    <table class="items" width="100%" style="font-size: 9pt; border-collapse: collapse;" cellpadding="8">
+                                        <thead>
+                                            <tr>
+                                            <td width="15%">REF. NO.</td>
+                                            <td width="15%">Amount Paid</td>
+                                            <td width="10%">Method of Paymnet</td>
+                                            <td width="15%">Reference Number</td>
+                                            <td width="15%">Receipt Date</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php
+                                                //Get Invoice Lines For the Application
+                                                $ReceiptLinesSQL = " select distinct  Rl.ReceiptLineID,Rl.Amount,
+                                                Rl.InvoiceHeaderID, Rl.CreatedBy, Rh.ReceiptMethodID,
+                                                 Rh.ReceiptDate, Rh.ReferenceNumber, Ih.Amount as InvoiceAmount
+                                                from ReceiptLines Rl
+                                                left join Receipts Rh on  Rl.ReceiptID = Rh.ReceiptID
+												left join  InvoiceHeader Ih on Rl.InvoiceHeaderID = ih.InvoiceHeaderID
+                                                where Rl.InvoiceHeaderID=$InvoiceNumber";
+
+                                                
+                                                $result = sqlsrv_query($db, $ReceiptLinesSQL);
+                                                if ($result)
+                                                    {
+                                                        $TotalInvoiceAMount = 0;
+                                                        while($row=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC))
+                                                        {	
+                                                            @$AmountReceivedSoFar += $row['Amount'];	
+                                                            $TotalInvoiceAMount = $row['InvoiceAmount'];								
+							
+                                                            echo 
+                                                          '<tr>
+                                                            <td align="left">'.$row['ReceiptLineID'].'</td>
+                                                            <td align="left">'.number_format($row['Amount'], 2).'</td>
+                                                            <td align="left">'.$row["ReceiptMethodID"].'</td>
+                                                            <td align="left">'.$row["ReferenceNumber"].'</td>
+                                                            <td align="left">'.$row["ReceiptDate"].'</td>
+
+                                                            </tr>';
+                                                        }
+                                                    echo
+                                                    ' <tr>
+                                                        <td class="blanktotal" colspan="2" rowspan="4"></td>
+                                                        <td class="totals"> Invoice Amount:</td>
+                                                        <td class="totals">'.number_format($TotalInvoiceAMount,2).'</td>
+                                                        </tr>
+                                                        <tr>
+                                                        <td class="blanktotal" rowspan="4"></td>
+                                                        <td class="totals">Amount Received:</td>
+                                                        <td class="totals">'.number_format($AmountReceivedSoFar,2).'</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="blanktotal" rowspan="4"></td>
+                                                            <td class="totals"><b>OutStanding Balance:</b></td>
+                                                            <td class="totals"><b>'.number_format(($TotalInvoiceAMount- $AmountReceivedSoFar),2).'</b></td>
+                                                        </tr>';
+                                                }
+                                        
+                                            ?>
+
+                                        </tbody>
+                                    </table>              
+                                </div>
+							<div class="frame" id="_page_7" style="display: block;">
+                                    <?php 
+                                        
+                                        $GetInvoiceidSQL = "
+                                            Select InvoiceHeaderID from InvoiceHeader
+                                        where ServiceHeaderID =$ApplicationID
+                                        ";
+                                        $GetInvoiceidResult = sqlsrv_query($db, $GetInvoiceidSQL);
+                                        while($row=sqlsrv_fetch_array($GetInvoiceidResult,SQLSRV_FETCH_ASSOC))
+                                        {
+                                            $InvoiceNumber=$row['InvoiceHeaderID'];
+                                        }
+                                                    
+                                            
+                                    ?>
+                                    <table class="items" width="100%" style="font-size: 9pt; border-collapse: collapse;" cellpadding="8">
+                                        <thead>
+                                            <tr>
+                                            <td width="15%">REF. NO.</td>
+                                            <td width="15%">QUANTITY</td>
+                                            <td width="40%">DESCRIPTION</td>
+                                            <td width="15%">UNIT PRICE</td>
+                                            <td width="15%">AMOUNT</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php
+                                                //Get Invoice Lines For the Application
+                                                $InvoiceLinesSQL = "select distinct s.ServiceID,
+                                                s.ServiceName,il.Amount,il.InvoiceLineID,
+                                                ih.Amount as TotalAmount,
+                                                il.InvoiceheaderID 
+                                                from InvoiceLines il
+                                                join Services s on il.ServiceID =s.ServiceID
+                                                join Invoiceheader ih on  il.InvoiceHeaderID = ih.InvoiceHeaderID
+                                                where il.InvoiceHeaderID=$InvoiceNumber";
+                                                
+                                                $result = sqlsrv_query($db, $InvoiceLinesSQL);
+                                                if ($result)
+                                                    {
+                                                        $TotalInvoiceAMount = 0;
+                                                        while($row=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC))
+                                                        {	
+                                                            $TotalInvoiceAMount = $row['TotalAmount'];								
+                                                            echo 
+
+                                                            '<tr>
+                                                            <td align="center">'.$row['InvoiceLineID'].'</td>
+                                                            <td align="center">1</td>
+                                                            <td>'.$row['ServiceName'].'</td>
+                                                            <td align="left">'.number_format($row["Amount"],2).'</td>
+                                                            <td align="left">'.number_format($row['Amount'],2).'</td>
+                                                            </tr>';
+                                                        }
+                                                    echo
+                                                    ' <tr>
+                                                        <td class="blanktotal" colspan="2" rowspan="6"></td>
+                                                        <td class="totals" align="left">'.$row['ServiceName'].'</td>
+                                                        <td class="totals">Subtotal:</td>
+                                                        <td class="totals">'.number_format($TotalInvoiceAMount,2).'</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="blanktotal" rowspan="6"></td>
+                                                            <td class="totals"><b>TOTAL:</b></td>
+                                                            <td class="totals"><b>'.number_format($TotalInvoiceAMount,2).'</b></td>
+                                                        </tr>';
+                                                }
+                                        
+                                            ?>
+
+                                        </tbody>
+                                    </table>              
+                                </div>
 								<div class="frame" id="_page_4" style="display: none;">
 									<fieldset>
 										<table width="50%" border="0" cellspacing="0" cellpadding="3">
@@ -1502,7 +1603,7 @@ if ($myrow = sqlsrv_fetch_array( $dresult, SQLSRV_FETCH_ASSOC))
           
           <?= $CurrentStatus;?>
           <?php 
-          if($ServiceType == 11 && $numrows == 3 && (!empty($SetDate1))){
+          if($ServiceType == 11 && $numrows != 3 && (empty($SetDate1))){
            ?>
 		  
            <input type="reset" value="Cancel" onClick="loadmypage('clients_list.php?i=1','content','loader','listpages','','applications','<?php echo $_SESSION['RoleCenter'] ?>')">
@@ -1522,7 +1623,7 @@ if ($myrow = sqlsrv_fetch_array( $dresult, SQLSRV_FETCH_ASSOC))
 		  "value="Approve">
 
 		  <?php
-		}elseif($ServiceType != 11 && $numrows != 0 && (!empty($SetDate1))){
+		}elseif($ServiceType != 11 && $numrows != 0 && (empty($SetDate1))){
 		  	?>
 			   
 		  	<input type="reset" value="Cancel" onClick="loadmypage('clients_list.php?i=1','content','loader','listpages','','applications','<?php echo $_SESSION['RoleCenter'] ?>')">

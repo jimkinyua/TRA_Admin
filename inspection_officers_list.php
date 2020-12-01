@@ -55,7 +55,7 @@ if (isset($_REQUEST['delete']))
 						<tr>
 							<td><?php echo $FirstName; ?> <?php echo $LastName; ?></td>
 							<td align="left" class="tabletext"><div align="center">
-								<a href="#" onClick="deleteConfirm2('Are you sure you want to delete the officer','service_approval.php?deleteofficer=1&ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>&User_ID=<?php echo $User_ID; ?>','content','loader','listpages','','applications','<?php echo $_SESSION['RoleCenter'] ?>')">Remove</a>
+								<a href="#" onClick="deleteConfirm2('Are you sure you want to delete the officer','LicenceAppliactionApprovedByOfficerCard.php?deleteofficer=1&ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>&User_ID=<?php echo $User_ID; ?>','content','loader','listpages','','applications','<?php echo $_SESSION['RoleCenter'] ?>')">Remove</a>
 
 								
 
