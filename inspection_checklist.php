@@ -176,7 +176,7 @@ $row = sqlsrv_has_rows( $s_result );
                       Re-Inspection has to be conducted by 3 officers
                     </p>
                   <?php
-                }elseif($ServiceGroupID == 11 && $ServiceStatusID ==4 || $ServiceStatusID==1|| $ServiceStatusID==6){?>
+                }elseif($ServiceGroupID == 11 && $ServiceStatusID==4 || $ServiceStatusID==1|| $ServiceStatusID==6|| $ServiceStatusID==3){?>
                     <p style="color:red;">
                      Verdict has been given...
                     </p>
@@ -198,7 +198,7 @@ $row = sqlsrv_has_rows( $s_result );
                 <td><label>Comment</label>
                   <div class="input-control textarea" data-role="input-control">            
                     <textarea id="Comment" name="Comment" cols="20"></textarea>  
-                    
+                    <input type="hidden" name="ServiceGroupID" value="<?php echo $ServiceGroupID; ?>">
                     <?php
                       if($ServiceGroupID == 11){
                         ?>
@@ -231,6 +231,7 @@ $row = sqlsrv_has_rows( $s_result );
                       '&Status='+this.form.Status.value+                
                       '&Comment='+this.form.Comment.value+
                       '&AverageScore='+this.form.AverageScore.value+
+                      '&ServiceGroupID='+this.form.ServiceGroupID.value+
                       '&submit=1','content','loader','listpages','','Inspections','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" value="Submit">
                     <?php } ?>
                 </td>

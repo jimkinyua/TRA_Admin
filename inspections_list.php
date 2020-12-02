@@ -42,12 +42,12 @@ if($_REQUEST['addinspection']==1){
 
 
 if($_REQUEST['submit']==1){
-	//
-	// EXIT('74');
+	// print_r($_REQUEST);exit;
 	$InspectionID=$_REQUEST['InspectionID'];
 	$Status=$_REQUEST['Status'];
 	$Comment=$_REQUEST['Comment'];
 	$AverageScore=$_REQUEST['AverageScore'];
+	$ServiceGroupID = $_REQUEST['ServiceGroupID'];
 	if($Comment==''){
 		$Comment='Cleared for Payment and Licencing';
 	}
@@ -77,9 +77,11 @@ if($_REQUEST['submit']==1){
 	// echo '<pre>';
 	// print_r($ChangeStatussql);
 	// exit;
+	sqlsrv_commit($db);
+
 	$ChangeStatusResult=sqlsrv_query($db,$ChangeStatussql);
 
-	if($ChangeStatusResult){
+	if($ChangeStatusResult && $ServiceGroupID != 11){
 		GenerateLicenceApplicationInvoice($db,$ApplicationID,$UserID);
 	}
 	else{
@@ -105,18 +107,21 @@ if($_REQUEST['submit']==1){
 		// exit($sql);
 		$result=sqlsrv_query($db,$sql);
 		if($result){
+			sqlsrv_commit($db);
 			$msg="Status Saved Successfully";
 		}else
 		{
 			sqlsrv_rollback($db);
 			DisplayErrors();
 			$msg="Failed to save Status, contact the technical teamss";
+			
 		}
 
 	}else{
 		sqlsrv_rollback($db);
 		DisplayErrors();
 		$msg="Failed to save status, contact the technical team";
+		
 	}
 }
 
@@ -190,13 +195,12 @@ checkSession($db,$UserID);
        <!--  <input type="text" id="session" name="session" /> -->
 
 
-       <input name="Button" type="button" 
-					onclick="loadmypage('graded.php?ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','','')" value="View Grades">
 	   <input name="Button" type="button" 
-					onclick="loadmypage('setrating.php?CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','','')" value="Set Ratings">
-
-		<input name="Button" type="button" 
-					onclick="loadmypage('create_inspection.php?CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','','')" value="Initiate Inspection">
+					onclick="loadmypage('setrating.php?ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','listpages','','Inspections','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" value="Set Rating for Classification and Grading"> || 
+	 <input name="Button" type="button" 
+					onclick="loadmypage('tradefacilitation_list.php?ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','listpages','','Inspections','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" value="Trade And Facilitation Applications">||
+	<input name="Button" type="button" 
+					onclick="loadmypage('classification_list.php?ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','listpages','','Inspections','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" value="Classification and Grading Applications">
 
 
 		<form>
