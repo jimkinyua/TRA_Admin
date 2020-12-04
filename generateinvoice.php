@@ -83,6 +83,7 @@ left join BusinessZones bz on sh.BusinessZoneID=bz.ZoneID
 left join Wards w on bz.wardid=w.wardid 
 join SubSystems sbs on sbs.SubSystemID = Sh.SubSystemID
 where sh.ServiceHeaderID=$ApplicationID";
+// echo $s_sql;
 $s_result=sqlsrv_query($db,$s_sql);
 
 
@@ -220,7 +221,8 @@ $(document).ready(function(){
 				 <td width="50%">
 					<label>Customer Name</label>
 					  <div class="input-control text" data-role="input-control">
-						  <input name="customer" type="text" id="customer" value="<?php echo $CustomerName; ?>" disabled="disabled" placeholder="">
+                      <input name="customer" type="text" id="customer" value="<?php echo $CustomerName; ?>" disabled="disabled" placeholder="">
+                      <input name="UserID" type="hidden" id="UserID" value="<?php echo $UserID; ?>" disabled="disabled" placeholder="">
 						  
 					  </div>                 	
 				  </td>
@@ -248,56 +250,18 @@ $(document).ready(function(){
 					
                   </td>   
 			</tr>
-			<tr>
-                  <td width="50%">
-					  <label>Add New Officer</label>
-						  <div class="input-control select" data-role="input-control">
-							<select name="User_ID"  id="User_ID">
-							<option value="" selected="selected" required></option>
-							<?php 
-							$s_sql = " SELECT u.Email, u.UserID,ag.AgentID, ag.FirstName, ag.Middlename, ag.LastName FROM Users u join Agents ag on u.AgentID=ag.AgentID";
-							
-							$s_result = sqlsrv_query($db, $s_sql);
-							if ($s_result) 
-							{ //connection succesful 
-								while ($row = sqlsrv_fetch_array($s_result, SQLSRV_FETCH_ASSOC))
-								{
-									$ag_id = $row["AgentID"];
-									$f_name = $row["FirstName"];
-									$l_name = $row["LastName"];
-									if ($AgentID==$ag_id) 
-									{
-										$selected = 'selected="selected"';
-									} else
-									{
-										$selected = '';
-									}												
-								 ?>
-							<option value="<?php echo $ag_id; ?>" <?php echo $selected; ?>><?php echo $f_name; ?> <?php echo $l_name; ?></option>
-							<?php 
-								}
-							}
-							?>
-						  </select>
-						
-					  </div>				  
-                  </td>
-                  <td width="50%">	
-					
-                  </td>   
-			</tr>
+			
 			
             		
           </table> 
           
           
-          <input type="reset" value="Cancel" onClick="loadmypage('add_officer.php?ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','listpages','','applications','<?php echo $_SESSION['RoleCenter'] ?>')">
+          <input type="reset" value="Cancel" onClick="loadmypage('Inspection_date.php?ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','listpages','','applications','<?php echo $_SESSION['RoleCenter'] ?>')">
 
-<input type="button" value="Add Officer" onClick="deleteConfirm2('Are you sure you want to add the officer','LicenceAppliactionApprovedByOfficerCard.php?addofficer=1&ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>&User_ID='+this.form.User_ID.value+'','content','loader','listpages','','applications','<?php echo $_SESSION['RoleCenter'] ?>')"> 
+<input type="button" value="Send Invoice" onClick="deleteConfirm2('Are you sure you want to send the invoice','service_approval.php?generateinvoice=1&ApplicationID=<?php echo $ApplicationID; ?>&UserID=<?php echo $UserID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','listpages','','applications','<?php echo $_SESSION['RoleCenter'] ?>')"> 
 
 
   <!--	<input name="Button" type="button" onclick="loadmypage('pdf.php.php?save=1,'content','loader','clients')" value="View"> -->
 
       </fieldset>
-  </form>     
-
+  </form>                  

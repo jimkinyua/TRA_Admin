@@ -270,20 +270,10 @@
 			$mail->SMTPSecure = 'ssl'; 
 			$mail->Port       = 465;                    // set the SMTP port for the GMAIL server				
 
-			$mail->Username = "omonsotest@gmail.com";
-			$mail->Password = "omonso001";	    
-
-			// $mail->Username = "passdevelopment00@gmail.com";
-			// $mail->Password = "cyvkhicsdngecuvf";	    
+			$mail->Username = "passdevelopment00@gmail.com";
+			$mail->Password = "cyvkhicsdngecuvf";	    
 			// $mail->Username = "omonsotest@gmail.com";
 			// $mail->Password = "omonso001";	    
-
-
-			// $mail->Username = "passdevelopment00@gmail.com";
-			// $mail->Password = "cyvkhicsdngecuvf";	    
-
-			$mail->Username = "omonsotest@gmail.com";
-			$mail->Password = "omonso001";	    
 
 			
 			
@@ -309,10 +299,7 @@
 				$feedback[1]=$item." sent Successfully to $toEmail";
 				return $feedback;
 				
-				return "Mail Sent Successfully to $toEmail";
-				// return "Mail Sent Successfully to $toEmail";
-
-				return "Mail Sent Successfully to $toEmail";
+				//return "Mail Sent Successfully to $toEmail";
 
 
 			}else
@@ -4069,7 +4056,7 @@ function GenerateLicenceApplicationInvoice($db,$ServiceHeaderID,$UserID)
 	//Get the ServiceId 
 	$GetServiceIDSQL = "select ServiceID
 	from ServiceHeader  WHERE ServiceHeaderId = $ServiceHeaderID";
-	// exit($GetServiceIDSQL);
+	// exit($ServiceHeaderID);
 
 	//Get the LicenceNo 
 	$GetLicenceNoSQL = "select PermitNo
