@@ -79,6 +79,12 @@ function loadoptionalpage(app_id,app_type,current_status,destination,loader,op,i
 		//mypage='hire_application.php?ApplicationID='+app_id+'&app_type='+app_type+'&CurrentStatus='+current_status;
 		opv='SubmittedLicenceApplicationCard';
 	}
+	else if(app_type==52) //Submitted Apps For Officers
+	{
+		mypage='service_approval.php?ApplicationID='+app_id+'&app_type='+app_type+'&CurrentStatus='+current_status;
+		//mypage='hire_application.php?ApplicationID='+app_id+'&app_type='+app_type+'&CurrentStatus='+current_status;
+		opv='SubmittedLicenceApplicationCard';
+	}
 
 	else if(app_type==51) //Submitted Apps For Chief Officer
 	{

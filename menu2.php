@@ -137,6 +137,25 @@ $myRights=getrights($db,$UserID,$PageID);
 							<?php } 	
 							?>	
 
+
+<?php 
+                    		$PageID=71; //Regional Officer Views
+								$myRights=getrights($db,$UserID,$PageID);	
+								// echo '<pre>';
+								// print_r($UserID);
+								// exit;					
+								if ($myRights['View']==1){  
+							?>
+
+								<button class="fluent-big-button" onClick="loadmypage('approved_facilitation_pending_approval.php?i=1','content','loader','listpages','','approved_facilitation_approval','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" style="width:80px">
+									<span class="icon-layers-alt fg-darkBlue"></span>
+									<span class="button-label fg-darkBlue">Trade and Facilitation Approval</span>
+								</button> 
+							
+							<?php } 	
+							?>	
+
+								
 							<?php 
                     		$PageID=68; //Chief Officer Views
 								$myRights=getrights($db,$UserID,$PageID);
@@ -179,9 +198,28 @@ $myRights=getrights($db,$UserID,$PageID);
                                 <span class="button-label fg-darkBlue"> Submitted Licence Renewal Applications</span>
                             </button>
 
-							<?php } 
+							<?php } ?>
+
+							<?php 
+                    		$PageID=70; //Regional Officer Views
+								$myRights=getrights($db,$UserID,$PageID);	
+								// echo '<pre>';
+								// print_r($UserID);
+								// exit;					
+								if ($myRights['View']==1){  
+							?>
+
+								<button class="fluent-big-button" onClick="loadmypage('tradefacilitationapplications.php?i=1','content','loader','listpages','','tradefacilitationapplications','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" style="width:80px">
+									<span class="icon-layers-alt fg-darkBlue"></span>
+									<span class="button-label fg-darkBlue">Trade Facilitation Applications</span>
+								</button> 
 							
-							
+							<?php } 	
+							?>	
+
+
+
+							<?php							
 								$PageID=57;
 								$myRights=getrights($db,$UserID,$PageID);						
 								if ($myRights['View']==1){	?>	
