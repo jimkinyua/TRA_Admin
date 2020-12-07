@@ -694,7 +694,7 @@ if (isset($_REQUEST['generateinvoice']))
 	});
 </script>
 <div class="example">
-   <legend>Service Approval</legend>
+   <legend>Trade and Facilitation Applications</legend>
    <form>
       <fieldset>
           <table width="100%" border="0" cellspacing="0" cellpadding="3">
@@ -1481,7 +1481,7 @@ if (isset($_REQUEST['generateinvoice']))
 							<?php 
 								
 								
-								$s_sql="SELECT ServiceStatusID,ServiceStatusDisplay  from ServiceStatus where ServiceStatusID in (11,12)";						
+								$s_sql="SELECT ServiceStatusID,ServiceStatusDisplay  from ServiceStatus where ServiceStatusID in (11,4)";						
 
 								
 								$s_result = sqlsrv_query($db, $s_sql);
@@ -1494,8 +1494,8 @@ if (isset($_REQUEST['generateinvoice']))
 											
 								?>
 								<option value="<?php echo $s_id; ?>" <?php echo $selected; ?>>
-									<?php if($s_id==12 && $ServiceGroupID==12){
-										echo 'Forward for Approval';
+									<?php if($s_id==4 && $ServiceGroupID==12){
+										echo 'Trade Facilitation Application Approved';
 									}else{
 									echo $s_name; 
 								}?>

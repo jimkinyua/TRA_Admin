@@ -2826,7 +2826,7 @@ else if($OptionValue=='approved_facilitation_approval')
 	$Subcounties='';
 	$locationcondition='';
 	$role='None';
-	$app_type=7;
+	$app_type=12;
 	//check whether the person is a clerk or Officer
 	$sql="select iif (exists(select 1 from ClerkWard where UserID=$UserID and status=1),'Clerk',
 			iif (exists(select 1 from ApproverSetup where UserID=$UserID and status=1),'Officer','None')) Role";
