@@ -138,7 +138,7 @@ $myRights=getrights($db,$UserID,$PageID);
 							?>	
 
 
-<?php 
+							<?php 
                     		$PageID=71; //Regional Officer Views
 								$myRights=getrights($db,$UserID,$PageID);	
 								// echo '<pre>';
@@ -154,8 +154,64 @@ $myRights=getrights($db,$UserID,$PageID);
 							
 							<?php } 	
 							?>	
+							<?php 
+                    		$PageID=1071; //Regional Officer Views
+								$myRights=getrights($db,$UserID,$PageID);	
+								// echo '<pre>';
+								// print_r($UserID);
+								// exit;					
+								if ($myRights['View']==1){  
+							?>
+
+								<button class="fluent-big-button" onClick="loadmypage('classification_applications.php?i=1','content','loader','listpages','','classificationapplications','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" style="width:80px">
+									<span class="icon-layers-alt fg-darkBlue"></span>
+									<span class="button-label fg-darkBlue">Classification and Grading Applications</span>
+								</button> 
 
 								
+
+								<button class="fluent-big-button" onClick="loadmypage('licence-application-invoices.php?i=1','content','loader','listpages','','licence-application-invoices-a','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" style="width:80px">
+                            	<span class="icon-libreoffice fg-darkBlue"></span>
+                                <span class="button-label fg-darkBlue">Licence Application Invoices</span>
+                            </button>
+							
+							<?php } 	
+							?>
+
+							<?php 
+                    		$PageID=2071; //Regional Officer Views
+								$myRights=getrights($db,$UserID,$PageID);	
+								// echo '<pre>';
+								// print_r($UserID);
+								// exit;					
+								if ($myRights['View']==1){  
+							?>
+
+								<button class="fluent-big-button" onClick="loadmypage('classification_approval.php?i=1','content','loader','listpages','','classificationapproval','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" style="width:80px">
+									<span class="icon-layers-alt fg-darkBlue"></span>
+									<span class="button-label fg-darkBlue">Classification and Grading Management</span>
+								</button> 
+							
+							<?php } 	
+							?>
+								
+								<?php 
+                    		$PageID=2072; //Regional Officer Views
+								$myRights=getrights($db,$UserID,$PageID);	
+								// echo '<pre>';
+								// print_r($UserID);
+								// exit;					
+								if ($myRights['View']==1){  
+							?>
+
+								<button class="fluent-big-button" onClick="loadmypage('approved_classification_pending_approval.php?i=1','content','loader','listpages','','approved_classification_approval','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" style="width:80px">
+									<span class="icon-layers-alt fg-darkBlue"></span>
+									<span class="button-label fg-darkBlue">Classification and Grading Review</span>
+								</button> 
+							
+							<?php } 	
+							?>
+
 							<?php 
                     		$PageID=68; //Chief Officer Views
 								$myRights=getrights($db,$UserID,$PageID);
@@ -216,9 +272,7 @@ $myRights=getrights($db,$UserID,$PageID);
 							
 							<?php } 	
 							?>	
-
-
-
+								
 							<?php							
 								$PageID=57;
 								$myRights=getrights($db,$UserID,$PageID);						
