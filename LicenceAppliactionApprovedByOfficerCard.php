@@ -1512,7 +1512,7 @@ if (isset($_REQUEST['InspectionDate']))
 					</div>
 				<?php } ?> <!-- End If -->
 				<?php
-					if($RoleCenter != 2020){ //Chief Officer
+					if($RoleCenter == 2020 || $RoleCenter == 4026){ //Chief Officer
 				?>
 					<div class="input-control select" data-role="input-control">
 						<select name="NextStatus"  id="NextStatus">                    

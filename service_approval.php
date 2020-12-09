@@ -1465,7 +1465,7 @@ if (isset($_REQUEST['generateinvoice']))
 					$UserID = $_SESSION['UserID'];
 					$GetRoleCenterSQL = "Select RoleCenterID FROM UserRoles where UserID= $UserID";
 
-					// exit($GetZoneSQL );
+					// exit($GetRoleCenterSQL );
 					$GetRoleCenterSQLResult=sqlsrv_query($db,$GetRoleCenterSQL);
 					while ($row=sqlsrv_fetch_array($GetRoleCenterSQLResult,SQLSRV_FETCH_ASSOC)) 
 					{
@@ -1474,7 +1474,7 @@ if (isset($_REQUEST['generateinvoice']))
 
 				?>
 				<?php
-					if($RoleCenter != 2014){ //TRA Officer
+					if($RoleCenter == 2014  ||$RoleCenter == 2025 || $RoleCenter == 3026){ 
 				?>
 					<div class="input-control select" data-role="input-control">
 						<select name="NextStatus"  id="NextStatus">                    

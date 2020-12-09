@@ -167,14 +167,10 @@ $myRights=getrights($db,$UserID,$PageID);
 									<span class="icon-layers-alt fg-darkBlue"></span>
 									<span class="button-label fg-darkBlue">Classification and Grading Applications</span>
 								</button> 
-
-								
-
-								<button class="fluent-big-button" onClick="loadmypage('licence-application-invoices.php?i=1','content','loader','listpages','','licence-application-invoices-a','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" style="width:80px">
+								<button class="fluent-big-button" onClick="loadmypage('licence-application-invoices.php?i=1','content','loader','listpages','','licence-application-invoices-b','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" style="width:80px">
                             	<span class="icon-libreoffice fg-darkBlue"></span>
-                                <span class="button-label fg-darkBlue">Licence Application Invoices</span>
-                            </button>
-							
+                                <span class="button-label fg-darkBlue">Classification Application Invoices</span>
+                            
 							<?php } 	
 							?>
 
@@ -191,7 +187,10 @@ $myRights=getrights($db,$UserID,$PageID);
 									<span class="icon-layers-alt fg-darkBlue"></span>
 									<span class="button-label fg-darkBlue">Classification and Grading Management</span>
 								</button> 
-							
+								<button class="fluent-big-button" onClick="loadmypage('classification_list.php?ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','listpages','','Inspections','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" style="width:80px">
+									<span class="icon-layers-alt fg-darkBlue"></span>
+									<span class="button-label fg-darkBlue">Inspections</span>
+							</button>
 							<?php } 	
 							?>
 								
@@ -208,7 +207,15 @@ $myRights=getrights($db,$UserID,$PageID);
 									<span class="icon-layers-alt fg-darkBlue"></span>
 									<span class="button-label fg-darkBlue">Classification and Grading Review</span>
 								</button> 
-							
+								<button class="fluent-big-button" onClick="loadmypage('classification_list.php?ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','listpages','','Inspections','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" style="width:80px">
+									<span class="icon-layers-alt fg-darkBlue"></span>
+									<span class="button-label fg-darkBlue">Inspections</span>
+								</button>
+								
+								<button class="fluent-big-button" onClick="loadmypage('setrating.php?ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','listpages','','Inspections','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" style="width:80px">
+									<span class="icon-layers-alt fg-darkBlue"></span>
+									<span class="button-label fg-darkBlue">Set Ratings for Establishments</span>
+								</button>
 							<?php } 	
 							?>
 

@@ -448,10 +448,12 @@ else if($OptionValue=='licence-application-invoices-a')
 			inner join InvoiceLines il on il.InvoiceHeaderID=ih.InvoiceHeaderID
 			left join (select InvoiceHeaderid,sum(amount) Amount from ReceiptLines group by InvoiceHeaderID)rl on ih.InvoiceHeaderID=rl.InvoiceHeaderID
 			inner join ServiceHeader sh on ih.ServiceHeaderID=sh.ServiceHeaderID
+			inner join ServiceCategory sc on sc.ServiceCategoryID = sh.ServiceCategoryId
+			inner join ServiceGroup sg on sg.ServiceGroupID = sc.ServiceGroupID
 			left join Miscellaneous misc on misc.ServiceHeaderID=sh.ServiceHeaderID
 			inner join Customer c on sh.CustomerID=c.CustomerID	
 			inner join Services s on sh.ServiceID=s.ServiceID 
-			where year(il.CreatedDate)=year(getdate()) ".$filter."
+			where NOT sc.ServiceGroupID=11 AND NOT sc.ServiceGroupID= 12 and year(il.CreatedDate)=year(getdate()) ".$filter." and (sc.ServiceGroupID != 11 or sc.ServiceGroupID != 12)
 			group by sh.ServiceHeaderID,misc.CustomerName, sh.CustomerID,ih.InvoiceDate,c.CustomerName,s.ServiceName,ih.InvoiceHeaderID,sh.ServiceID,sh.ServiceHeaderID,ih.[Description],isnull(rl.Amount,0) 
 			Order By ih.InvoiceHeaderID";
 
@@ -493,6 +495,196 @@ else if($OptionValue=='licence-application-invoices-a')
 		);
 	}  	
 }
+
+
+
+else if($OptionValue=='licence-application-invoices-b')
+{
+	// echo '<pre>';
+	// print_r($exParam);
+	// exit;
+
+	$fromDate;
+	$toDate;
+	$filter;
+	$ServiceHeaderID='';
+	$CustomerName='';
+	$InvoiceHeaderID='';
+
+	$PageID=25;
+	$View=0;
+	$Edit=0;
+	$Add=0;
+	$Delete=0;
+	$myRights=getrights($db,$CurrentUser,$PageID);
+	if ($myRights)
+	{
+		$View=$myRights['View'];
+		$Edit=$myRights['Edit'];
+		$Add=$myRights['Add'];
+		$Delete=$myRights['Delete'];
+	}
+
+	//location
+	$wards='';
+	$Subcounties='';
+	$locationcondition='';
+	$role='None';
+	//check whether the person is a clerk or Officer
+	$locsql="select iif (exists(select 1 from ClerkWard where UserID=$CurrentUser and status=1),'Clerk',
+			iif (exists(select 1 from ApproverSetup where UserID=$CurrentUser and status=1),'Officer','None')) Role";
+
+	$result=sqlsrv_query($db,$locsql);
+	while ($row=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC)) 
+	{
+		$role=$row['Role'];
+	}
+
+	if($role=='Clerk')
+	{
+		$sql="select WardID From ClerkWard where UserID=$CurrentUser and Status=1";
+
+		$result=sqlsrv_query($db,$sql);
+		$i=0;
+
+		while($row=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC)){
+			if ($i==0){
+				$wards='('.$row['WardID'];
+			}else{
+				$wards.=','.$row['WardID'];
+			}
+			$i+=1;
+		}
+
+		$wards.=')';
+
+		$locationcondition=" and (select value from fnFormData(sh.ServiceHeaderID) WHERE FormColumnID=11204) in $wards ";
+
+	}else if ($role=='Officer'){
+		$sql="select SubCountyID From ApproverSetup where UserID=$CurrentUser and Status=1";
+
+		$result=sqlsrv_query($db,$sql);
+		$i=0;
+		while($row=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC)){
+			if ($i==0){
+				$subcounties='('.$row['SubCountyID'];
+			}else{
+				$subcounties.=','.$row['SubCountyID'];
+			}
+			$i+=1;
+		}
+
+		$subcounties.=')';
+
+		$locationcondition=" and (select value from fnFormData(sh.ServiceHeaderID) WHERE FormColumnID=11203) in $subcounties ";
+	}
+
+	if (strlen($exParam)>0)
+	{
+		$details=explode(':',$exParam);
+		
+		if(strlen($exParam)>2)
+		{		
+			$str3=explode('=',$details[0]);
+			$fromDate=$str3[1];		
+			
+			$str3=explode('=',$details[1]);
+			$toDate=$str3[1];
+
+			$str3=explode('=',$details[2]);
+			$InvoiceHeaderID=$str3[1];
+
+			$str3=explode('=',$details[3]);
+			$ServiceHeaderID=$str3[1];
+
+			$str3=explode('=',$details[4]);
+			$CustomerName=$str3[1];
+
+			if(!$InvoiceHeaderID==''){
+				$filter=" and il.InvoiceHeaderID=$InvoiceHeaderID";
+			}
+
+			if(!$ServiceHeaderID==''){
+				$filter=" and il.ServiceHeaderID=$ServiceHeaderID";
+			}
+
+			if(!$CustomerName==''){
+				$filter.=" and isnull(misc.CustomerName,c.CustomerName) like '%$CustomerName%'";
+			}
+
+			if(!$fromDate==''){
+				$filter.=" and convert(date,il.CreatedDate)>=convert(date,'$fromDate')";
+			}
+
+			if(!$toDate==''){
+				$filter.=" and convert(date,il.CreatedDate)<=convert(date,'$toDate')";
+			}
+			
+			if($filter==''){
+				$filter=" and DATEDIFF(day,il.CreatedDate,getdate())<3 ";
+			}
+
+			
+
+		}else{
+			$filter=" and DATEDIFF(day,il.CreatedDate,getdate())<3 ";
+		}
+		
+		$sql = "set dateformat dmy select  distinct top 10 sh.ServiceHeaderID,ih.InvoiceHeaderID, sh.CustomerID,ih.InvoiceDate [INV DATE]
+		,isnull(misc.CustomerName,c.CustomerName) CustomerName,s.ServiceName +'('+isnull(ih.[Description],'')+')' 	ServiceName,sum(il.Amount) Amount,isnull(rl.Amount,0) Paid,sh.ServiceID
+			from InvoiceHeader ih
+			inner join InvoiceLines il on il.InvoiceHeaderID=ih.InvoiceHeaderID
+			left join (select InvoiceHeaderid,sum(amount) Amount from ReceiptLines group by InvoiceHeaderID)rl on ih.InvoiceHeaderID=rl.InvoiceHeaderID
+			inner join ServiceHeader sh on ih.ServiceHeaderID=sh.ServiceHeaderID
+			inner join ServiceCategory sc on sc.ServiceCategoryID = sh.ServiceCategoryId
+			inner join ServiceGroup sg on sg.ServiceGroupID = sc.ServiceGroupID
+			left join Miscellaneous misc on misc.ServiceHeaderID=sh.ServiceHeaderID
+			inner join Customer c on sh.CustomerID=c.CustomerID	
+			inner join Services s on sh.ServiceID=s.ServiceID 
+			where year(il.CreatedDate)=year(getdate()) ".$filter." and sc.ServiceGroupID = 11
+			group by sh.ServiceHeaderID,misc.CustomerName, sh.CustomerID,ih.InvoiceDate,c.CustomerName,s.ServiceName,ih.InvoiceHeaderID,sh.ServiceID,sh.ServiceHeaderID,ih.[Description],isnull(rl.Amount,0) 
+			Order By ih.InvoiceHeaderID";
+
+		
+	}
+	// exit($sql);
+	//echo $sql;
+	$result = sqlsrv_query($db, $sql);	
+	while ($row = sqlsrv_fetch_array( $result, SQLSRV_FETCH_ASSOC)) 
+	{
+		// echo '<pre>';
+		// print_r($row);
+		// exit;
+
+		extract($row);
+		$Balance=$Amount-$Paid;
+		$CustomerName =  '<a href="#" onClick="loadoptionalpage2('.$ServiceID.','.$InvoiceHeaderID.','.$ServiceHeaderID.',\'content\',\'loader\',\'listpages\',\'\',\'invoices_lines\',\''.$InvoiceHeaderID.'\')">'.$CustomerName.'</a>';
+
+		$ViewBtn  = '<a href="reports.php?rptType=Invoice&ServiceHeaderID='.$ServiceHeaderID.'&InvoiceHeaderID='.$InvoiceHeaderID.'" target="_blank">View</a>'; 
+
+		$ReceiptBtn = '<a href="#" onClick="loadmypage(\'licence_application_receipt.php?add=1&InvoiceHeaderID='.$InvoiceHeaderID.'&InvoiceAmount='.$Amount.'&Balance='.$Balance.'\',\'content\',\'\',\'\',\'\',\''.$_SESSION['UserID'].'\')">Receipt</a>';
+	
+		
+		if($Add==0){
+			$actions='['.$ViewBtn.']';		
+		}else{
+			$actions='['.$ViewBtn.'|'.$ReceiptBtn.']';
+		}
+		
+		$Date 	= date('d/m/Y',strtotime($CreatedDate));
+		$channel[] = array(
+					$InvoiceHeaderID,
+					$ServiceHeaderID,
+					$CustomerName,
+					$ServiceName,
+					$Amount,
+					$Paid,
+					$actions
+		);
+	}  	
+}
+
+
 else if($OptionValue=='invoices-a')
 {
 	// echo '<pre>';

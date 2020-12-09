@@ -67,7 +67,7 @@ if (isset($_REQUEST['reset']))
     
 	<body class="metro">
         <div class="example">
-        <legend>Sent Licence Application Invoices</legend>
+        <legend>Sent Application Invoices</legend>
 		<form>
             <table class="table striped hovered dataTable" id="dataTables-1">
                 <thead>
