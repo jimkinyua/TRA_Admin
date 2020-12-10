@@ -52,8 +52,8 @@ if (isset($_REQUEST['save']))
 	$FormSectionID=$_REQUEST['FormSectionID'];
 	$FormColumnName= str_replace("'","",$_REQUEST['FormColumnName']); //addslashes($_REQUEST['FormColumnName']);
 	$ColumnDataTypeID=$_REQUEST['ColumnDataTypeID'];
-	$ColumnSize=$_REQUEST['ColumnSize'];
-	$Priority=$_REQUEST['Priority'];
+	// $ColumnSize=$_REQUEST['ColumnSize'];
+	// $Priority=$_REQUEST['Priority'];
 	$Mandatory=$_REQUEST['Mandatory'];
 	$FilterColumID=$_REQUEST['FilterColumnID'];
 	$Notes=urldecode($_REQUEST['Notes']);
@@ -73,12 +73,12 @@ if (isset($_REQUEST['save']))
 
 	if ($FormColumnID=='0')
 	{
-		$sql="Insert into FormColumns (FormID,FormColumnName,FormSectionID,ColumnDataTypeID,ColumnSize,Priority,Notes,Mandatory,FilterColumnID,CreatedBY)
-		Values('$FormID','$FormColumnName','$FormSectionID','$ColumnDataTypeID','$ColumnSize','$Priority','$Notes','$Mandatory','$FilterColumnID','$CreatedUserID')";	
+		$sql="Insert into FormColumns (FormID,FormColumnName,FormSectionID,ColumnDataTypeID,Notes,Mandatory,FilterColumnID,CreatedBY)
+		Values('$FormID','$FormColumnName','$FormSectionID','$ColumnDataTypeID','$Notes','$Mandatory','$FilterColumnID','$CreatedUserID')";	
 		// exit($sql);
 	} else
 	{
-		$sql="Update FormColumns set FormColumnName='$FormColumnName',FormSectionID='$FormSectionID',ColumnDataTypeID='$ColumnDataTypeID',ColumnSize='$ColumnSize',FormID='$FormID',Priority='$Priority',Notes='$Notes',Mandatory='$Mandatory',FilterColumnID='$FilterColumID' where FormColumnID='$FormColumnID'";
+		$sql="Update FormColumns set FormColumnName='$FormColumnName',FormSectionID='$FormSectionID',ColumnDataTypeID='$ColumnDataTypeID',FormID='$FormID',Notes='$Notes',Mandatory='$Mandatory',FilterColumnID='$FilterColumID' where FormColumnID='$FormColumnID'";
 	}
 	
 	$result = sqlsrv_query($db, $sql);

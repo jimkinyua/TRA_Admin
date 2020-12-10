@@ -2803,7 +2803,7 @@ else if($OptionValue=='Inspections')
 			JOIN Users u on u.AgentID=ins.UserID 
 			where ins.InspectionStatusID>0 
 			and sh.ServiceStatusID !=1 and (sc.ServiceGroupID!=11 and sc.ServiceGroupID !=12) order by sh.SubmissionDate desc";
-			echo $sql1;exit;
+			//echo $sql1;exit;
 		// "set dateformat dmy 
 		// 			SELECT distinct top 100 sh.SubmissionDate,sc.ServiceGroupID,sh.ServiceHeaderID AS ApplicationID,sc.ServiceGroupID,ins.UserID,ins.InspectionDate,
 		// 			s.ServiceName,c.CustomerName,ss.ServiceStatusDisplay,u.UserFullNames UserNames,ins.UserComment,ins.InspectionID
@@ -3560,8 +3560,11 @@ else if ($OptionValue=='LicenceRenewalForm')
 
 else if ($OptionValue=='FormSections')
 {
-	$sql = "select fs.*,f.FormName from FormSections fs inner join Forms f on fs.FormID=f.FormID where f.FormID=$exParam";
-	//echo $sql;		
+	$sql = "select fs.*,f.FormName from FormSections fs 
+	inner join Forms f on fs.FormID=f.FormID where f.FormID=$exParam";
+	// echo $sql;	
+	// exit;
+
 	$result = sqlsrv_query($db, $sql);	
 	while ($row = sqlsrv_fetch_array( $result, SQLSRV_FETCH_ASSOC)) 
 	{

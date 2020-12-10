@@ -708,21 +708,21 @@ if (isset($_REQUEST['InspectionDate']))
         }
     }
     ?>
-                  <!-- <td width="50%">
+                  <td width="50%">
                   <label>Inspection Date</label>
 					  <div class="input-control text" data-role="input-control">
 						  <input name="servicename" type="text" id="servicename" value="<?php echo isset($SetDate)?$SetDate:'Not Set'; ?>" disabled="disabled" placeholder="">
 						  
 					  </div>				  
-                  </td> -->
-                  <!-- <td width="50%"> -->
-				<!-- <label>&nbsp;</label>				   -->
+                  </td>
+                  <td width="50%">
+				<label>&nbsp;</label>				  
 					<!-- service_approval.php?ApplicationID='+app_id+'&app_type='+app_type+'&CurrentStatus='+current_status -->
 					<!-- <input name="Button" type="button" onclick="loadmypage('service_form.php?save=1&ApplicationID=<?php echo $ApplicationID ?>','content','loader','','')" value="Change"> -->
-					<!-- <input name="Button" type="button" 
+					<input name="Button" type="button" 
 					onclick="loadmypage('inspection_date.php?ApplicationID=<?php echo $ApplicationID; ?>&app_type=50&CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','','')" value="Set Inspection Date">
-                  </td>    -->
-              <!-- </tr> -->
+                  </td>   
+              </tr>
 
 
 	

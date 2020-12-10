@@ -185,7 +185,7 @@ if (isset($_REQUEST['edit']))
                   </div></td>
 			  <td></td>
 		  </tr>                          
-            <tr>
+            <!-- <tr>
                 <td width="50%">
                     <label>Field Size</label>
                     <div class="input-control text" data-role="input-control">
@@ -196,9 +196,9 @@ if (isset($_REQUEST['edit']))
                 <td width="50%">
             
                     </td>
-            </tr>
+            </tr> -->
 		  </tr>                          
-            <tr>
+            <!-- <tr>
                 <td width="50%">
                     <label>Priority</label>
                     <div class="input-control text" data-role="input-control">
@@ -207,9 +207,8 @@ if (isset($_REQUEST['edit']))
                     </div>
                 </td>
                 <td width="50%">
-            
-                    </td>
-            </tr>
+                </td>
+            </tr> -->
 		  </tr>                          
             <tr>
                 <td width="50%">
@@ -228,7 +227,7 @@ if (isset($_REQUEST['edit']))
                     <label class="input-control checkbox">
                     	<input type="checkbox" id="Mandatory" name="Mandatory" checked="checked" />
                         <span class="check"></span>
-                        <span class="caption">Mandatory</span>                    
+                        <span class="caption">Is the Field Mandatory?</span>                    
                     </label>
                 </td>
                 <td width="50%">
@@ -277,8 +276,6 @@ if (isset($_REQUEST['edit']))
                                                     '&FormID='+this.form.FormID.value+
                                                     '&FormSectionID='+this.form.FormSectionID.value+
                                                     '&ColumnDataTypeID='+this.form.ColumnDataTypeID.value+
-                                                    '&ColumnSize='+this.form.ColumnSize.value+
-                                                    '&Priority='+this.form.Priority.value+
                                                     '&Notes='+escape(this.form.Notes.value)+
                                                     '&Mandatory='+this.form.Mandatory.checked+
                                                     '&FilterColumnID='+this.form.FilterColumnID.value+

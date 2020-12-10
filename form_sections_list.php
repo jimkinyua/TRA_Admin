@@ -18,6 +18,9 @@ if ($result)
 {
 	$FormName=$rw['FormName'];
 }
+echo '<pre>';
+print_r($FormName);
+eixt;
 
 if (isset($_REQUEST['delete']))
 {
