@@ -235,7 +235,7 @@ if (isset($_REQUEST['save']) && $_REQUEST['NextStatus']!='')
 	}
 }
 
-$s_sql="select c.*,f.ServiceHeaderType,bt.CustomerTypeName,
+$s_sql="select c.*,f.ServiceHeaderType,bt.CustomerTypeName,s.IsAppliedByIndividuals,
 sh.ServiceStatusID,sh.ServiceHeaderID,bz.ZoneName,w.WardName,
 s.ServiceName,sh.ServiceID,sh.CreatedDate,sh.SubSystemID, sub.SubSystemName,
 S.ServiceCategoryID,sc.ServiceGroupID from Customer c join ServiceHeader sh on sh.CustomerID=c.CustomerID 
@@ -284,6 +284,7 @@ if ($s_result)
 		$ApplicantEmail = $row['Email'];
 		$SubCountyName=$row['SubCountyName'];
 		$ServiceGroupID = $row['ServiceGroupID'];
+		$IsAppliedByIndividuals = $row['IsAppliedByIndividuals'];
 		// $WardName=$row['WardName'];
 		// $BusinessZone=$row['ZoneName'];
 		$SubSystemID=$row['SubSystemID'];
@@ -667,7 +668,7 @@ if (isset($_REQUEST['InspectionDate']))
 	});
 </script>
 <div class="example">
-   <legend>Service Approval (Chief Tourism Officer) </legend>
+   <legend>Service Approval </legend>
    <form>
       <fieldset>
           <table width="100%" border="0" cellspacing="0" cellpadding="3">
@@ -754,7 +755,7 @@ if (isset($_REQUEST['InspectionDate']))
 
 
               <?php 
-              if($ServiceGroupID == 12){
+              if($ServiceGroupID == 12 || $IsAppliedByIndividuals==1){
 
               }else{
               ?>
@@ -779,7 +780,10 @@ if (isset($_REQUEST['InspectionDate']))
 					onclick="loadmypage('add_officer.php?ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','','')" value="Add Inspection Officer">
                   </td>   
               </tr>	
+<?php if($IsAppliedByIndividuals == 1){
 
+}else{
+?>
 <tr>
 
 	<?php
@@ -810,10 +814,9 @@ if (isset($_REQUEST['InspectionDate']))
 					onclick="loadmypage('inspection_date.php?ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','','')" value="Set Inspection Date">
                   </td>   
               </tr>
-
-
-	
-
+			  <?php
+				}
+				?>
 			  <tr>
 				   <td width="50%">
 						<label>Service Cost (Ksh.)</label>
@@ -842,7 +845,15 @@ if (isset($_REQUEST['InspectionDate']))
 						<div class="tab-control" data-role="tab-control">
 							<ul class="tabs">
 								<li class=""><a href="#_page_4">Details</a></li>
-								<li class=""><a href="#_page_6">Directors</a></li>	
+								<?php
+								if($IsAppliedByIndividuals!=1){ ?>
+									<li class=""><a href="#_page_6">Directors</a></li>
+									<?php
+								}else{
+
+								}
+								?>
+									
 								<li class="active"><a href="#_page_1">Aplication Notes</a></li>
 								<li class=""><a href="#_page_3">Attachments</a></li>
 								<?php
@@ -854,7 +865,7 @@ if (isset($_REQUEST['InspectionDate']))
 								}else{}
 								?>
 								<li class=""><a href="#_page_2">Notes</a></li>
-							<?php if($ServiceGroupID==12){
+							<?php if($ServiceGroupID==12||$IsAppliedByIndividuals==1){
 								}else{?>
 								<li class=""><a href="#_page_5">Inspection Officers</a></li>
 							<?php } ?>
@@ -1525,12 +1536,23 @@ if (isset($_REQUEST['InspectionDate']))
 								$s_result = sqlsrv_query($db, $s_sql);
 								if ($s_result) 
 								{ //connection succesful 
+									if($IsAppliedByIndividuals==1){?>
+										<option value="3" <?php echo $selected; ?>>
+									Send for Approval
+									</option>
+									<option value="6" <?php echo $selected; ?>>
+									Rejected
+									</option>
+									<?php
+									}else{
 								while ($row = sqlsrv_fetch_array( $s_result, SQLSRV_FETCH_ASSOC))
 								{
 									$s_name = $row["ServiceStatusDisplay"];							  
 									$s_id = $row["ServiceStatusID"];
-											
+									
+									
 								?>
+								
 								<option value="<?php echo $s_id; ?>" <?php echo $selected; ?>>
 									<?php if($s_id==2 && $ServiceGroupID==12){
 										echo 'Trade Facilitation Application Approved';
@@ -1540,6 +1562,7 @@ if (isset($_REQUEST['InspectionDate']))
 										
 									</option>
 								<?php 
+									}
 								}
 								}
 								?>
@@ -1626,6 +1649,25 @@ if ($myrow = sqlsrv_fetch_array( $dresult, SQLSRV_FETCH_ASSOC))
 
 		  <?php
 		}elseif($ServiceType != 11 && $numrows != 0 && (!empty($SetDate1))){
+		  	?>
+			   
+		  	<input type="reset" value="Cancel" onClick="loadmypage('clients_list.php?i=1','content','loader','listpages','','applications','<?php echo $_SESSION['RoleCenter'] ?>')">
+
+
+		  <input name="Button" type="button" onClick="
+		   CurrStatus=this.form.CurrentStatus.value;
+
+		  if(CurrStatus>2)
+		  {
+		  	loadmypage('licences_approved_by_officer.php?save=1&ApplicationID=<?php echo $ApplicationID ?>&CustomerName=<?php echo $CustomerName ?>&CustomerID=<?php echo $CustomerID ?>&ServiceID=<?php echo $ServiceID ?>&ServiceName=<?php echo $ServiceName ?>&CurrentStatus=<?php echo $CurrentStatus ?>&NextStatus='+this.form.NextStatus.value+'&Notes='+this.form.Notes.value+'&ServiceCategoryID=<?php echo $ServiceCategoryID ?>','content','loader','listpages','','applications','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')
+		  }else
+		  {
+		  	loadpage('LicenceApplicationApprovedByOfficer.php?save=1&ApplicationID=<?php echo $ApplicationID ?>&CustomerName=<?php echo $CustomerName ?>&CustomerID=<?php echo $CustomerID ?>&ServiceID=<?php echo $ServiceID ?>&ServiceName=<?php echo $ServiceName ?>&CurrentStatus=<?php echo $CurrentStatus ?>&NextStatus='+this.form.NextStatus.value+'&Notes='+this.form.Notes.value+'&ServiceCategoryID=<?php echo $ServiceCategoryID ?>','content')
+		  }
+		  "value="Approve">
+
+		  <?php
+		}elseif($ServiceType != 11 && $IsAppliedByIndividuals==1 && (empty($SetDate1))){
 		  	?>
 			   
 		  	<input type="reset" value="Cancel" onClick="loadmypage('clients_list.php?i=1','content','loader','listpages','','applications','<?php echo $_SESSION['RoleCenter'] ?>')">

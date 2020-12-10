@@ -48,6 +48,7 @@ if($_REQUEST['submit']==1){
 	$Comment=$_REQUEST['Comment'];
 	$AverageScore=$_REQUEST['AverageScore'];
 	$ServiceGroupID = $_REQUEST['ServiceGroupID'];
+	$IsAppliedByIndividuals=$_REQUEST['IsAppliedByIndividuals'];
 	if($Comment==''){
 		$Comment='Cleared for Payment and Licencing';
 	}
@@ -63,7 +64,7 @@ if($_REQUEST['submit']==1){
 	//Begin Transaction
 	if(sqlsrv_begin_transaction($db)===false)
 	{
-		$msg=sqlsrv_errors();
+		$msg=sqlsrv_errors(); 
 		$Sawa=false;
 	}
 
@@ -81,7 +82,7 @@ if($_REQUEST['submit']==1){
 
 	$ChangeStatusResult=sqlsrv_query($db,$ChangeStatussql);
 
-	if($ChangeStatusResult && $ServiceGroupID != 11){
+	if($ChangeStatusResult && $ServiceGroupID != 11 || $IsAppliedByIndividuals!=1){
 		GenerateLicenceApplicationInvoice($db,$ApplicationID,$UserID);
 	}
 	else{

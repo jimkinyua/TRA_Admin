@@ -47,7 +47,10 @@ if (isset($_REQUEST['save']) && $_REQUEST['NextStatus']!='')
 	if ($NextStatus=='')
 	{
 		// break;		
+	}elseif($NextStatus==3){
+		GenerateLicenceApplicationInvoice($db,$ApplicationID,$UserID);
 	}
+
 	
 	$sql="select f.serviceheadertype from Forms f 
 	  join ServiceHeader sh on sh.FormID=f.formid 

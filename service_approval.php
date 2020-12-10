@@ -840,7 +840,14 @@ if (isset($_REQUEST['generateinvoice']))
 						<div class="tab-control" data-role="tab-control">
 							<ul class="tabs">
 								<li class=""><a href="#_page_4">Details</a></li>
-								<li class=""><a href="#_page_6">Directors</a></li>	
+								<?php
+								if($IsAppliedByIndividuals==1){ ?>
+									<li class=""><a href="#_page_6">Directors</a></li>
+									<?php
+								}else{
+
+								}
+								?>	
 								<li class="active"><a href="#_page_1">Aplication Notes</a></li>
 								<li class=""><a href="#_page_3">Attachments</a></li>
 								<li class=""><a href="#_page_2">Notes</a></li>
