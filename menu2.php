@@ -137,6 +137,88 @@ $myRights=getrights($db,$UserID,$PageID);
 							<?php } 	
 							?>	
 
+
+							<?php 
+                    		$PageID=71; //Regional Officer Views
+								$myRights=getrights($db,$UserID,$PageID);	
+								// echo '<pre>';
+								// print_r($UserID);
+								// exit;					
+								if ($myRights['View']==1){  
+							?>
+
+								<button class="fluent-big-button" onClick="loadmypage('approved_facilitation_pending_approval.php?i=1','content','loader','listpages','','approved_facilitation_approval','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" style="width:80px">
+									<span class="icon-layers-alt fg-darkBlue"></span>
+									<span class="button-label fg-darkBlue">Trade and Facilitation Approval</span>
+								</button> 
+							
+							<?php } 	
+							?>	
+							<?php 
+                    		$PageID=1071; //Regional Officer Views
+								$myRights=getrights($db,$UserID,$PageID);	
+								// echo '<pre>';
+								// print_r($UserID);
+								// exit;					
+								if ($myRights['View']==1){  
+							?>
+
+								<button class="fluent-big-button" onClick="loadmypage('classification_applications.php?i=1','content','loader','listpages','','classificationapplications','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" style="width:80px">
+									<span class="icon-layers-alt fg-darkBlue"></span>
+									<span class="button-label fg-darkBlue">Classification and Grading Applications</span>
+								</button> 
+								<button class="fluent-big-button" onClick="loadmypage('licence-application-invoices.php?i=1','content','loader','listpages','','licence-application-invoices-b','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" style="width:80px">
+                            	<span class="icon-libreoffice fg-darkBlue"></span>
+                                <span class="button-label fg-darkBlue">Classification Application Invoices</span>
+                            
+							<?php } 	
+							?>
+
+							<?php 
+                    		$PageID=2071; //Regional Officer Views
+								$myRights=getrights($db,$UserID,$PageID);	
+								// echo '<pre>';
+								// print_r($UserID);
+								// exit;					
+								if ($myRights['View']==1){  
+							?>
+
+								<button class="fluent-big-button" onClick="loadmypage('classification_approval.php?i=1','content','loader','listpages','','classificationapproval','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" style="width:80px">
+									<span class="icon-layers-alt fg-darkBlue"></span>
+									<span class="button-label fg-darkBlue">Classification and Grading Management</span>
+								</button> 
+								<button class="fluent-big-button" onClick="loadmypage('classification_list.php?ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','listpages','','Inspections','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" style="width:80px">
+									<span class="icon-layers-alt fg-darkBlue"></span>
+									<span class="button-label fg-darkBlue">Inspections</span>
+							</button>
+							<?php } 	
+							?>
+								
+								<?php 
+                    		$PageID=2072; //Regional Officer Views
+								$myRights=getrights($db,$UserID,$PageID);	
+								// echo '<pre>';
+								// print_r($UserID);
+								// exit;					
+								if ($myRights['View']==1){  
+							?>
+
+								<button class="fluent-big-button" onClick="loadmypage('approved_classification_pending_approval.php?i=1','content','loader','listpages','','approved_classification_approval','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" style="width:80px">
+									<span class="icon-layers-alt fg-darkBlue"></span>
+									<span class="button-label fg-darkBlue">Classification and Grading Review</span>
+								</button> 
+								<button class="fluent-big-button" onClick="loadmypage('classification_list.php?ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','listpages','','Inspections','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" style="width:80px">
+									<span class="icon-layers-alt fg-darkBlue"></span>
+									<span class="button-label fg-darkBlue">Inspections</span>
+								</button>
+								
+								<button class="fluent-big-button" onClick="loadmypage('setrating.php?ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','listpages','','Inspections','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" style="width:80px">
+									<span class="icon-layers-alt fg-darkBlue"></span>
+									<span class="button-label fg-darkBlue">Set Ratings for Establishments</span>
+								</button>
+							<?php } 	
+							?>
+
 							<?php 
                     		$PageID=68; //Chief Officer Views
 								$myRights=getrights($db,$UserID,$PageID);
@@ -179,9 +261,26 @@ $myRights=getrights($db,$UserID,$PageID);
                                 <span class="button-label fg-darkBlue"> Submitted Licence Renewal Applications</span>
                             </button>
 
-							<?php } 
+							<?php } ?>
+
+							<?php 
+                    		$PageID=70; //Regional Officer Views
+								$myRights=getrights($db,$UserID,$PageID);	
+								// echo '<pre>';
+								// print_r($UserID);
+								// exit;					
+								if ($myRights['View']==1){  
+							?>
+
+								<button class="fluent-big-button" onClick="loadmypage('tradefacilitationapplications.php?i=1','content','loader','listpages','','tradefacilitationapplications','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" style="width:80px">
+									<span class="icon-layers-alt fg-darkBlue"></span>
+									<span class="button-label fg-darkBlue">Trade Facilitation Applications</span>
+								</button> 
 							
-							
+							<?php } 	
+							?>	
+								
+							<?php							
 								$PageID=57;
 								$myRights=getrights($db,$UserID,$PageID);						
 								if ($myRights['View']==1){	?>	

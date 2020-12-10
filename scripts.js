@@ -52,6 +52,9 @@ function loadoptionalpage(app_id,app_type,current_status,destination,loader,op,i
 		mypage='service_approval.php?ApplicationID='+app_id+'&app_type='+app_type+'&CurrentStatus='+current_status;
 		//mypage='hire_application.php?ApplicationID='+app_id+'&app_type='+app_type+'&CurrentStatus='+current_status;
 		//opv='LAIFOMS_PERMIT';
+	}else if(app_type==12)
+	{
+		mypage='tourism_manager.php?ApplicationID='+app_id+'&app_type='+app_type+'&CurrentStatus='+current_status;
 	}
 	else if(app_type==5)
 	{
@@ -76,6 +79,12 @@ function loadoptionalpage(app_id,app_type,current_status,destination,loader,op,i
 	else if(app_type==50) //Submitted Apps For Officers
 	{
 		mypage='SubmittedLicenceApplicationCard.php?ApplicationID='+app_id+'&app_type='+app_type+'&CurrentStatus='+current_status;
+		//mypage='hire_application.php?ApplicationID='+app_id+'&app_type='+app_type+'&CurrentStatus='+current_status;
+		opv='SubmittedLicenceApplicationCard';
+	}
+	else if(app_type==52) //Submitted Apps For Officers
+	{
+		mypage='service_approval.php?ApplicationID='+app_id+'&app_type='+app_type+'&CurrentStatus='+current_status;
 		//mypage='hire_application.php?ApplicationID='+app_id+'&app_type='+app_type+'&CurrentStatus='+current_status;
 		opv='SubmittedLicenceApplicationCard';
 	}

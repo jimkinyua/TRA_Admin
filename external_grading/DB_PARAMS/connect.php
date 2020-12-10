@@ -4,7 +4,7 @@
 $myServer = "TRA\SQL2017";
 $myUser = "portalman";
 $myPass = 'portalman';
-$myDB = "TRANEW";
+$myDB = "TRANEW"; 
 
 $params = array();
 $options =  array( "Scrollable" => SQLSRV_CURSOR_KEYSET );

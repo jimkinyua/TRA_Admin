@@ -34,7 +34,7 @@
         <tr>
        <?php
 
-       $s_sql = "select sh.ServiceID,s.ServiceName,sh.ServiceStatusID,s.ServiceCategoryID,sc.ServiceGroupID from ServiceHeader sh join Services s 
+       $s_sql = "select sh.ServiceID,s.ServiceName,s.IsAppliedByIndividuals,sh.ServiceStatusID,s.ServiceCategoryID,sc.ServiceGroupID from ServiceHeader sh join Services s 
         on sh.ServiceID = s.ServiceID join ServiceCategory sc on sc.ServiceCategoryID=sh.ServiceCategoryId
         join ServiceGroup sg on sg.ServiceGroupID=sc.ServiceGroupID where ServiceHeaderID = $ApplicationID";
         $t_result=sqlsrv_query($db,$s_sql);
@@ -50,6 +50,7 @@
           $ServiceCategoryID = $row['ServiceCategoryID'];
           $ServiceGroupID = $row['ServiceGroupID'];
           $ServiceStatusID = $row['ServiceStatusID'];
+          $IsAppliedByIndividuals = $row['IsAppliedByIndividuals'];
         }
         // echo $ServiceCategoryID;
       }
@@ -199,6 +200,8 @@ $row = sqlsrv_has_rows( $s_result );
                   <div class="input-control textarea" data-role="input-control">            
                     <textarea id="Comment" name="Comment" cols="20"></textarea>  
                     <input type="hidden" name="ServiceGroupID" value="<?php echo $ServiceGroupID; ?>">
+                    <input type="hidden" name="IsAppliedByIndividuals" value="<?php echo $IsAppliedByIndividuals; ?>">
+                    
                     <?php
                       if($ServiceGroupID == 11){
                         ?>

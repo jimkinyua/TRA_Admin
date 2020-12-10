@@ -48,6 +48,7 @@ if($_REQUEST['submit']==1){
 	$Comment=$_REQUEST['Comment'];
 	$AverageScore=$_REQUEST['AverageScore'];
 	$ServiceGroupID = $_REQUEST['ServiceGroupID'];
+	$IsAppliedByIndividuals=$_REQUEST['IsAppliedByIndividuals'];
 	if($Comment==''){
 		$Comment='Cleared for Payment and Licencing';
 	}
@@ -63,7 +64,7 @@ if($_REQUEST['submit']==1){
 	//Begin Transaction
 	if(sqlsrv_begin_transaction($db)===false)
 	{
-		$msg=sqlsrv_errors();
+		$msg=sqlsrv_errors(); 
 		$Sawa=false;
 	}
 
@@ -81,7 +82,7 @@ if($_REQUEST['submit']==1){
 
 	$ChangeStatusResult=sqlsrv_query($db,$ChangeStatussql);
 
-	if($ChangeStatusResult && $ServiceGroupID != 11){
+	if($ChangeStatusResult && $ServiceGroupID != 11 || $IsAppliedByIndividuals!=1){
 		GenerateLicenceApplicationInvoice($db,$ApplicationID,$UserID);
 	}
 	else{
@@ -194,13 +195,13 @@ checkSession($db,$UserID);
         <legend>SBP Applications</legend>
        <!--  <input type="text" id="session" name="session" /> -->
 
-
+<!-- 
 	   <input name="Button" type="button" 
 					onclick="loadmypage('setrating.php?ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','listpages','','Inspections','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" value="Set Rating for Classification and Grading"> || 
 	 <input name="Button" type="button" 
 					onclick="loadmypage('tradefacilitation_list.php?ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','listpages','','Inspections','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" value="Trade And Facilitation Applications">||
 	<input name="Button" type="button" 
-					onclick="loadmypage('classification_list.php?ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','listpages','','Inspections','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" value="Classification and Grading Applications">
+					onclick="loadmypage('classification_list.php?ApplicationID=<?php echo $ApplicationID; ?>&CurrentStatus=<?php echo $CurrentStatus; ?>','content','loader','listpages','','Inspections','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')" value="Classification and Grading Applications"> -->
 
 
 		<form>

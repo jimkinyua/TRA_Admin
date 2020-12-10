@@ -30,10 +30,7 @@ checkSession($db,$UserID);
 
 if (isset($_REQUEST['save']) && $_REQUEST['NextStatus']!='')
 {
-	// echo '<pre>';
-	// print_r($_REQUEST);
-	// exit;
-
+	
 	$ApplicationID=$_REQUEST['ApplicationID'];
 	$CustomerID=$_REQUEST['CustomerID'];
 	$CurrentStatus=$_REQUEST['CurrentStatus'];
@@ -44,13 +41,10 @@ if (isset($_REQUEST['save']) && $_REQUEST['NextStatus']!='')
 
 	$ConservancyServiceID=1696;
 	
-	if ($NextStatus=='')
-	{
-		// break;		
-	}elseif($NextStatus==3){
-		GenerateLicenceApplicationInvoice($db,$ApplicationID,$UserID);
-	}
-
+	// if ($NextStatus=='')
+	// {
+	// 	break;		
+	// }
 	
 	$sql="select f.serviceheadertype from Forms f 
 	  join ServiceHeader sh on sh.FormID=f.formid 
@@ -486,7 +480,7 @@ if (isset($_REQUEST['save']) && $_REQUEST['NextStatus']!='')
 	    </script>   
 
         <div class="example">
-        <legend>Service Applications</legend> 
+        <legend>Licences Pending Final Approval</legend> 
        <!--  <input type="text" id="session" name="session" /> -->
 
 		<form>
@@ -501,20 +495,20 @@ if (isset($_REQUEST['save']) && $_REQUEST['NextStatus']!='')
 							<tr>
 								<td width="20%"><label>From Date </label>
 										<div class="input-control text datepicker" data-role="input-control">						
-											<input type="text" id="fromDate" name="fromDate" value="<?php echo $fromDate ?>"></input>	
+											<!-- <input type="text" id="fromDate" name="fromDate" value=""></input>	 -->
 											<button class="btn-date" type="button"></button>			
 										</div>
 								</td>
 								<td width="20%"><label>To Date </label>
 									<div class="input-control text datepicker" data-role="input-control">						
-										<input type="text" id="toDate" name="toDate" value="<?php echo $toDate ?>"></input>	
+										<input type="text" id="toDate" name="toDate" value=""></input>	
 										<button class="btn-date" type="button"></button>			
 									</div>
 								</td>
 								<td width="20%"><label>Application No</label>
-									<div class="input-control text" data-role="input-control">						
-										<input type="text" id="ServiceHeaderID" name="ServiceHeaderID" value="<?php echo $ServiceHeaderID ?>"></input>									
-									</div>
+									<!-- <div class="input-control text" data-role="input-control">						
+										<input type="text" id="ServiceHeaderID" name="ServiceHeaderID" value=""></input>									
+									</div> -->
 								</td>								
 								<td><label>&nbsp;</label>
 								<input name="btnSearch" type="button" onclick="loadmypage('clients_list.php?'+
@@ -527,8 +521,8 @@ if (isset($_REQUEST['save']) && $_REQUEST['NextStatus']!='')
 					</td>							  
 				</tr>
                 <tr>
-                    <th  class="text-left">Application ID</th>
-                    <th  class="text-left">Customer Name</th>                   
+                    <th  class="text-left"> ID</th>
+                    <th  class="text-left">CustomerName</th>                   
                     <th  class="text-left" width="30%">Service Name</th>
                     <th  class="text-left">Application Date</th>
                     <th  class="text-left">Region</th>

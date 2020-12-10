@@ -119,7 +119,7 @@ if (isset($_REQUEST['save']) && $_REQUEST['NextStatus']!='')
 		
 	}
 
-	exit('8595');
+	// exit('8595');
 	$sql="select f.serviceheadertype from Forms f 
 	  join ServiceHeader sh on sh.FormID=f.formid 
 	  where sh.ServiceHeaderID='$ApplicationID'";
@@ -840,7 +840,14 @@ if (isset($_REQUEST['generateinvoice']))
 						<div class="tab-control" data-role="tab-control">
 							<ul class="tabs">
 								<li class=""><a href="#_page_4">Details</a></li>
-								<li class=""><a href="#_page_6">Directors</a></li>	
+								<?php
+								if($IsAppliedByIndividuals==1){ ?>
+									<li class=""><a href="#_page_6">Directors</a></li>
+									<?php
+								}else{
+
+								}
+								?>	
 								<li class="active"><a href="#_page_1">Aplication Notes</a></li>
 								<li class=""><a href="#_page_3">Attachments</a></li>
 								<li class=""><a href="#_page_2">Notes</a></li>
@@ -1465,7 +1472,7 @@ if (isset($_REQUEST['generateinvoice']))
 					$UserID = $_SESSION['UserID'];
 					$GetRoleCenterSQL = "Select RoleCenterID FROM UserRoles where UserID= $UserID";
 
-					// exit($GetZoneSQL );
+					// exit($GetRoleCenterSQL );
 					$GetRoleCenterSQLResult=sqlsrv_query($db,$GetRoleCenterSQL);
 					while ($row=sqlsrv_fetch_array($GetRoleCenterSQLResult,SQLSRV_FETCH_ASSOC)) 
 					{
@@ -1474,7 +1481,7 @@ if (isset($_REQUEST['generateinvoice']))
 
 				?>
 				<?php
-					if($RoleCenter == 2014){ //TRA Officer
+					if($RoleCenter == 2014  ||$RoleCenter == 2025 || $RoleCenter == 3026){ 
 				?>
 					<div class="input-control select" data-role="input-control">
 						<select name="NextStatus"  id="NextStatus">                    
@@ -1494,8 +1501,8 @@ if (isset($_REQUEST['generateinvoice']))
 											
 								?>
 								<option value="<?php echo $s_id; ?>" <?php echo $selected; ?>>
-									<?php if($s_id==2 && $ServiceGroupID==12){
-										echo 'Trade Facilitation Application Approved';
+									<?php if($s_id==12 && $ServiceGroupID==12){
+										echo 'Forward for Approval';
 									}else{
 									echo $s_name; 
 								}?>
@@ -1580,7 +1587,7 @@ if ($myrow = sqlsrv_fetch_array( $dresult, SQLSRV_FETCH_ASSOC))
 
 	if($ServiceGroupID == 12){
 		?>
-		<input type="reset" value="Cancel" onClick="loadmypage('clients_list.php?i=1','content','loader','listpages','','applications','<?php echo $_SESSION['RoleCenter'] ?>')">
+		<!-- <input type="reset" value="Cancel" onClick="loadmypage('clients_list.php?i=1','content','loader','listpages','','applications','<?php echo $_SESSION['RoleCenter'] ?>')">
 
 
 		  <input name="Button" type="button" onClick="
@@ -1594,7 +1601,7 @@ if ($myrow = sqlsrv_fetch_array( $dresult, SQLSRV_FETCH_ASSOC))
 		  	loadpage('service_approval.php?save=1&ApplicationID=<?php echo $ApplicationID ?>&CustomerName=<?php echo $CustomerName ?>&CustomerID=<?php echo $CustomerID ?>&ServiceID=<?php echo $ServiceID ?>&ServiceName=<?php echo $ServiceName ?>&CurrentStatus=<?php echo $CurrentStatus ?>&NextStatus='+this.form.NextStatus.value+'&Notes='+this.form.Notes.value+'&ServiceCategoryID=<?php echo $ServiceCategoryID ?>','content')
 		  }
 
-		  "value="Proceed">
+		  "value="Proceed"> -->
 		<?php
 	}else{
 	}
@@ -1603,7 +1610,7 @@ if ($myrow = sqlsrv_fetch_array( $dresult, SQLSRV_FETCH_ASSOC))
           
           <?= $CurrentStatus;?>
           <?php 
-          if($ServiceType == 11 && $numrows != 3 && (empty($SetDate1))){
+          if($numrows != 3 && (empty($SetDate1))){
            ?>
 		  
            <input type="reset" value="Cancel" onClick="loadmypage('clients_list.php?i=1','content','loader','listpages','','applications','<?php echo $_SESSION['RoleCenter'] ?>')">
@@ -1612,7 +1619,7 @@ if ($myrow = sqlsrv_fetch_array( $dresult, SQLSRV_FETCH_ASSOC))
 		  <input name="Button" type="button" onClick="
 		   CurrStatus=this.form.CurrentStatus.value;
 
-		  if(CurrStatus>2)
+		  if(CurrStatus>0)
 		  {
 		  	loadmypage('clients_list.php?save=1&ApplicationID=<?php echo $ApplicationID ?>&CustomerName=<?php echo $CustomerName ?>&CustomerID=<?php echo $CustomerID ?>&ServiceID=<?php echo $ServiceID ?>&ServiceName=<?php echo $ServiceName ?>&CurrentStatus=<?php echo $CurrentStatus ?>&NextStatus='+this.form.NextStatus.value+'&Notes='+this.form.Notes.value+'&ServiceCategoryID=<?php echo $ServiceCategoryID ?>','content','loader','listpages','','applications','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')
 		  }else

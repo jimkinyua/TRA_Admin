@@ -47,10 +47,7 @@ if (isset($_REQUEST['save']) && $_REQUEST['NextStatus']!='')
 	if ($NextStatus=='')
 	{
 		// break;		
-	}elseif($NextStatus==3){
-		GenerateLicenceApplicationInvoice($db,$ApplicationID,$UserID);
 	}
-
 	
 	$sql="select f.serviceheadertype from Forms f 
 	  join ServiceHeader sh on sh.FormID=f.formid 
@@ -486,7 +483,7 @@ if (isset($_REQUEST['save']) && $_REQUEST['NextStatus']!='')
 	    </script>   
 
         <div class="example">
-        <legend>Service Applications</legend> 
+        <legend>Classification and Grading Applications</legend> 
        <!--  <input type="text" id="session" name="session" /> -->
 
 		<form>

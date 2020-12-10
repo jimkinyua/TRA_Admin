@@ -448,10 +448,12 @@ else if($OptionValue=='licence-application-invoices-a')
 			inner join InvoiceLines il on il.InvoiceHeaderID=ih.InvoiceHeaderID
 			left join (select InvoiceHeaderid,sum(amount) Amount from ReceiptLines group by InvoiceHeaderID)rl on ih.InvoiceHeaderID=rl.InvoiceHeaderID
 			inner join ServiceHeader sh on ih.ServiceHeaderID=sh.ServiceHeaderID
+			inner join ServiceCategory sc on sc.ServiceCategoryID = sh.ServiceCategoryId
+			inner join ServiceGroup sg on sg.ServiceGroupID = sc.ServiceGroupID
 			left join Miscellaneous misc on misc.ServiceHeaderID=sh.ServiceHeaderID
 			inner join Customer c on sh.CustomerID=c.CustomerID	
 			inner join Services s on sh.ServiceID=s.ServiceID 
-			where year(il.CreatedDate)=year(getdate()) ".$filter."
+			where NOT sc.ServiceGroupID=11 AND NOT sc.ServiceGroupID= 12 and year(il.CreatedDate)=year(getdate()) ".$filter." and (sc.ServiceGroupID != 11 or sc.ServiceGroupID != 12)
 			group by sh.ServiceHeaderID,misc.CustomerName, sh.CustomerID,ih.InvoiceDate,c.CustomerName,s.ServiceName,ih.InvoiceHeaderID,sh.ServiceID,sh.ServiceHeaderID,ih.[Description],isnull(rl.Amount,0) 
 			Order By ih.InvoiceHeaderID";
 
@@ -493,6 +495,196 @@ else if($OptionValue=='licence-application-invoices-a')
 		);
 	}  	
 }
+
+
+
+else if($OptionValue=='licence-application-invoices-b')
+{
+	// echo '<pre>';
+	// print_r($exParam);
+	// exit;
+
+	$fromDate;
+	$toDate;
+	$filter;
+	$ServiceHeaderID='';
+	$CustomerName='';
+	$InvoiceHeaderID='';
+
+	$PageID=25;
+	$View=0;
+	$Edit=0;
+	$Add=0;
+	$Delete=0;
+	$myRights=getrights($db,$CurrentUser,$PageID);
+	if ($myRights)
+	{
+		$View=$myRights['View'];
+		$Edit=$myRights['Edit'];
+		$Add=$myRights['Add'];
+		$Delete=$myRights['Delete'];
+	}
+
+	//location
+	$wards='';
+	$Subcounties='';
+	$locationcondition='';
+	$role='None';
+	//check whether the person is a clerk or Officer
+	$locsql="select iif (exists(select 1 from ClerkWard where UserID=$CurrentUser and status=1),'Clerk',
+			iif (exists(select 1 from ApproverSetup where UserID=$CurrentUser and status=1),'Officer','None')) Role";
+
+	$result=sqlsrv_query($db,$locsql);
+	while ($row=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC)) 
+	{
+		$role=$row['Role'];
+	}
+
+	if($role=='Clerk')
+	{
+		$sql="select WardID From ClerkWard where UserID=$CurrentUser and Status=1";
+
+		$result=sqlsrv_query($db,$sql);
+		$i=0;
+
+		while($row=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC)){
+			if ($i==0){
+				$wards='('.$row['WardID'];
+			}else{
+				$wards.=','.$row['WardID'];
+			}
+			$i+=1;
+		}
+
+		$wards.=')';
+
+		$locationcondition=" and (select value from fnFormData(sh.ServiceHeaderID) WHERE FormColumnID=11204) in $wards ";
+
+	}else if ($role=='Officer'){
+		$sql="select SubCountyID From ApproverSetup where UserID=$CurrentUser and Status=1";
+
+		$result=sqlsrv_query($db,$sql);
+		$i=0;
+		while($row=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC)){
+			if ($i==0){
+				$subcounties='('.$row['SubCountyID'];
+			}else{
+				$subcounties.=','.$row['SubCountyID'];
+			}
+			$i+=1;
+		}
+
+		$subcounties.=')';
+
+		$locationcondition=" and (select value from fnFormData(sh.ServiceHeaderID) WHERE FormColumnID=11203) in $subcounties ";
+	}
+
+	if (strlen($exParam)>0)
+	{
+		$details=explode(':',$exParam);
+		
+		if(strlen($exParam)>2)
+		{		
+			$str3=explode('=',$details[0]);
+			$fromDate=$str3[1];		
+			
+			$str3=explode('=',$details[1]);
+			$toDate=$str3[1];
+
+			$str3=explode('=',$details[2]);
+			$InvoiceHeaderID=$str3[1];
+
+			$str3=explode('=',$details[3]);
+			$ServiceHeaderID=$str3[1];
+
+			$str3=explode('=',$details[4]);
+			$CustomerName=$str3[1];
+
+			if(!$InvoiceHeaderID==''){
+				$filter=" and il.InvoiceHeaderID=$InvoiceHeaderID";
+			}
+
+			if(!$ServiceHeaderID==''){
+				$filter=" and il.ServiceHeaderID=$ServiceHeaderID";
+			}
+
+			if(!$CustomerName==''){
+				$filter.=" and isnull(misc.CustomerName,c.CustomerName) like '%$CustomerName%'";
+			}
+
+			if(!$fromDate==''){
+				$filter.=" and convert(date,il.CreatedDate)>=convert(date,'$fromDate')";
+			}
+
+			if(!$toDate==''){
+				$filter.=" and convert(date,il.CreatedDate)<=convert(date,'$toDate')";
+			}
+			
+			if($filter==''){
+				$filter=" and DATEDIFF(day,il.CreatedDate,getdate())<3 ";
+			}
+
+			
+
+		}else{
+			$filter=" and DATEDIFF(day,il.CreatedDate,getdate())<3 ";
+		}
+		
+		$sql = "set dateformat dmy select  distinct top 10 sh.ServiceHeaderID,ih.InvoiceHeaderID, sh.CustomerID,ih.InvoiceDate [INV DATE]
+		,isnull(misc.CustomerName,c.CustomerName) CustomerName,s.ServiceName +'('+isnull(ih.[Description],'')+')' 	ServiceName,sum(il.Amount) Amount,isnull(rl.Amount,0) Paid,sh.ServiceID
+			from InvoiceHeader ih
+			inner join InvoiceLines il on il.InvoiceHeaderID=ih.InvoiceHeaderID
+			left join (select InvoiceHeaderid,sum(amount) Amount from ReceiptLines group by InvoiceHeaderID)rl on ih.InvoiceHeaderID=rl.InvoiceHeaderID
+			inner join ServiceHeader sh on ih.ServiceHeaderID=sh.ServiceHeaderID
+			inner join ServiceCategory sc on sc.ServiceCategoryID = sh.ServiceCategoryId
+			inner join ServiceGroup sg on sg.ServiceGroupID = sc.ServiceGroupID
+			left join Miscellaneous misc on misc.ServiceHeaderID=sh.ServiceHeaderID
+			inner join Customer c on sh.CustomerID=c.CustomerID	
+			inner join Services s on sh.ServiceID=s.ServiceID 
+			where year(il.CreatedDate)=year(getdate()) ".$filter." and sc.ServiceGroupID = 11
+			group by sh.ServiceHeaderID,misc.CustomerName, sh.CustomerID,ih.InvoiceDate,c.CustomerName,s.ServiceName,ih.InvoiceHeaderID,sh.ServiceID,sh.ServiceHeaderID,ih.[Description],isnull(rl.Amount,0) 
+			Order By ih.InvoiceHeaderID";
+
+		
+	}
+	// exit($sql);
+	//echo $sql;
+	$result = sqlsrv_query($db, $sql);	
+	while ($row = sqlsrv_fetch_array( $result, SQLSRV_FETCH_ASSOC)) 
+	{
+		// echo '<pre>';
+		// print_r($row);
+		// exit;
+
+		extract($row);
+		$Balance=$Amount-$Paid;
+		$CustomerName =  '<a href="#" onClick="loadoptionalpage2('.$ServiceID.','.$InvoiceHeaderID.','.$ServiceHeaderID.',\'content\',\'loader\',\'listpages\',\'\',\'invoices_lines\',\''.$InvoiceHeaderID.'\')">'.$CustomerName.'</a>';
+
+		$ViewBtn  = '<a href="reports.php?rptType=Invoice&ServiceHeaderID='.$ServiceHeaderID.'&InvoiceHeaderID='.$InvoiceHeaderID.'" target="_blank">View</a>'; 
+
+		$ReceiptBtn = '<a href="#" onClick="loadmypage(\'licence_application_receipt.php?add=1&InvoiceHeaderID='.$InvoiceHeaderID.'&InvoiceAmount='.$Amount.'&Balance='.$Balance.'\',\'content\',\'\',\'\',\'\',\''.$_SESSION['UserID'].'\')">Receipt</a>';
+	
+		
+		if($Add==0){
+			$actions='['.$ViewBtn.']';		
+		}else{
+			$actions='['.$ViewBtn.'|'.$ReceiptBtn.']';
+		}
+		
+		$Date 	= date('d/m/Y',strtotime($CreatedDate));
+		$channel[] = array(
+					$InvoiceHeaderID,
+					$ServiceHeaderID,
+					$CustomerName,
+					$ServiceName,
+					$Amount,
+					$Paid,
+					$actions
+		);
+	}  	
+}
+
+
 else if($OptionValue=='invoices-a')
 {
 	// echo '<pre>';
@@ -1793,7 +1985,7 @@ else if($OptionValue=='applications')
 				  INNER JOIN DBO.ServiceCategory sc on s.ServiceCategoryID=sc.ServiceCategoryID
 				  inner join ServiceGroup sg on sc.ServiceGroupID = sg.ServiceGroupID 
 				  INNER JOIN dbo.Forms f on sh.FormID=f.FormID 
-				  where sh.ServiceStatusID =1 and c.BusinessZone= $RegionID or (sh.ServiceStatusID = 5 and sh.ServiceCategoryID = 2033) and (sc.InvoiceStage<>sc.LastStage or sh.ServiceStatusID<>sc.LastStage) 
+				  where sh.ServiceStatusID =1 and sc.ServiceGroupID != 12 and sc.ServiceGroupID != 11 and c.BusinessZone= $RegionID or (sh.ServiceStatusID = 5 and sh.ServiceCategoryID = 2033) and (sc.InvoiceStage<>sc.LastStage or sh.ServiceStatusID<>sc.LastStage) 
 				  and sh.ServiceID not in (select ServiceID from ServiceTrees) order by sh.SubmissionDate desc
 				  
 	  ";
@@ -1848,6 +2040,391 @@ else if($OptionValue=='applications')
 	}  	
 	
 }
+
+else if($OptionValue=='tradefacilitationapplications')
+{
+	$params = array();
+	$options =  array( "Scrollable" => SQLSRV_CURSOR_KEYSET );
+
+	$fromDate=date('d/m/Y');
+	$toDate=date('d/m/Y');
+	$filter=" and DATEDIFF(day,sh.CreatedDate,getdate())<3 ";
+	$role_center=1;
+	$ServiceHeaderID='';
+
+	// $UserID=$CurrentUser;
+	$UserID = $_SESSION['UserID'];
+	$wards='';
+	$Subcounties='';
+	$locationcondition='';
+	$role='None';
+	$app_type=52;
+
+	//Get Zone Of Logged In User
+	$GetZoneSQL = "Select U.RegionID FROM Agents as A 
+	Join Users U on U.AgentID = A.AgentID where A.AgentID= $UserID";
+
+	// exit($GetZoneSQL );
+	$GetZoneSQLResult=sqlsrv_query($db,$GetZoneSQL);
+	while ($row=sqlsrv_fetch_array($GetZoneSQLResult,SQLSRV_FETCH_ASSOC)) 
+	{
+		$RegionID=$row['RegionID'];
+	}
+
+	//check whether the person is a clerk or Officer
+	$sql="select iif (exists(select 1 from ClerkWard where UserID=$UserID and status=1),'Clerk',
+			iif (exists(select 1 from ApproverSetup where UserID=$UserID and status=1),'Officer','None')) Role";
+
+	$result=sqlsrv_query($db,$sql);
+	while ($row=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC)) 
+	{
+		$role=$row['Role'];
+	}
+	// echo '<pre>';
+	// print_r($role);
+	// exit;
+
+	if($role=='Clerk')
+	{
+		$sql="select WardID From ClerkWard where UserID=$UserID and Status=1";
+
+		$result=sqlsrv_query($db,$sql);
+		$i=0;
+
+		while($row=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC)){
+			if ($i==0){
+				$wards='('.$row['WardID'];
+			}else{
+				$wards.=','.$row['WardID'];
+			}
+			$i+=1;
+		}
+
+		$wards.=')';
+
+		$locationcondition=" and (select value from fnFormData(sh.ServiceHeaderID) WHERE FormColumnID=11204) in $wards and sh.ServiceStatusID<=3";
+
+	}else if ($role=='Officer'){
+		$sql="select SubCountyID From ApproverSetup where UserID=$UserID and Status=1";
+
+		$result=sqlsrv_query($db,$sql);
+		$i=0;
+		while($row=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC)){
+			if ($i==0){
+				$subcounties='('.$row['SubCountyID'];
+			}else{
+				$subcounties.=','.$row['SubCountyID'];
+			}
+			$i+=1;
+		}
+
+		$subcounties.=')';
+
+		$locationcondition=" and (select value from fnFormData(sh.ServiceHeaderID) WHERE FormColumnID=11203) in $subcounties and sh.ServiceStatusID>3 and sh.ServiceStatusID<7";
+	}else{
+		$locationcondition=" and 1=1"; //just to make sure that a person who is neither a cler nor officer cannot view anything
+	}
+
+	if (strlen($exParam)>0)
+	{
+		$details=explode(':',$exParam);
+		
+		if(strlen($exParam)>2)
+		{
+			$str3=explode('=',$details[0]);
+			$role_center=1;//$str3[1];
+
+			if (strpos($exParam,'fromDate')==true)
+			{
+				$str3=explode('=',$details[1]);
+				$fromDate=$str3[1];
+			}else
+			{
+				$fromDate='date';//date('d/m/Y');
+			}
+
+			if (strpos($exParam,'toDate')==true)
+			{
+				$str3=explode('=',$details[2]);
+				$toDate=$str3[1];
+			}else
+			{
+				$toDate=date('d/m/Y');
+			}
+
+			if (strpos($exParam,'ServiceHeaderID')==true)
+			{
+				$str3=explode('=',$details[3]);
+				$ServiceHeaderID=$str3[1];
+			}
+			
+			if(!$ServiceHeaderID=='')
+			{
+				$filter=" and sh.ServiceHeaderID='$ServiceHeaderID'";
+			}else{
+				$filter=" and convert(date,sh.CreatedDate)>='$fromDate' and convert(date,sh.CreatedDate)<='$toDate'";
+			}
+			
+		}else{
+			$role_center=1;//$exParam;
+			$filter=" and DATEDIFF(day,sh.CreatedDate,getdate())<5 ";
+		}
+	}
+		
+	// exit('We are here for trade facilitation');		
+	$msql = "
+
+	set dateformat dmy SELECT top 100 sh.ServiceHeaderID 
+				  AS ApplicationID,sh.ServiceStatusID,ss.ServiceStatusName,sc.ServiceGroupID, s.ServiceName ,c.CustomerID, 
+				  c.CustomerName, sb.SubSystemName, c.BusinessZone, sh.SubmissionDate,s.ServiceID,f.ServiceHeaderType ApplicationType,s.ServiceCategoryID,s.ServiceCategoryID 
+				  FROM dbo.ServiceHeader AS sh 
+				  INNER JOIN dbo.Services AS s ON sh.ServiceID = s.ServiceID 
+				  INNER JOIN dbo.Customer AS c ON sh.CustomerID = c.CustomerID
+				  INNER JOIN dbo.SubSystems AS sb ON sb.SubSystemID = c.BusinessZone 
+				  INNER JOIN dbo.ServiceStatus ss ON sh.ServiceStatusID=ss.ServiceStatusID 
+				  INNER JOIN DBO.ServiceCategory sc on s.ServiceCategoryID=sc.ServiceCategoryID
+				  inner join ServiceGroup sg on sc.ServiceGroupID = sg.ServiceGroupID 
+				  INNER JOIN dbo.Forms f on sh.FormID=f.FormID 
+				  where sh.ServiceStatusID =1 and sg.ServiceGroupID = 12 or (sh.ServiceStatusID = 5 and sh.ServiceCategoryID = 2033) and (sc.InvoiceStage<>sc.LastStage or sh.ServiceStatusID<>sc.LastStage) 
+				  and sh.ServiceID not in (select ServiceID from ServiceTrees) order by sh.SubmissionDate desc
+				  
+	  ";
+				
+// exit($msql); 
+	
+	//".$filter.$locationcondition."
+
+	$result = sqlsrv_query($db, $msql);	
+	while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) 
+	{
+		extract($row);
+		
+		// $Balance=1;
+		// $ApplicationFee="Not Paid";
+		// $sql="select Balance from vwInvoices where ServiceHeaderID=$ApplicationID and ServiceID=69";
+		// $rslt=sqlsrv_query($db,$sql,$params,$options);
+
+		// $rows=sqlsrv_num_rows($rslt);
+		// if($rows>0){
+		// 	while($rw=sqlsrv_fetch_array($rslt,SQLSRV_FETCH_ASSOC)){
+		// 		$Balance=$rw['Balance'];			
+		// 	}
+		// }
+
+
+
+		// if($Balance<=0){
+		// 	$ApplicationFee="Paid";
+			$CustomerName =  '<a href="#" onClick="loadoptionalpage('.$ApplicationID.','.$app_type.','.$ServiceStatusID.',\'content\',\'loader\',\'listpages\',\'\',\''.$ApplicationID.'\')">'.$CustomerName.'</a>';
+		//}
+
+		$DeleteBtn   = '<a href="#" onClick="deleteConfirm2(\'Are you sure you want to Delete?\',\'clients_list.php?delete=1&ApplicationID='.$ApplicationID.'\',\'content\',\'loader\',\'listpages\',\'\',\''.$OptionValue.'\')">Delete</a>';
+		$channel[] = array(			
+				$ApplicationID,
+				$CustomerName,				
+				$ServiceName,
+				$SubmissionDate,
+				$SubSystemName,	
+				$ServiceGroupID
+				
+		);			
+	}  	
+	
+}
+
+
+else if($OptionValue=='classificationapplications')
+{
+	$params = array();
+	$options =  array( "Scrollable" => SQLSRV_CURSOR_KEYSET );
+
+	$fromDate=date('d/m/Y');
+	$toDate=date('d/m/Y');
+	$filter=" and DATEDIFF(day,sh.CreatedDate,getdate())<3 ";
+	$role_center=1;
+	$ServiceHeaderID='';
+
+	// $UserID=$CurrentUser;
+	$UserID = $_SESSION['UserID'];
+	$wards='';
+	$Subcounties='';
+	$locationcondition='';
+	$role='None';
+	$app_type=52;
+
+	//Get Zone Of Logged In User
+	$GetZoneSQL = "Select U.RegionID FROM Agents as A 
+	Join Users U on U.AgentID = A.AgentID where A.AgentID= $UserID";
+
+	// exit($GetZoneSQL );
+	$GetZoneSQLResult=sqlsrv_query($db,$GetZoneSQL);
+	while ($row=sqlsrv_fetch_array($GetZoneSQLResult,SQLSRV_FETCH_ASSOC)) 
+	{
+		$RegionID=$row['RegionID'];
+	}
+
+	//check whether the person is a clerk or Officer
+	$sql="select iif (exists(select 1 from ClerkWard where UserID=$UserID and status=1),'Clerk',
+			iif (exists(select 1 from ApproverSetup where UserID=$UserID and status=1),'Officer','None')) Role";
+
+	$result=sqlsrv_query($db,$sql);
+	while ($row=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC)) 
+	{
+		$role=$row['Role'];
+	}
+	// echo '<pre>';
+	// print_r($role);
+	// exit;
+
+	if($role=='Clerk')
+	{
+		$sql="select WardID From ClerkWard where UserID=$UserID and Status=1";
+
+		$result=sqlsrv_query($db,$sql);
+		$i=0;
+
+		while($row=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC)){
+			if ($i==0){
+				$wards='('.$row['WardID'];
+			}else{
+				$wards.=','.$row['WardID'];
+			}
+			$i+=1;
+		}
+
+		$wards.=')';
+
+		$locationcondition=" and (select value from fnFormData(sh.ServiceHeaderID) WHERE FormColumnID=11204) in $wards and sh.ServiceStatusID<=3";
+
+	}else if ($role=='Officer'){
+		$sql="select SubCountyID From ApproverSetup where UserID=$UserID and Status=1";
+
+		$result=sqlsrv_query($db,$sql);
+		$i=0;
+		while($row=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC)){
+			if ($i==0){
+				$subcounties='('.$row['SubCountyID'];
+			}else{
+				$subcounties.=','.$row['SubCountyID'];
+			}
+			$i+=1;
+		}
+
+		$subcounties.=')';
+
+		$locationcondition=" and (select value from fnFormData(sh.ServiceHeaderID) WHERE FormColumnID=11203) in $subcounties and sh.ServiceStatusID>3 and sh.ServiceStatusID<7";
+	}else{
+		$locationcondition=" and 1=1"; //just to make sure that a person who is neither a cler nor officer cannot view anything
+	}
+
+	if (strlen($exParam)>0)
+	{
+		$details=explode(':',$exParam);
+		
+		if(strlen($exParam)>2)
+		{
+			$str3=explode('=',$details[0]);
+			$role_center=1;//$str3[1];
+
+			if (strpos($exParam,'fromDate')==true)
+			{
+				$str3=explode('=',$details[1]);
+				$fromDate=$str3[1];
+			}else
+			{
+				$fromDate='date';//date('d/m/Y');
+			}
+
+			if (strpos($exParam,'toDate')==true)
+			{
+				$str3=explode('=',$details[2]);
+				$toDate=$str3[1];
+			}else
+			{
+				$toDate=date('d/m/Y');
+			}
+
+			if (strpos($exParam,'ServiceHeaderID')==true)
+			{
+				$str3=explode('=',$details[3]);
+				$ServiceHeaderID=$str3[1];
+			}
+			
+			if(!$ServiceHeaderID=='')
+			{
+				$filter=" and sh.ServiceHeaderID='$ServiceHeaderID'";
+			}else{
+				$filter=" and convert(date,sh.CreatedDate)>='$fromDate' and convert(date,sh.CreatedDate)<='$toDate'";
+			}
+			
+		}else{
+			$role_center=1;//$exParam;
+			$filter=" and DATEDIFF(day,sh.CreatedDate,getdate())<5 ";
+		}
+	}
+		
+	// exit('We are here for trade facilitation');		
+	$msql = "
+
+	set dateformat dmy SELECT top 100 sh.ServiceHeaderID 
+				  AS ApplicationID,sh.ServiceStatusID,ss.ServiceStatusName,sc.ServiceGroupID, s.ServiceName ,c.CustomerID, 
+				  c.CustomerName, sb.SubSystemName, c.BusinessZone, sh.SubmissionDate,s.ServiceID,f.ServiceHeaderType ApplicationType,s.ServiceCategoryID,s.ServiceCategoryID 
+				  FROM dbo.ServiceHeader AS sh 
+				  INNER JOIN dbo.Services AS s ON sh.ServiceID = s.ServiceID 
+				  INNER JOIN dbo.Customer AS c ON sh.CustomerID = c.CustomerID
+				  INNER JOIN dbo.SubSystems AS sb ON sb.SubSystemID = c.BusinessZone 
+				  INNER JOIN dbo.ServiceStatus ss ON sh.ServiceStatusID=ss.ServiceStatusID 
+				  INNER JOIN DBO.ServiceCategory sc on s.ServiceCategoryID=sc.ServiceCategoryID
+				  inner join ServiceGroup sg on sc.ServiceGroupID = sg.ServiceGroupID 
+				  INNER JOIN dbo.Forms f on sh.FormID=f.FormID 
+				  where sh.ServiceStatusID =1 and sg.ServiceGroupID = 11 or (sh.ServiceStatusID = 5) and (sc.InvoiceStage<>sc.LastStage or sh.ServiceStatusID<>sc.LastStage) 
+				  and sh.ServiceID not in (select ServiceID from ServiceTrees) order by sh.SubmissionDate desc
+				  
+	  ";
+				
+// exit($msql); 
+	
+	//".$filter.$locationcondition."
+
+	$result = sqlsrv_query($db, $msql);	
+	while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) 
+	{
+		extract($row);
+		
+		// $Balance=1;
+		// $ApplicationFee="Not Paid";
+		// $sql="select Balance from vwInvoices where ServiceHeaderID=$ApplicationID and ServiceID=69";
+		// $rslt=sqlsrv_query($db,$sql,$params,$options);
+
+		// $rows=sqlsrv_num_rows($rslt);
+		// if($rows>0){
+		// 	while($rw=sqlsrv_fetch_array($rslt,SQLSRV_FETCH_ASSOC)){
+		// 		$Balance=$rw['Balance'];			
+		// 	}
+		// }
+
+
+
+		// if($Balance<=0){
+		// 	$ApplicationFee="Paid";
+			$CustomerName =  '<a href="#" onClick="loadoptionalpage('.$ApplicationID.','.$app_type.','.$ServiceStatusID.',\'content\',\'loader\',\'listpages\',\'\',\''.$ApplicationID.'\')">'.$CustomerName.'</a>';
+		//}
+
+		$DeleteBtn   = '<a href="#" onClick="deleteConfirm2(\'Are you sure you want to Delete?\',\'clients_list.php?delete=1&ApplicationID='.$ApplicationID.'\',\'content\',\'loader\',\'listpages\',\'\',\''.$OptionValue.'\')">Delete</a>';
+		$channel[] = array(			
+				$ApplicationID,
+				$CustomerName,				
+				$ServiceName,
+				$SubmissionDate,
+				$SubSystemName,	
+				$ServiceGroupID
+				
+		);			
+	}  	
+	
+}
+
+
 
 //
 else if($OptionValue=='SubmittedApplications')
@@ -1994,7 +2571,7 @@ else if($OptionValue=='SubmittedApplications')
 				  INNER JOIN DBO.ServiceCategory sc on s.ServiceCategoryID=sc.ServiceCategoryID
 				  inner join ServiceGroup sg on sc.ServiceGroupID = sg.ServiceGroupID 
 				  INNER JOIN dbo.Forms f on sh.FormID=f.FormID 
-				  where sh.ServiceStatusID =1 and c.BusinessZone= $RegionID or (sh.ServiceStatusID = 5 and sh.ServiceCategoryID = 2033) and (sc.InvoiceStage<>sc.LastStage or sh.ServiceStatusID<>sc.LastStage) 
+				  where sh.ServiceStatusID =1 and sc.ServiceGroupID != 12 and sc.ServiceGroupID != 11 and c.BusinessZone= $RegionID or (sh.ServiceStatusID = 5 and sh.ServiceCategoryID = 2033) and (sc.InvoiceStage<>sc.LastStage or sh.ServiceStatusID<>sc.LastStage) 
 				  and sh.ServiceID not in (select ServiceID from ServiceTrees) order by sh.SubmissionDate desc
 				  
 	  ";
@@ -2237,6 +2814,205 @@ else if($OptionValue=='LicenceApplicationApprovedByOfficer')
 	}  	
 	
 }
+
+
+else if($OptionValue=='classificationapproval')
+{
+	$params = array();
+	$options =  array( "Scrollable" => SQLSRV_CURSOR_KEYSET );
+
+	$fromDate=date('d/m/Y');
+	$toDate=date('d/m/Y');
+	$filter=" and DATEDIFF(day,sh.CreatedDate,getdate())<3 ";
+	$role_center=1;
+	$ServiceHeaderID='';
+
+	// $UserID=$CurrentUser;
+	$UserID = $_SESSION['UserID'];
+	$wards='';
+	$Subcounties='';
+	$locationcondition='';
+	$role='None';
+	$app_type=51;
+
+	//Get Zone Of Logged In User
+	$GetZoneSQL = "Select U.RegionID FROM Agents as A 
+	Join Users U on U.AgentID = A.AgentID where A.AgentID= $UserID";
+
+	// exit($GetZoneSQL );
+	$GetZoneSQLResult=sqlsrv_query($db,$GetZoneSQL);
+	while ($row=sqlsrv_fetch_array($GetZoneSQLResult,SQLSRV_FETCH_ASSOC)) 
+	{
+		$RegionID=$row['RegionID'];
+	}
+
+	//check whether the person is a clerk or Officer
+	$sql="select iif (exists(select 1 from ClerkWard where UserID=$UserID and status=1),'Clerk',
+			iif (exists(select 1 from ApproverSetup where UserID=$UserID and status=1),'Officer','None')) Role";
+
+	$result=sqlsrv_query($db,$sql);
+	while ($row=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC)) 
+	{
+		$role=$row['Role'];
+	}
+
+	if($role=='Clerk')
+	{
+		$sql="select WardID From ClerkWard where UserID=$UserID and Status=1";
+
+		$result=sqlsrv_query($db,$sql);
+		$i=0;
+
+		while($row=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC)){
+			if ($i==0){
+				$wards='('.$row['WardID'];
+			}else{
+				$wards.=','.$row['WardID'];
+			}
+			$i+=1;
+		}
+
+		$wards.=')';
+
+		$locationcondition=" and (select value from fnFormData(sh.ServiceHeaderID) WHERE FormColumnID=11204) in $wards and sh.ServiceStatusID<=3";
+
+	}else if ($role=='Officer'){
+		$sql="select SubCountyID From ApproverSetup where UserID=$UserID and Status=1";
+
+		$result=sqlsrv_query($db,$sql);
+		$i=0;
+		while($row=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC)){
+			if ($i==0){
+				$subcounties='('.$row['SubCountyID'];
+			}else{
+				$subcounties.=','.$row['SubCountyID'];
+			}
+			$i+=1;
+		}
+
+		$subcounties.=')';
+
+		$locationcondition=" and (select value from fnFormData(sh.ServiceHeaderID) WHERE FormColumnID=11203) in $subcounties and sh.ServiceStatusID>3 and sh.ServiceStatusID<7";
+	}else{
+		$locationcondition=" and 1=1"; //just to make sure that a person who is neither a cler nor officer cannot view anything
+	}
+
+	if (strlen($exParam)>0)
+	{
+		$details=explode(':',$exParam);
+		
+		if(strlen($exParam)>2)
+		{
+			$str3=explode('=',$details[0]);
+			$role_center=1;//$str3[1];
+
+			if (strpos($exParam,'fromDate')==true)
+			{
+				$str3=explode('=',$details[1]);
+				$fromDate=$str3[1];
+			}else
+			{
+				$fromDate='date';//date('d/m/Y');
+			}
+
+			if (strpos($exParam,'toDate')==true)
+			{
+				$str3=explode('=',$details[2]);
+				$toDate=$str3[1];
+			}else
+			{
+				$toDate=date('d/m/Y');
+			}
+
+			if (strpos($exParam,'ServiceHeaderID')==true)
+			{
+				$str3=explode('=',$details[3]);
+				$ServiceHeaderID=$str3[1];
+			}
+			
+			if(!$ServiceHeaderID=='')
+			{
+				$filter=" and sh.ServiceHeaderID='$ServiceHeaderID'";
+			}else{
+				$filter=" and convert(date,sh.CreatedDate)>='$fromDate' and convert(date,sh.CreatedDate)<='$toDate'";
+			}
+			
+		}else{
+			$role_center=1;//$exParam;
+			$filter=" and DATEDIFF(day,sh.CreatedDate,getdate())<5 ";
+		}
+	}
+		
+		
+	$msql = "
+
+	set dateformat dmy SELECT top 100 sh.ServiceHeaderID 
+				  AS ApplicationID,sh.ServiceStatusID,ss.ServiceStatusName,sc.ServiceGroupID, s.ServiceName ,c.CustomerID, 
+				  c.CustomerName, sb.SubSystemName, c.BusinessZone, sh.SubmissionDate,s.ServiceID,f.ServiceHeaderType ApplicationType,s.ServiceCategoryID,s.ServiceCategoryID 
+				  FROM dbo.ServiceHeader AS sh 
+				  INNER JOIN dbo.Services AS s ON sh.ServiceID = s.ServiceID 
+				  INNER JOIN dbo.Customer AS c ON sh.CustomerID = c.CustomerID
+				  INNER JOIN dbo.SubSystems AS sb ON sb.SubSystemID = c.BusinessZone 
+				  INNER JOIN dbo.ServiceStatus ss ON sh.ServiceStatusID=ss.ServiceStatusID 
+				  INNER JOIN DBO.ServiceCategory sc on s.ServiceCategoryID=sc.ServiceCategoryID
+				  inner join ServiceGroup sg on sc.ServiceGroupID = sg.ServiceGroupID 
+				  INNER JOIN dbo.Forms f on sh.FormID=f.FormID 
+				  where sh.ServiceStatusID =12 and sc.ServiceGroupID = 11 or (sh.ServiceStatusID = 5 and sh.ServiceCategoryID = 2033) and (sc.InvoiceStage<>sc.LastStage or sh.ServiceStatusID<>sc.LastStage) 
+				  and sh.ServiceID not in (select ServiceID from ServiceTrees) order by sh.SubmissionDate desc
+				  
+	  ";
+				
+	// echo $msql; 
+	// exit;	
+	//".$filter.$locationcondition."
+
+	$result = sqlsrv_query($db, $msql);	
+	while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) 
+	{
+		extract($row);
+		
+		// $Balance=1;
+		// $ApplicationFee="Not Paid";
+		// $sql="select Balance from vwInvoices where ServiceHeaderID=$ApplicationID and ServiceID=69";
+		// $rslt=sqlsrv_query($db,$sql,$params,$options);
+
+		// $rows=sqlsrv_num_rows($rslt);
+		// if($rows>0){
+		// 	while($rw=sqlsrv_fetch_array($rslt,SQLSRV_FETCH_ASSOC)){
+		// 		$Balance=$rw['Balance'];			
+		// 	}
+		// }
+
+		$sql="select fn.Value, w.RegionName Name
+			from fnFormData($ApplicationID) fn 
+			join Regions w on fn.Value=w.RegionID
+			where fn.formcolumnid=12237
+		";
+		$res=sqlsrv_query($db,$sql);
+		while($row=sqlsrv_fetch_array($res,SQLSRV_FETCH_ASSOC))
+		{
+			$RegionName=$row['Name'];
+		}
+
+		// if($Balance<=0){
+		// 	$ApplicationFee="Paid";
+			$CustomerName =  '<a href="#" onClick="loadoptionalpage('.$ApplicationID.','.$app_type.','.$ServiceStatusID.',\'content\',\'loader\',\'listpages\',\'\',\''.$ApplicationID.'\')">'.$CustomerName.'</a>';
+		//}
+
+		$DeleteBtn   = '<a href="#" onClick="deleteConfirm2(\'Are you sure you want to Delete?\',\'clients_list.php?delete=1&ApplicationID='.$ApplicationID.'\',\'content\',\'loader\',\'listpages\',\'\',\''.$OptionValue.'\')">Delete</a>';
+		$channel[] = array(			
+				$ApplicationID,
+				$CustomerName,				
+				$ServiceName,
+				$SubmissionDate,
+				$SubSystemName,	
+				$ServiceGroupID
+				
+		);			
+	}  	
+	
+}
+
 else if($OptionValue=='renewalapplications')
 {
 	$params = array();
@@ -2614,6 +3390,410 @@ else if($OptionValue=='approved_pending_approval')
 	}  	
 	
 }
+
+
+else if($OptionValue=='approved_classification_approval')
+{
+	// exit('hap');
+	$params = array();
+	$options =  array( "Scrollable" => SQLSRV_CURSOR_KEYSET );
+
+	$fromDate=date('d/m/Y');
+	$toDate=date('d/m/Y');
+	$filter=" and DATEDIFF(day,sh.CreatedDate,getdate())<3 ";
+	$role_center=1;
+	$ServiceHeaderID='';
+
+	$UserID=$CurrentUser;
+	$wards='';
+	$Subcounties='';
+	$locationcondition='';
+	$role='None';
+	$app_type=7;
+	//check whether the person is a clerk or Officer
+	$sql="select iif (exists(select 1 from ClerkWard where UserID=$UserID and status=1),'Clerk',
+			iif (exists(select 1 from ApproverSetup where UserID=$UserID and status=1),'Officer','None')) Role";
+
+	$result=sqlsrv_query($db,$sql);
+	while ($row=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC)) 
+	{
+		$role=$row['Role'];
+	}
+
+	//Get Zone Of Logged In User
+	$GetZoneSQL = "Select U.RegionID FROM Agents as A 
+	Join Users U on U.AgentID = A.AgentID where A.AgentID= $UserID";
+
+	// exit($GetZoneSQL );
+	$GetZoneSQLResult=sqlsrv_query($db,$GetZoneSQL);
+	while ($row=sqlsrv_fetch_array($GetZoneSQLResult,SQLSRV_FETCH_ASSOC)) 
+	{
+		$RegionID=$row['RegionID'];
+	}
+
+	if($role=='Clerk')
+	{
+		$sql="select WardID From ClerkWard where UserID=$UserID and Status=1";
+
+		$result=sqlsrv_query($db,$sql);
+		$i=0;
+
+		while($row=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC)){
+			if ($i==0){
+				$wards='('.$row['WardID'];
+			}else{
+				$wards.=','.$row['WardID'];
+			}
+			$i+=1;
+		}
+
+		$wards.=')';
+
+		$locationcondition=" and (select value from fnFormData(sh.ServiceHeaderID) WHERE FormColumnID=11204) in $wards and sh.ServiceStatusID<=3";
+
+	}else if ($role=='Officer'){
+		$sql="select SubCountyID From ApproverSetup where UserID=$UserID and Status=1";
+
+		$result=sqlsrv_query($db,$sql);
+		$i=0;
+		while($row=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC)){
+			if ($i==0){
+				$subcounties='('.$row['SubCountyID'];
+			}else{
+				$subcounties.=','.$row['SubCountyID'];
+			}
+			$i+=1;
+		}
+
+		$subcounties.=')';
+
+		$locationcondition=" and (select value from fnFormData(sh.ServiceHeaderID) WHERE FormColumnID=11203) in $subcounties and sh.ServiceStatusID>3 and sh.ServiceStatusID<7";
+	}else{
+		$locationcondition=" and 1=1"; //just to make sure that a person who is neither a cler nor officer cannot view anything
+	}
+
+	if (strlen($exParam)>0)
+	{
+		$details=explode(':',$exParam);
+		
+		if(strlen($exParam)>2)
+		{
+			$str3=explode('=',$details[0]);
+			$role_center=1;//$str3[1];
+
+			if (strpos($exParam,'fromDate')==true)
+			{
+				$str3=explode('=',$details[1]);
+				$fromDate=$str3[1];
+			}else
+			{
+				$fromDate='date';//date('d/m/Y');
+			}
+
+			if (strpos($exParam,'toDate')==true)
+			{
+				$str3=explode('=',$details[2]);
+				$toDate=$str3[1];
+			}else
+			{
+				$toDate=date('d/m/Y');
+			}
+
+			if (strpos($exParam,'ServiceHeaderID')==true)
+			{
+				$str3=explode('=',$details[3]);
+				$ServiceHeaderID=$str3[1];
+			}
+			
+			if(!$ServiceHeaderID=='')
+			{
+				$filter=" and sh.ServiceHeaderID='$ServiceHeaderID'";
+			}else{
+				$filter=" and convert(date,sh.CreatedDate)>='$fromDate' and convert(date,sh.CreatedDate)<='$toDate'";
+			}
+			
+		}else{
+			$role_center=1;//$exParam;
+			$filter=" and DATEDIFF(day,sh.CreatedDate,getdate())<5 ";
+		}
+	}
+
+	$sql  = "set dateformat dmy SELECT top 100 sh.ServiceHeaderID AS ApplicationID,
+	sh.ServiceStatusID,
+	ss.ServiceStatusName, 
+	s.ServiceName ,c.CustomerID, c.CustomerName, 
+	c.BusinessZone,
+	sh.SubmissionDate,
+	s.ServiceID,f.ServiceHeaderType ApplicationType,
+	s.ServiceCategoryID,s.ServiceCategoryID
+	FROM dbo.ServiceHeader AS sh INNER JOIN 
+	dbo.Services AS s ON sh.ServiceID = s.ServiceID INNER JOIN
+	dbo.Customer AS c ON sh.CustomerID = c.CustomerID INNER JOIN 
+	dbo.ServiceStatus ss ON sh.ServiceStatusID=ss.ServiceStatusID INNER JOIN
+	DBO.ServiceCategory sc on s.ServiceCategoryID=sc.ServiceCategoryID INNER JOIN
+	dbo.Forms f on sh.FormID=f.FormID 	 
+	where s.ServiceCategoryID!=1  
+	and (sc.InvoiceStage<>sc.LastStage or sh.ServiceStatusID<>sc.LastStage)
+	and sh.ServiceID not in (select ServiceID from ServiceTrees) 
+	and sh.ServiceID<>1603 
+	and sh.ServiceStatusID = 3
+	and sc.ServiceGroupID = 11
+	order by sh.SubmissionDate desc";
+	//$ApproverRegionID
+	// echo $sql;
+	// exit; 	
+	//".$filter.$locationcondition."
+
+	$result = sqlsrv_query($db, $sql);	
+	while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) 
+	{
+		extract($row);
+		
+		// $Balance=1;
+		// $ApplicationFee="Not Paid";
+		// $sql="select Balance from vwInvoices where ServiceHeaderID=$ApplicationID and ServiceID=69";
+		// $rslt=sqlsrv_query($db,$sql,$params,$options);
+
+		// $rows=sqlsrv_num_rows($rslt);
+		// if($rows>0){
+		// 	while($rw=sqlsrv_fetch_array($rslt,SQLSRV_FETCH_ASSOC)){
+		// 		$Balance=$rw['Balance'];			
+		// 	}
+		// }
+
+		// echo '<pre>'
+
+
+		$sql="select fn.Value, w.RegionName Name
+			from fnFormData($ApplicationID) fn 
+			join Regions w on fn.Value=w.RegionID
+			where fn.formcolumnid=12237
+		";
+		$res=sqlsrv_query($db,$sql);
+		while($row=sqlsrv_fetch_array($res,SQLSRV_FETCH_ASSOC))
+		{
+			$RegionName=$row['Name'];
+		}
+
+		// if($Balance<=0){
+		// 	$ApplicationFee="Paid";
+			$CustomerName =  '<a href="#" onClick="loadoptionalpage('.$ApplicationID.','.$app_type.','.$ServiceStatusID.',\'content\',\'loader\',\'listpages\',\'\',\''.$ApplicationID.'\')">'.$CustomerName.'</a>';
+		//}
+
+		$DeleteBtn   = '<a href="#" onClick="deleteConfirm2(\'Are you sure you want to Delete?\',\'clients_list.php?delete=1&ApplicationID='.$ApplicationID.'\',\'content\',\'loader\',\'listpages\',\'\',\''.$OptionValue.'\')">Delete</a>';
+		$channel[] = array(			
+				$ApplicationID,
+				$CustomerName,				
+				$ServiceName,
+				$SubmissionDate,
+				$RegionName	
+		);			
+	}  	
+	
+}
+
+
+else if($OptionValue=='approved_facilitation_approval')
+{
+	// exit('hap');
+	$params = array();
+	$options =  array( "Scrollable" => SQLSRV_CURSOR_KEYSET );
+
+	$fromDate=date('d/m/Y');
+	$toDate=date('d/m/Y');
+	$filter=" and DATEDIFF(day,sh.CreatedDate,getdate())<3 ";
+	$role_center=1;
+	$ServiceHeaderID='';
+
+	$UserID=$CurrentUser;
+	$wards='';
+	$Subcounties='';
+	$locationcondition='';
+	$role='None';
+	$app_type=12;
+	//check whether the person is a clerk or Officer
+	$sql="select iif (exists(select 1 from ClerkWard where UserID=$UserID and status=1),'Clerk',
+			iif (exists(select 1 from ApproverSetup where UserID=$UserID and status=1),'Officer','None')) Role";
+
+	$result=sqlsrv_query($db,$sql);
+	while ($row=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC)) 
+	{
+		$role=$row['Role'];
+	}
+
+	//Get Zone Of Logged In User
+	$GetZoneSQL = "Select U.RegionID FROM Agents as A 
+	Join Users U on U.AgentID = A.AgentID where A.AgentID= $UserID";
+
+	// exit($GetZoneSQL );
+	$GetZoneSQLResult=sqlsrv_query($db,$GetZoneSQL);
+	while ($row=sqlsrv_fetch_array($GetZoneSQLResult,SQLSRV_FETCH_ASSOC)) 
+	{
+		$RegionID=$row['RegionID'];
+	}
+
+	if($role=='Clerk')
+	{
+		$sql="select WardID From ClerkWard where UserID=$UserID and Status=1";
+
+		$result=sqlsrv_query($db,$sql);
+		$i=0;
+
+		while($row=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC)){
+			if ($i==0){
+				$wards='('.$row['WardID'];
+			}else{
+				$wards.=','.$row['WardID'];
+			}
+			$i+=1;
+		}
+
+		$wards.=')';
+
+		$locationcondition=" and (select value from fnFormData(sh.ServiceHeaderID) WHERE FormColumnID=11204) in $wards and sh.ServiceStatusID<=3";
+
+	}else if ($role=='Officer'){
+		$sql="select SubCountyID From ApproverSetup where UserID=$UserID and Status=1";
+
+		$result=sqlsrv_query($db,$sql);
+		$i=0;
+		while($row=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC)){
+			if ($i==0){
+				$subcounties='('.$row['SubCountyID'];
+			}else{
+				$subcounties.=','.$row['SubCountyID'];
+			}
+			$i+=1;
+		}
+
+		$subcounties.=')';
+
+		$locationcondition=" and (select value from fnFormData(sh.ServiceHeaderID) WHERE FormColumnID=11203) in $subcounties and sh.ServiceStatusID>3 and sh.ServiceStatusID<7";
+	}else{
+		$locationcondition=" and 1=1"; //just to make sure that a person who is neither a cler nor officer cannot view anything
+	}
+
+	if (strlen($exParam)>0)
+	{
+		$details=explode(':',$exParam);
+		
+		if(strlen($exParam)>2)
+		{
+			$str3=explode('=',$details[0]);
+			$role_center=1;//$str3[1];
+
+			if (strpos($exParam,'fromDate')==true)
+			{
+				$str3=explode('=',$details[1]);
+				$fromDate=$str3[1];
+			}else
+			{
+				$fromDate='date';//date('d/m/Y');
+			}
+
+			if (strpos($exParam,'toDate')==true)
+			{
+				$str3=explode('=',$details[2]);
+				$toDate=$str3[1];
+			}else
+			{
+				$toDate=date('d/m/Y');
+			}
+
+			if (strpos($exParam,'ServiceHeaderID')==true)
+			{
+				$str3=explode('=',$details[3]);
+				$ServiceHeaderID=$str3[1];
+			}
+			
+			if(!$ServiceHeaderID=='')
+			{
+				$filter=" and sh.ServiceHeaderID='$ServiceHeaderID'";
+			}else{
+				$filter=" and convert(date,sh.CreatedDate)>='$fromDate' and convert(date,sh.CreatedDate)<='$toDate'";
+			}
+			
+		}else{
+			$role_center=1;//$exParam;
+			$filter=" and DATEDIFF(day,sh.CreatedDate,getdate())<5 ";
+		}
+	}
+
+	$sql  = "set dateformat dmy SELECT top 100 sh.ServiceHeaderID AS ApplicationID,
+	sh.ServiceStatusID,
+	ss.ServiceStatusName, 
+	s.ServiceName ,c.CustomerID, c.CustomerName, 
+	c.BusinessZone,
+	sh.SubmissionDate,
+	s.ServiceID,f.ServiceHeaderType ApplicationType,
+	s.ServiceCategoryID,s.ServiceCategoryID
+	FROM dbo.ServiceHeader AS sh INNER JOIN 
+	dbo.Services AS s ON sh.ServiceID = s.ServiceID INNER JOIN
+	dbo.Customer AS c ON sh.CustomerID = c.CustomerID INNER JOIN 
+	dbo.ServiceStatus ss ON sh.ServiceStatusID=ss.ServiceStatusID INNER JOIN
+	DBO.ServiceCategory sc on s.ServiceCategoryID=sc.ServiceCategoryID INNER JOIN
+	dbo.Forms f on sh.FormID=f.FormID 	 
+	where s.ServiceCategoryID!=1  
+	and (sc.InvoiceStage<>sc.LastStage or sh.ServiceStatusID<>sc.LastStage)
+	and sh.ServiceID not in (select ServiceID from ServiceTrees) 
+	and sh.ServiceID<>1603 
+	and sh.ServiceStatusID = 12
+	and sc.ServiceGroupID = 12
+	order by sh.SubmissionDate desc";
+	//$ApproverRegionID
+	// echo $sql;
+	// exit; 	
+	//".$filter.$locationcondition."
+
+	$result = sqlsrv_query($db, $sql);	
+	while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) 
+	{
+		extract($row);
+		
+		// $Balance=1;
+		// $ApplicationFee="Not Paid";
+		// $sql="select Balance from vwInvoices where ServiceHeaderID=$ApplicationID and ServiceID=69";
+		// $rslt=sqlsrv_query($db,$sql,$params,$options);
+
+		// $rows=sqlsrv_num_rows($rslt);
+		// if($rows>0){
+		// 	while($rw=sqlsrv_fetch_array($rslt,SQLSRV_FETCH_ASSOC)){
+		// 		$Balance=$rw['Balance'];			
+		// 	}
+		// }
+
+		// echo '<pre>'
+
+
+		$sql="select fn.Value, w.RegionName Name
+			from fnFormData($ApplicationID) fn 
+			join Regions w on fn.Value=w.RegionID
+			where fn.formcolumnid=12237
+		";
+		$res=sqlsrv_query($db,$sql);
+		while($row=sqlsrv_fetch_array($res,SQLSRV_FETCH_ASSOC))
+		{
+			$RegionName=$row['Name'];
+		}
+
+		// if($Balance<=0){
+		// 	$ApplicationFee="Paid";
+			$CustomerName =  '<a href="#" onClick="loadoptionalpage('.$ApplicationID.','.$app_type.','.$ServiceStatusID.',\'content\',\'loader\',\'listpages\',\'\',\''.$ApplicationID.'\')">'.$CustomerName.'</a>';
+		//}
+
+		$DeleteBtn   = '<a href="#" onClick="deleteConfirm2(\'Are you sure you want to Delete?\',\'clients_list.php?delete=1&ApplicationID='.$ApplicationID.'\',\'content\',\'loader\',\'listpages\',\'\',\''.$OptionValue.'\')">Delete</a>';
+		$channel[] = array(			
+				$ApplicationID,
+				$CustomerName,				
+				$ServiceName,
+				$SubmissionDate,
+				$RegionName	
+		);			
+	}  	
+	
+}
+
+
 else if($OptionValue=='applications_all')
 {
 	$fromDate=date('d/m/Y');
@@ -2803,7 +3983,11 @@ else if($OptionValue=='Inspections')
 			JOIN Users u on u.AgentID=ins.UserID 
 			where ins.InspectionStatusID>0 
 			and sh.ServiceStatusID !=1 and (sc.ServiceGroupID!=11 and sc.ServiceGroupID !=12) order by sh.SubmissionDate desc";
+<<<<<<< HEAD
 			//echo $sql1;exit;
+=======
+			// echo $sql1;exit;
+>>>>>>> 4d89b0ea5569eafe483387123d6ececdd45592b5
 		// "set dateformat dmy 
 		// 			SELECT distinct top 100 sh.SubmissionDate,sc.ServiceGroupID,sh.ServiceHeaderID AS ApplicationID,sc.ServiceGroupID,ins.UserID,ins.InspectionDate,
 		// 			s.ServiceName,c.CustomerName,ss.ServiceStatusDisplay,u.UserFullNames UserNames,ins.UserComment,ins.InspectionID
