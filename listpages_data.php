@@ -3983,11 +3983,7 @@ else if($OptionValue=='Inspections')
 			JOIN Users u on u.AgentID=ins.UserID 
 			where ins.InspectionStatusID>0 
 			and sh.ServiceStatusID !=1 and (sc.ServiceGroupID!=11 and sc.ServiceGroupID !=12) order by sh.SubmissionDate desc";
-<<<<<<< HEAD
-			//echo $sql1;exit;
-=======
 			// echo $sql1;exit;
->>>>>>> 4d89b0ea5569eafe483387123d6ececdd45592b5
 		// "set dateformat dmy 
 		// 			SELECT distinct top 100 sh.SubmissionDate,sc.ServiceGroupID,sh.ServiceHeaderID AS ApplicationID,sc.ServiceGroupID,ins.UserID,ins.InspectionDate,
 		// 			s.ServiceName,c.CustomerName,ss.ServiceStatusDisplay,u.UserFullNames UserNames,ins.UserComment,ins.InspectionID
