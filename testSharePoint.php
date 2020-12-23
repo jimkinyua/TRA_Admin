@@ -17,23 +17,23 @@ use Office365\PHP\Client\SharePoint\Web;
 // require "phpSPO-master/src/Auth/NetworkCredentialContext.php"; 
 
 
-$Url = "http://tra-edms";//"http://rbadev-shrpnt";
+$Url = "http://tra-edms:82";//"http://rbadev-shrpnt";
 $username ='TRA\Administrator';//'rbadev\administrator';
 $password = 'Admin@support12020a'; //'rba123!!';
 
 // echo Shrpnt_test($Url,$username,$password);exit;
 
-$TargetLibrary="TestLibrary";
+$TargetLibrary="Shared Documents";
 $destination="C:\Users\Administrator\Documents\dummy.pdf";
-exit($destination);
-$destination="C:\Users\Administrator\Documents\dummy.pdf";
+// exit($destination);
+// $destination="C:\Users\Administrator\Documents\dummy.pdf";
 $DocumentMetadata=array();
 $SharePointURL = Shrpnt_attach($Url,$username,$password,$destination, $TargetLibrary, $DocumentMetadata);
-exit($destination);
+// exit($destination);
 
-$FullUrl = $Url.'/'.$TargetLibrary.'/'.'document for upload.pdf';
-echo $FullUrl;
-exit();
+// $FullUrl = $Url.'/'.$TargetLibrary.'/'.'document for upload.pdf';
+// echo $FullUrl;
+// exit();
 
 
 // 'Tender_Document_Path'=> Yii::$app->params['sharepointUrl'].'/'.Yii::$app->params['SupplierDocumentsURL'].'/'.$UploadedFileName
@@ -50,6 +50,7 @@ function Shrpnt_attach($Url,$username,$password,$filepath, $targetLibraryTitle, 
         $ctx->executeQuery();
 
         $list = ensureList($ctx->getWeb(),$targetLibraryTitle, \Office365\PHP\Client\SharePoint\ListTemplateType::DocumentLibrary);
+
         uploadToSP($filepath, $list, $DocumentMetadata);
     }
     catch (Exception $e) {
@@ -66,10 +67,10 @@ function Shrpnt_test($Url,$username,$password){
         $authCtx->AuthType = CURLAUTH_NTLM; //NTML Auth schema
         
         $ctx = new ClientContext($Url, $authCtx);
-        $targetLibraryTitle="circulars";
+        $targetLibraryTitle="Shared Documents";
         //$list = ensureList($ctx->getWeb(),$targetLibraryTitle, \Office365\PHP\Client\SharePoint\ListTemplateType::DocumentLibrary);
 
-        //print_r($list);
+        // print_r($list);exit;
         
         $site = $ctx->getSite();
         
@@ -79,6 +80,7 @@ function Shrpnt_test($Url,$username,$password){
         echo 'connected';
     }
     catch (Exception $e) {
+        // print_r($e);exit;
         print 'Authentication failed: ' .  $e->getMessage(). "\n";
         echo $e->getMessage();
     } 
@@ -104,7 +106,7 @@ function uploadToSP($localFilePath, \Office365\PHP\Client\SharePoint\SPList $tar
         $fileCreationInformation = new \Office365\PHP\Client\SharePoint\FileCreationInformation();
         $fileCreationInformation->Content = file_get_contents($localFilePath);
         $fileCreationInformation->Url = basename($localFilePath);
-        //print_r($fileCreationInformation); exit;
+        // print_r($fileCreationInformation); exit;
         $uploadFile = $targetList->getRootFolder()->getFiles()->add($fileCreationInformation);
         $ctx->executeQuery();
 
