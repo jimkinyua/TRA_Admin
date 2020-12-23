@@ -841,7 +841,7 @@ if (isset($_REQUEST['generateinvoice']))
 							<ul class="tabs">
 								<li class=""><a href="#_page_4">Details</a></li>
 								<?php
-								if($IsAppliedByIndividuals==1){ ?>
+								if($IsAppliedByIndividuals!=1){ ?>
 									<li class=""><a href="#_page_6">Directors</a></li>
 									<?php
 								}else{
@@ -1619,7 +1619,7 @@ if ($myrow = sqlsrv_fetch_array( $dresult, SQLSRV_FETCH_ASSOC))
 		  <input name="Button" type="button" onClick="
 		   CurrStatus=this.form.CurrentStatus.value;
 
-		  if(CurrStatus>0)
+		  if(CurrStatus>2)
 		  {
 		  	loadmypage('clients_list.php?save=1&ApplicationID=<?php echo $ApplicationID ?>&CustomerName=<?php echo $CustomerName ?>&CustomerID=<?php echo $CustomerID ?>&ServiceID=<?php echo $ServiceID ?>&ServiceName=<?php echo $ServiceName ?>&CurrentStatus=<?php echo $CurrentStatus ?>&NextStatus='+this.form.NextStatus.value+'&Notes='+this.form.Notes.value+'&ServiceCategoryID=<?php echo $ServiceCategoryID ?>','content','loader','listpages','','applications','<?php echo $_SESSION['RoleCenter']; ?>','<?php echo $_SESSION['UserID']; ?>')
 		  }else
@@ -1695,7 +1695,7 @@ if ($myrow = sqlsrv_fetch_array( $dresult, SQLSRV_FETCH_ASSOC))
           <span class="table_text">
           <input name="ApplicationID" type="hidden" id="ApplicationID" value="<?php echo $ApplicationID;?>" />
   <input name="edit" type="hidden" id="edit" value="<?php echo $edit;?>" />
-  <input name="edit" type="hidden" id="CurrentStatus" value="<?php echo $CurrentStatus;?>" />
+  <input name="edit" type="" id="CurrentStatus" value="<?php echo $CurrentStatus;?>" />
                   </span>
           <div style="margin-top: 20px">
   </div>

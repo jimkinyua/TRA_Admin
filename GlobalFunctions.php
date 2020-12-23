@@ -19,9 +19,9 @@
 	// use Thybag\SharePointAPI;
 	use Office365\PHP\Client\Runtime\Auth\NetworkCredentialContext;
 	use Office365\PHP\Client\Runtime\Utilities\UserCredentials;
-	use Office365\SharePoint\ClientContext;
+	// use Office365\SharePoint\ClientContext;
 	use Office365\Runtime\Auth\ClientCredential;
-	// use Office365\PHP\Client\SharePoint\ClientContext;
+	use Office365\PHP\Client\SharePoint\ClientContext;
 	use Office365\PHP\Client\Runtime\Auth\AuthenticationContext;
 	use Office365\PHP\Client\Runtime\Utilities\RequestOptions;
 	use Office365\PHP\Client\SharePoint\ListCreationInformation;
@@ -84,104 +84,159 @@
 		$drawing->finish($drawing->IMG_FORMAT_PNG);
 	}
 
-	function uploadFiles($db,$mName)
+	function uploadFiles($localFilePath, \Office365\PHP\Client\SharePoint\SPList $targetList)
 	{
-		$UploadDirectory	= 'C:/COSBACKUP/Dev/County/'; //Upload Directory, ends with slash & make sure folder exist
-		$SuccessRedirect	= 'success.html'; //Redirect to a URL after success
-	
-		if (!@file_exists($UploadDirectory)) {
-			//destination folder does not exist
-			$msg="Make sure Upload directory exist!";
-			return;
+		try {
+
+			$ctx = $targetList->getContext();
+			// print_r($ctx);exit;
+
+			// $session = Yii::$app->session;
+			
+			// if($session->has('metadata')){
+			// 		$metadata = $session->get('metadata');
+			// }
+
+
+			//Tender_x0020_No
+
+
+
+			$fileCreationInformation = new \Office365\PHP\Client\SharePoint\FileCreationInformation();
+			$fileCreationInformation->Content = file_get_contents($localFilePath);
+			$fileCreationInformation->Url = basename($localFilePath);
+
+			// print_r($fileCreationInformation); exit;
+
+
+
+			$uploadFile = $targetList->getRootFolder()->getFiles()->add($fileCreationInformation);
+			
+			$ctx->executeQuery();
+			
+		
+
+			//print_r($metadata[2]); exit;
+
+			// // $uploadFile->getListItemAllFields()->setProperty('Title',basename($localFilePath));
+			// // $uploadFile->getListItemAllFields()->setProperty('App_x0020_no_x002e_',$metadata[1]);//Document_x0020_Number
+			// // $uploadFile->getListItemAllFields()->setProperty('Document_x0020_Number',$metadata[2]);//
+			// // $uploadFile->getListItemAllFields()->setProperty('Document_x0020_Description',$metadata[0]);
+			// $uploadFile->getListItemAllFields()->update();
+			
+			
+			// print "File {$uploadFile->getProperty('Name')} has been uploaded\r\n";
+
+			return true;
+
+		} catch (Exception $e) {
+
+			print 'Upload Failed';
+
+			
 		}
+
 		
-		if($_POST)
-		{	
-			if(!isset($mName) || strlen($mName)<1)
-			{
-				//required variables are empty
-				$msg="Title is empty!";
-				return;
-			}
-			
-			
-			if($_FILES['mFile']['error'])
-			{
-				//File upload error encountered
-				$msg=upload_errors($_FILES['mFile']['error']);
-			}
+	}
+
+	// function uploadFiles($db,$mName)
+	// {
+	// 	$UploadDirectory	= 'C:/COSBACKUP/Dev/County/'; //Upload Directory, ends with slash & make sure folder exist
+	// 	$SuccessRedirect	= 'success.html'; //Redirect to a URL after success
+	
+	// 	if (!@file_exists($UploadDirectory)) {
+	// 		//destination folder does not exist
+	// 		$msg="Make sure Upload directory exist!";
+	// 		return;
+	// 	}
 		
-			$FileName			= strtolower($_FILES['mFile']['name']); //uploaded file name
-			$FileTitle			= mysql_real_escape_string($mName); // file title
-			$ImageExt			= substr($FileName, strrpos($FileName, '.')); //file extension
-			$FileType			= $FileType; //file type
-			$FileSize			= $_FILES['mFile']["size"]; //file size
-			$RandNumber   		= rand(0, 9999999999); //Random number to make each filename unique.
-			$uploaded_date		= date("Y-m-d H:i:s");
+	// 	if($_POST)
+	// 	{	
+	// 		if(!isset($mName) || strlen($mName)<1)
+	// 		{
+	// 			//required variables are empty
+	// 			$msg="Title is empty!";
+	// 			return;
+	// 		}
 			
-			switch(strtolower($FileType))
-			{
-				//allowed file types
-				case 'image/png': //png file
-				case 'image/gif': //gif file 
-				case 'image/jpeg': //jpeg file
-				case 'application/pdf': //PDF file
-				case 'application/msword': //ms word file
-				case 'application/vnd.ms-excel': //ms excel file
-				case 'application/x-zip-compressed': //zip file
-				case 'text/plain': //text file
-				case 'text/html': //html file
-					break;
-				default:
-					die('Unsupported File!'); //output error
-			}
+			
+	// 		if($_FILES['mFile']['error'])
+	// 		{
+	// 			//File upload error encountered
+	// 			$msg=upload_errors($_FILES['mFile']['error']);
+	// 		}
+		
+	// 		$FileName			= strtolower($_FILES['mFile']['name']); //uploaded file name
+	// 		$FileTitle			= mysql_real_escape_string($mName); // file title
+	// 		$ImageExt			= substr($FileName, strrpos($FileName, '.')); //file extension
+	// 		$FileType			= $FileType; //file type
+	// 		$FileSize			= $_FILES['mFile']["size"]; //file size
+	// 		$RandNumber   		= rand(0, 9999999999); //Random number to make each filename unique.
+	// 		$uploaded_date		= date("Y-m-d H:i:s");
+			
+	// 		switch(strtolower($FileType))
+	// 		{
+	// 			//allowed file types
+	// 			case 'image/png': //png file
+	// 			case 'image/gif': //gif file 
+	// 			case 'image/jpeg': //jpeg file
+	// 			case 'application/pdf': //PDF file
+	// 			case 'application/msword': //ms word file
+	// 			case 'application/vnd.ms-excel': //ms excel file
+	// 			case 'application/x-zip-compressed': //zip file
+	// 			case 'text/plain': //text file
+	// 			case 'text/html': //html file
+	// 				break;
+	// 			default:
+	// 				die('Unsupported File!'); //output error
+	// 		}
 		
 		  
-			//File Title will be used as new File name
-			$NewFileName = preg_replace(array('/\s/', '/\.[\.]+/', '/[^\w_\.\-]/'), array('_', '.', ''), strtolower($FileTitle));
-			$NewFileName = $NewFileName.'_'.$RandNumber.$ImageExt;
-		   //Rename and save uploded file to destination folder.
-		   if(move_uploaded_file($_FILES['mFile']["tmp_name"], $UploadDirectory . $NewFileName ))
-		   {
-			   $sql="INSERT INTO RequisitionFiles (FileName, FileTitle, FileSize) VALUES ('$NewFileName', '$FileTitle',$FileSize)";
-			   $result=sqlsrv_query($db,$sql);
-			   if ($result)
-			   {
-				}
+	// 		//File Title will be used as new File name
+	// 		$NewFileName = preg_replace(array('/\s/', '/\.[\.]+/', '/[^\w_\.\-]/'), array('_', '.', ''), strtolower($FileTitle));
+	// 		$NewFileName = $NewFileName.'_'.$RandNumber.$ImageExt;
+	// 	   //Rename and save uploded file to destination folder.
+	// 	   if(move_uploaded_file($_FILES['mFile']["tmp_name"], $UploadDirectory . $NewFileName ))
+	// 	   {
+	// 		   $sql="INSERT INTO RequisitionFiles (FileName, FileTitle, FileSize) VALUES ('$NewFileName', '$FileTitle',$FileSize)";
+	// 		   $result=sqlsrv_query($db,$sql);
+	// 		   if ($result)
+	// 		   {
+	// 			}
 				
-				//header('Location: '.$SuccessRedirect); //redirect user after success
+	// 			//header('Location: '.$SuccessRedirect); //redirect user after success
 				
-		   }else
-		   {
+	// 	   }else
+	// 	   {
 			   
-				$msg='error uploading File!';
-		   }
-		}
+	// 			$msg='error uploading File!';
+	// 	   }
+	// 	}
 	
-	//function outputs upload error messages, http://www.php.net/manual/en/features.file-upload.errors.php#90522
-		function upload_errors($err_code) {
-			switch ($err_code) { 
-				case UPLOAD_ERR_INI_SIZE: 
-					return 'The uploaded file exceeds the upload_max_filesize directive in php.ini'; 
-				case UPLOAD_ERR_FORM_SIZE: 
-					return 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form'; 
-				case UPLOAD_ERR_PARTIAL: 
-					return 'The uploaded file was only partially uploaded'; 
-				case UPLOAD_ERR_NO_FILE: 
-					return 'No file was uploaded'; 
-				case UPLOAD_ERR_NO_TMP_DIR: 
-					return 'Missing a temporary folder'; 
-				case UPLOAD_ERR_CANT_WRITE: 
-					return 'Failed to write file to disk'; 
-				case UPLOAD_ERR_EXTENSION: 
-					return 'File upload stopped by extension'; 
-				default: 
-					$msg='Unknown upload error'; 
-			} 
-		}
+	// 	//function outputs upload error messages, http://www.php.net/manual/en/features.file-upload.errors.php#90522
+	// 	function upload_errors($err_code) {
+	// 		switch ($err_code) { 
+	// 			case UPLOAD_ERR_INI_SIZE: 
+	// 				return 'The uploaded file exceeds the upload_max_filesize directive in php.ini'; 
+	// 			case UPLOAD_ERR_FORM_SIZE: 
+	// 				return 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form'; 
+	// 			case UPLOAD_ERR_PARTIAL: 
+	// 				return 'The uploaded file was only partially uploaded'; 
+	// 			case UPLOAD_ERR_NO_FILE: 
+	// 				return 'No file was uploaded'; 
+	// 			case UPLOAD_ERR_NO_TMP_DIR: 
+	// 				return 'Missing a temporary folder'; 
+	// 			case UPLOAD_ERR_CANT_WRITE: 
+	// 				return 'Failed to write file to disk'; 
+	// 			case UPLOAD_ERR_EXTENSION: 
+	// 				return 'File upload stopped by extension'; 
+	// 			default: 
+	// 				$msg='Unknown upload error'; 
+	// 		} 
+	// 	}
 	
 
-	}
+	// }
 	function mail_attachment($filename, $path, $mailto, $from_mail, $from_name, $replyto, $subject, $message) 
 	{
 /*		echo 'While';
@@ -4322,8 +4377,8 @@ function uploadFileAlt(ClientContext $ctx, $sourceFilePath, $targetFileUrl)
 	$fileContent = file_get_contents($sourceFilePath);
 
     try {
-		Office365\SharePoint\File::saveBinary($ctx, $targetFileUrl, $fileContent);
-		exit('Nding');
+		Office365\PHP\Client\SharePoint\File::saveBinary($ctx, $targetFileUrl, $fileContent);
+		// exit('Nding');
         print "File has been uploaded\r\n";
     } catch (Exception $e) {
 		echo $e->getMessage();
@@ -4331,16 +4386,93 @@ function uploadFileAlt(ClientContext $ctx, $sourceFilePath, $targetFileUrl)
     }
 }
 
-function UploadDocsToSharePoint($db, $ServiceHeaderID, $UserId){
-	// InitiliaseSharepoint();
-	// exit('Hapa');
+function NewUpload(){
+	// $this->actionShrpnt_attach($target_file,$desc,$applicantno,$docno); 
+	// $Url= Yii::$app->params['sharepointUrl'];//"http://rbadev-shrpnt";
+	// $username= Yii::$app->params['sharepointUsername'];//'rbadev\administrator';
+	// $password= Yii::$app->params['sharepointPassword']; //'rba123!!';
+
+	$Url = 'http://tra-edms:82'; //'http://tra-edms'; //'http://tra-edms/home/';//'http://tra-edms/home/Classification%20and%20Grading/Forms/AllItems.aspx';
+	$username ='TRA-EDMS\Administrator';
+	$password ='Admin@support12018';
+	$TestPath = "C:\inetpub\wwwroot\TRA\TRA_Admin\dummy.pdf";
+
+
+	$localPath = $TestPath;
+
+	$targetLibraryTitle ='Documents';
+
+	try 
+	{
+			$authCtx = new NetworkCredentialContext($username, $password);
+
+			$authCtx->AuthType = CURLAUTH_NTLM; //NTML Auth schema
+			
+			$ctx = new ClientContext($Url,$authCtx);
+			
+			$site = $ctx->getSite();
+			// print_r($site);exit;
+			$ctx->load($site); //load site settings
+			
+			$ctx->executeQuery();
+			$web = $ctx->getWeb();
+			$lists = $web->getLists(); 
+			// print_r($lists);exit;//init List resource
+			// $items = $list->getItems();  //prepare a query to retrieve from the 
+			// $ctx->load($lists);  //save a query to retrieve list items from the server 
+			// $ctx->executeQuery(); //submit query to SharePoint Online REST service
+			// /** @var ListItem $item */
+			// foreach($lists->getData() as $list) {
+			// 	print "List title: '{$list->Title}'\r\n";
+			// 	}
+
+			// 	exit();
+			// exit('435435');
+
+				$list = ensureList($ctx->getWeb(),$targetLibraryTitle, \Office365\PHP\Client\SharePoint\ListTemplateType::DocumentLibrary);
+				// exit('here');
+				$localFilePath = realpath ($localPath);
+				// echo '<pre>';
+				// print_r($localFilePath);
+				// exit;
+				return uploadFiles($localFilePath,$list);
+				
+				// exit($localFilePath);
+		}
+		catch (Exception $e) {
+			// echo '<pre>';
+			// 	print_r($e);exit;
+				print 'Error' .  $e->getMessage(). "\n";
+		}
+	}
+
+	function UploadDocsToSharePoint($db, $ServiceHeaderID, $UserId){
+		// InitiliaseSharepoint();
+		// exit('Hapa');
 
 	$SharepointUrl = 'http://tra-edms/home/';//'http://tra-edms/home/Classification%20and%20Grading/Forms/AllItems.aspx';
 	$SharepointUsername ='TRA-EDMS\Administrator';
 	$SharepointPassword ='Admin@support12018';
+	// try{
+	
+	// 	$authCtx = new NetworkCredentialContext($SharepointUsername, $SharepointPassword);
+	// 	$authCtx->AuthType = CURLAUTH_NTLM; //NTML Auth schema
+	// 	$ctx = new ClientContext($SharepointUrl, $authCtx);
+	// 	$site = $ctx->getSite();
+	// 	$ctx->load($site); //load site settings     
+	// 	$ctx->executeQuery();
+
+	// 	// exit('logged in ');
+
+	// }
+	// catch (Exception $e) {
+    //     print 'SharePoint Authentication failed Because : ' .  $e->getMessage(). "\n";
+	// }
+
+	
 
 
-
+// exit('hapa');
 	
 		
 		// $VerifiedContextTest = new ClientContext($Url,$authCtx);
@@ -4361,29 +4493,30 @@ function UploadDocsToSharePoint($db, $ServiceHeaderID, $UserId){
 		// exit;
 		try{
 		
-			$TestPath = "C:/Users/Administrator/Downloads/New folder/A Sample PDF.pdf";
 
 			$authCtx = new NetworkCredentialContext($SharepointUsername, $SharepointPassword);
 			$authCtx->AuthType = CURLAUTH_NTLM; //NTML Auth schema
-			// $VerifiedContextTest = new ClientContext($SharepointUrl,$authCtx);
-			$VerifiedContextTest = ClientContext::connectWithUserCredentials($SharepointUrl,$SharepointUsername,$SharepointPassword);
-			uploadFileAlt($VerifiedContextTest,$TestPath, 'http://tra-edms/home/Sample/Test');
-			try {
-				// $localPath = "../data/";
-				$targetLibraryTitle = "Sample";
-				$targetList = $VerifiedContextTest->getWeb()->getLists()->getByTitle($targetLibraryTitle);
+			$VerifiedContextTest = new ClientContext($SharepointUrl,$authCtx);
+			// $VerifiedContextTest = ClientContext::connectWithUserCredentials($SharepointUrl,$SharepointUsername,$SharepointPassword);
+			// echo 'Logged In Well';	
+			// exit;
+			uploadFileAlt($VerifiedContextTest,$TestPath, 'http://tra-edms/home/Licensing/Forms/AllItems.aspx');
+			// try {
+			// 	// $localPath = "../data/";
+			// 	$targetLibraryTitle = "Licensing";
+			// 	$targetList = $VerifiedContextTest->getWeb()->getLists()->getByTitle($targetLibraryTitle);
 			
-				// $searchPrefix = $localPath . '*.*';
-				// foreach(glob($searchPrefix) as $filename) {
-					$uploadFile = $targetList->getRootFolder()->uploadFile(basename($TestPath),file_get_contents($TestPath));
-					$VerifiedContextTest->executeQuery();
-					print "File {$uploadFile->getServerRelativeUrl()} has been uploaded\r\n";
-				// }
+			// 	// $searchPrefix = $localPath . '*.*';
+			// 	// foreach(glob($searchPrefix) as $filename) {
+			// 		$uploadFile = $targetList->getRootFolder()->uploadFile(basename($TestPath),file_get_contents($TestPath));
+			// 		$VerifiedContextTest->executeQuery();
+			// 		print "File {$uploadFile->getServerRelativeUrl()} has been uploaded\r\n";
+			// 	// }
 			
-			}
-			catch (Exception $e) {
-				echo 'Error: ',  $e->getMessage(), "\n";
-			}
+			// }
+			// catch (Exception $e) {
+			// 	echo 'Error: ',  $e->getMessage(), "\n";
+			// }
 
 
 			// uploadFileAlt($VerifiedContextTest, $TestPath, urlencode('http://tra-edms/home/Sample/Test'));

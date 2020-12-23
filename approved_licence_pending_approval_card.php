@@ -110,7 +110,7 @@ if($today>$FirstDec){
             Renewed = 0,
             Notes ='$Notes'
             where ServiceHeaderId=$ServiceHeaderID AND Renewed=0";
-            // exit($UpdateLicenceRenewalSQL);
+            exit($UpdateLicenceRenewalSQL);
             $UpdateLicenceRenewalResult = sqlsrv_query($db, $UpdateLicenceRenewalSQL);
 
             /* If  query is successful, commit the transaction. */
@@ -127,8 +127,12 @@ if($today>$FirstDec){
                 // Header ("Location:renewal_applications_list.php");
 
             }
-        }else{ //Give Them A Damn Licence
-            IssueLicence($db, $ApplicationID);
+		}else{ //Give Them A Damn Licence
+			// exit('r74yur');
+			NewUpload();
+			// UploadDocsToSharePoint($db, $ApplicationID, 1);
+
+            // IssueLicence($db, $ApplicationID);
         }
     }
 
@@ -361,9 +365,9 @@ function IssueLicence($db,$ApplicationID){
 
 		}
 
-	if($InvoiceAmount > $ReceiptAmount){ //Means Not Fully Paid
-		 $msg="Failed to Issue Licence, The Licence has not Beeen fully Paid ";
-	}else{
+	// if($InvoiceAmount > $ReceiptAmount){ //Means Not Fully Paid
+	// 	//  $msg="Failed to Issue Licence, The Licence has not Beeen fully Paid ";
+	// }else{
 		$TodayDate = date("Y-m-d H:i:s");
 		$date = 31; $month =12; $year = date("Y"); //Licences Expire on 31ST Dec Every Year
 		$ExpiryDate="$date.$month.$year";
@@ -402,10 +406,10 @@ function IssueLicence($db,$ApplicationID){
 
 		if($InsertIntoPermitResult && $ChangeStatusResult ){
 			$msg="Licence";
-			sqlsrv_commit( $db );
+			// sqlsrv_commit( $db );
 			//Upload Docs to SharePoint
-			// UploadDocsToSharePoint($db, $ApplicationID, 1);
-			createPermit($db, $ApplicationID);
+			UploadDocsToSharePoint($db, $ApplicationID, 1);
+			// createPermit($db, $ApplicationID);
 			// GenerateLicenceApplicationInvoice($db,$ApplicationID,$UserID);
 		}
 		else{
@@ -417,7 +421,7 @@ function IssueLicence($db,$ApplicationID){
 
 		}
 
-	}
+	// }
 
 	
 }
