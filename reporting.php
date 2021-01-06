@@ -8,19 +8,19 @@
 	$UserID = $_SESSION['UserID'];
 	$AgentID=$UserID;//$_REQUEST['user'];
 
+	
+
 	$fromDate=date("d/m/Y");
 	$toDate=date("d/m/Y");
 	
 	if ($_REQUEST['search']=="1"){
-		//print_r($_REQUEST);
+		// print_r($_REQUEST);
 		$report=$_REQUEST['report'];
 		$fromDate=$_REQUEST['fromDate'];
 		$toDate=$_REQUEST['toDate'];
 		$cName = $_REQUEST['cName'];
 		$RevenueStreamID=$_REQUEST['RevenueStreamID'];	
 		
-		// echo $cName;
-		// exit;
 	}else{
 		//echo "sio sawa";
 	}
@@ -32,6 +32,16 @@
 		PermitsList($db,$cosmasRow,$reportFileName,$fromDate,$toDate);
 	}else if ($report=='permits_summary'){			
 			Permits_Summary($db,$cosmasRow,$reportFileName,$fromDate,$toDate);
+	}else if ($report=='facilitation_applications'){			
+		facilitation_applications($db,$cosmasRow,$reportFileName,$fromDate,$toDate);
+	}else if ($report=='classification_applications'){			
+		classification_applications($db,$cosmasRow,$reportFileName,$fromDate,$toDate);
+	}else if ($report=='facilitation_establishment'){			
+			facilitation_establishment($db,$cosmasRow,$reportFileName,$fromDate,$toDate,$cName);
+	}else if ($report=='classification_applicant'){			
+			classification_applicant($db,$cosmasRow,$reportFileName,$fromDate,$toDate,$cName);
+	}else if ($report=='facilitation_approved'){			
+		facilitation_approved($db,$cosmasRow,$reportFileName,$fromDate,$toDate);
 	}else if ($report=='newestablishment'){			
 			newestablishment($db,$cosmasRow,$reportFileName,$fromDate,$toDate);
 	}else if ($report=='revenuegenerated'){			
@@ -42,6 +52,17 @@
 			establishmentbranches($db,$cosmasRow,$reportFileName,$fromDate,$toDate,$cName);
 	}else if ($report=='graded'){
 		graded($db,$cosmasRow,$reportFileName,$fromDate,$toDate);
+	}else if ($report=='all_graded'){
+		all_graded($db,$cosmasRow,$reportFileName,$fromDate,$toDate);
+	}else if ($report=='licence_applications'){
+		licence_applications($db,$cosmasRow,$reportFileName,$fromDate,$toDate);
+	}else if ($report=='licenced'){
+		licenced($db,$cosmasRow,$reportFileName,$fromDate,$toDate);
+	}else if ($report=='all_licenced'){
+		all_licenced($db,$cosmasRow,$reportFileName,$fromDate,$toDate);
+	}else if ($report=='licence_applicant'){
+		licence_applicant($db,$cosmasRow,$reportFileName,$fromDate,$toDate,$cName);
+
 
 
 	}else if ($report=='mpesa'){
@@ -130,6 +151,41 @@
 					<td><label width="20%">Report</label>
 						<div class="input-control select" data-role="input-control">						
 							<select name="ReportName"  id="ReportName">
+
+								<?php
+									$sql = "select RoleCenterID from UserRoles where UserID = $AgentID";
+
+									$result = sqlsrv_query($db, $sql);
+									while($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)){
+										$RoleCenterID = $row['RoleCenterID'];
+										
+									}
+								if($RoleCenterID == 2026 || $RoleCenterID == 2025){
+										
+								?>
+								<option value="0" ></option>
+								<option value="facilitation_applications" <?php if($report=='facilitation_applications'){?> selected="selected" <?php } ?>>Establishment Applications</option>
+								<option value="facilitation_approved" <?php if($report=='facilitation_approved'){?> selected="selected" <?php } ?>>Approved Applications</option>
+								<option value="facilitation_establishment" <?php if($report=='facilitation_establishment'){?> selected="selected" <?php } ?>>Applicant Details</option>
+								<?php
+								}elseif($RoleCenterID == 3026 || $RoleCenterID == 4026 || $RoleCenterID == 4027){
+										
+										?>
+										<option value="0" ></option>
+										<option value="classification_applications" <?php if($report=='classification_applications'){?> selected="selected" <?php } ?>>Pending Classification Applications</option>
+										<option value="graded" <?php if($report=='graded'){?> selected="selected" <?php } ?>>Graded Establishments Filtered</option>
+										<option value="all_graded" <?php if($report=='all_graded'){?> selected="selected" <?php } ?>>All Graded Establishments</option>
+										<option value="classification_applicant" <?php if($report=='classification_applicant'){?> selected="selected" <?php } ?>>Individual Applicants</option>?>
+										<?php
+								}elseif($RoleCenterID == 2014 || $RoleCenterID == 2020 || $RoleCenterID == 2023){
+										
+										?>
+										<option value="0" ></option>
+										<option value="licence_applications" <?php if($report=='licence_applications'){?> selected="selected" <?php } ?>>Pending Licence Applications</option>
+										<option value="licenced" <?php if($report=='licenced'){?> selected="selected" <?php } ?>>Licenced Establishments Filtered</option>
+										<option value="all_licenced" <?php if($report=='all_licenced'){?> selected="selected" <?php } ?>>All Licenced Establishments</option>
+										<option value="licence_applicant" <?php if($report=='licence_applicant'){?> selected="selected" <?php } ?>>Individual Applicants</option>?>
+								<?php }else{ ?>
 								<option value="0" ></option>
 								<!-- <option value="permits" <?php if($report=='permits'){?> selected="selected" <?php } ?>>Licences Issued</option> -->
 								<option value="graded" <?php if($report=='graded'){?> selected="selected" <?php } ?>>Graded Establishments</option>
@@ -156,7 +212,7 @@
 								<option value="land_rates_status_asAt" <?php if($report=='land_rates_status_asAt'){?> selected="selected" <?php } ?>>Land Rates Status As At</option>
 								<option value="house_invoices" <?php if($report=='house_invoices'){?> selected="selected" <?php } ?>>Housing Invoices</option>
 								<option value="house_receipts" <?php if($report=='house_receipts'){?> selected="selected" <?php } ?>>Housing Receipts</option>
-								<option value="house_receipts" <?php if($report=='house_receipts'){?> selected="selected" <?php } ?>>Housing Receipts</option> -->									
+								<option value="house_receipts" <?php if($report=='house_receipts'){?> selected="selected" <?php } ?>>Housing Receipts</option> -->								<?php } ?>	
 						  </select>					
 						</div>
 					</td>
@@ -206,6 +262,157 @@
 								'&report='+this.form.ReportName.value+	
 								'&cName='+this.form.cName.value+ '&search=1','content','loader','listpages','')" value="Search">
 					</td>
+					<?php
+					}elseif($report == 'facilitation_establishment'){
+						?>
+						<td><label width="20%">Applicant Name</label>
+						<div class="input-control select" data-role="input-control">	
+						
+						<select id="cName" name="cName" required width="48">
+				        <option value="" selected="selected" >select applicant</option>
+				        <?php 
+						$es_sql = "select sh.ServiceHeaderID,c.CustomerName,c.CustomerID,convert(date,sh.SubmissionDate) as DateApplied,st.ServiceStatusName
+						from ServiceHeader sh
+						join Customer c on sh.CustomerID = c.CustomerID
+						join Services s on sh.ServiceID = s.ServiceID
+						join ServiceStatus st on sh.ServiceStatusID = st.ServiceStatusID
+						join ServiceCategory sc on sh.ServiceCategoryId = sc.ServiceCategoryID
+						join ServiceGroup sg on sc.ServiceGroupID = sg.ServiceGroupID
+						where sc.ServiceGroupID = 12 and sh.ServiceStatusID != 4";
+						$es_result = sqlsrv_query($db, $es_sql) or die ("failed to load Status");
+
+						$selected = '';
+					    while ($myrow = sqlsrv_fetch_array( $es_result, SQLSRV_FETCH_ASSOC)) 
+					    {
+							$c_id = $myrow ['CustomerID'];
+							$c_name = $myrow['CustomerName'];
+							if ($c_name==$c_id) 
+							{
+							   	$selected = 'SELECTED';
+							} else
+							{
+								$selected = '';
+							}	 
+						 	?>
+				       <option value="<?php echo $c_id;?>"><?php echo $c_name;?></option> 
+
+						
+				        <?php
+					 }
+					 ?>
+				    </select>
+
+
+						</div>
+						</td>
+						<td></td>
+						<td><label>&nbsp;</label>
+					<input name="btnSearch" type="button" onclick="loadmypage('reporting.php?'+
+								'&report='+this.form.ReportName.value+	
+								'&cName='+this.form.cName.value+ '&search=1','content','loader','listpages','')" value="Search">
+					</td>
+
+					<?php
+					}elseif($report == 'classification_applicant'){
+						?>
+						<td><label width="20%">Applicant Name</label>
+						<div class="input-control select" data-role="input-control">	
+						
+						<select id="cName" name="cName" required width="48">
+				        <option value="" selected="selected" >select applicant</option>
+				        <?php 
+						$es_sql = "select sh.ServiceHeaderID,c.CustomerName,c.CustomerID,convert(date,sh.SubmissionDate) as DateApplied,st.ServiceStatusName
+						from ServiceHeader sh
+						join Customer c on sh.CustomerID = c.CustomerID
+						join Services s on sh.ServiceID = s.ServiceID
+						join ServiceStatus st on sh.ServiceStatusID = st.ServiceStatusID
+						join ServiceCategory sc on sh.ServiceCategoryId = sc.ServiceCategoryID
+						join ServiceGroup sg on sc.ServiceGroupID = sg.ServiceGroupID
+						where sc.ServiceGroupID = 11 and sh.ServiceStatusID != 4";
+						// exit($es_sql);
+						$es_result = sqlsrv_query($db, $es_sql) or die ("failed to load Status");
+
+						$selected = '';
+					    while ($myrow = sqlsrv_fetch_array( $es_result, SQLSRV_FETCH_ASSOC)) 
+					    {
+							$c_id = $myrow ['CustomerID'];
+							$c_name = $myrow['CustomerName'];
+							if ($c_name==$c_id) 
+							{
+							   	$selected = 'SELECTED';
+							} else
+							{
+								$selected = '';
+							}	 
+						 	?>
+				       <option value="<?php echo $c_id;?>"><?php echo $c_name;?></option> 
+
+						
+				        <?php
+					 }
+					 ?>
+				    </select>
+
+
+						</div>
+						</td>
+						<td></td>
+						<td><label>&nbsp;</label>
+					<input name="btnSearch" type="button" onclick="loadmypage('reporting.php?'+
+								'&report='+this.form.ReportName.value+	
+								'&cName='+this.form.cName.value+ '&search=1','content','loader','listpages','')" value="Search">
+					</td>
+					<?php
+					}elseif($report == 'licence_applicant'){
+						?>
+						<td><label width="20%">Applicant Name</label>
+						<div class="input-control select" data-role="input-control">	
+						
+						<select id="cName" name="cName" required width="48">
+				        <option value="" selected="selected" >select applicant</option>
+				        <?php 
+						$es_sql = "select sh.ServiceHeaderID,c.CustomerName,c.CustomerID,convert(date,sh.SubmissionDate) as DateApplied,st.ServiceStatusName
+						from ServiceHeader sh
+						join Customer c on sh.CustomerID = c.CustomerID
+						join Services s on sh.ServiceID = s.ServiceID
+						join ServiceStatus st on sh.ServiceStatusID = st.ServiceStatusID
+						join ServiceCategory sc on sh.ServiceCategoryId = sc.ServiceCategoryID
+						join ServiceGroup sg on sc.ServiceGroupID = sg.ServiceGroupID
+						where sh.ServiceStatusID != 4 and (sc.ServiceGroupID != 11 and sc.ServiceGroupID != 12)";
+						// exit($es_sql);
+						$es_result = sqlsrv_query($db, $es_sql) or die ("failed to load Status");
+
+						$selected = '';
+					    while ($myrow = sqlsrv_fetch_array( $es_result, SQLSRV_FETCH_ASSOC)) 
+					    {
+							$c_id = $myrow ['CustomerID'];
+							$c_name = $myrow['CustomerName'];
+							if ($c_name==$c_id) 
+							{
+							   	$selected = 'SELECTED';
+							} else
+							{
+								$selected = '';
+							}	 
+						 	?>
+				       <option value="<?php echo $c_id;?>"><?php echo $c_name;?></option> 
+
+						
+				        <?php
+					 }
+					 ?>
+				    </select>
+
+
+						</div>
+						</td>
+						<td></td>
+						<td><label>&nbsp;</label>
+					<input name="btnSearch" type="button" onclick="loadmypage('reporting.php?'+
+								'&report='+this.form.ReportName.value+	
+								'&cName='+this.form.cName.value+ '&search=1','content','loader','listpages','')" value="Search">
+					</td>
+
 						<?php
 					}else{
 					?>
@@ -220,36 +427,7 @@
 						</div>
 					</td>
 				
-					<!-- <td><label width="20%">Agent/User</label>
-						<div class="input-control select" data-role="input-control">								
-							<select name="AgentID"  id="AgentID">
-								<option value="0" selected="selected"></option>
-								<?php 
-								$s_sql = "SELECT u.AgentID,ag.FirstName+' '+ag.Middlename+' '+ag.LastName Names FROM Users u join Agents ag on u.AgentID=ag.AgentID ORDER BY 1";									
-								$s_result = sqlsrv_query($db, $s_sql);
-								if ($s_result) 
-								{ //connection succesful 
-									while ($row = sqlsrv_fetch_array( $s_result, SQLSRV_FETCH_ASSOC))
-									{
-										$s_id = $row["AgentID"];
-										$s_name = $row["Names"];
-										if ($AgentID==$s_id) 
-										{
-											$selected = 'selected="selected"';
-										} else
-										{
-											$selected = '';
-										}												
-									 ?>
-								<option value="<?php echo $s_id; ?>" <?php echo $selected; ?>><?php echo $s_name; ?></option>
-								<?php 
-									}
-									
-								}
-								?>
-						  </select>							
-						</div>
-					</td> -->
+					
 					<td><label>&nbsp;</label>
 					<input name="btnSearch" type="button" onclick="loadmypage('reporting.php?'+
 								'&report='+this.form.ReportName.value+	

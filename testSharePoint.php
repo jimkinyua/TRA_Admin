@@ -2,7 +2,7 @@
 
 require 'DB_PARAMS/connect.php';
 
-//require_once('phpSPO-master/vendor/autoload.php');
+// require_once('phpSPO-master/vendor/autoload.php');
 require_once "phpSPO/src/autoloader.php";
 
 use Office365\PHP\Client\Runtime\Auth\NetworkCredentialContext;
@@ -23,13 +23,13 @@ $password = 'Admin@support12020a'; //'rba123!!';
 
 // echo Shrpnt_test($Url,$username,$password);exit;
 
-$TargetLibrary="Shared Documents";
+$TargetLibrary="Documents";
 $destination="C:\Users\Administrator\Documents\dummy.pdf";
 // exit($destination);
 // $destination="C:\Users\Administrator\Documents\dummy.pdf";
 $DocumentMetadata=array();
 $SharePointURL = Shrpnt_attach($Url,$username,$password,$destination, $TargetLibrary, $DocumentMetadata);
-// exit($destination);
+exit($SharePointURL);
 
 // $FullUrl = $Url.'/'.$TargetLibrary.'/'.'document for upload.pdf';
 // echo $FullUrl;
@@ -50,8 +50,9 @@ function Shrpnt_attach($Url,$username,$password,$filepath, $targetLibraryTitle, 
         $ctx->executeQuery();
 
         $list = ensureList($ctx->getWeb(),$targetLibraryTitle, \Office365\PHP\Client\SharePoint\ListTemplateType::DocumentLibrary);
-
+// print_r($list);exit;
         uploadToSP($filepath, $list, $DocumentMetadata);
+        
     }
     catch (Exception $e) {
         print 'Authentication failed: ' .  $e->getMessage(). "\n";
@@ -98,7 +99,7 @@ function ensureList(Web $web, $listTitle, $type, $clearItems = true) {
             }
             return $existingList;
         }
-        return ListExtensions::createList($web, $listTitle, $type);
+        // return ListExtensions::createList($web, $listTitle, $type);
     }
 
 function uploadToSP($localFilePath, \Office365\PHP\Client\SharePoint\SPList $targetList, $DocumentMetadata) {
@@ -117,8 +118,8 @@ function uploadToSP($localFilePath, \Office365\PHP\Client\SharePoint\SPList $tar
         // $uploadFile->getListItemAllFields()->setProperty('Document_x0020_No_x002e_', $DocumentMetadata['DocumentNumber']);
         // $uploadFile->getListItemAllFields()->setProperty('Expiry_x0020_Date', $DocumentMetadata['ExpiryDate']);
         // $uploadFile->getListItemAllFields()->setProperty('Reference_x0020_Number', $DocumentMetadata['TenderNumber']);
-        $uploadFile->getListItemAllFields()->update();
-        $ctx->executeQuery();
+        // $uploadFile->getListItemAllFields()->update();
+        // $ctx->executeQuery();
     }
 
 

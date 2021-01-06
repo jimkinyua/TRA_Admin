@@ -129,10 +129,10 @@ if($today>$FirstDec){
             }
 		}else{ //Give Them A Damn Licence
 			// exit('r74yur');
-			NewUpload();
+			// NewUpload();
 			// UploadDocsToSharePoint($db, $ApplicationID, 1);
 
-            // IssueLicence($db, $ApplicationID);
+            IssueLicence($db, $ApplicationID);
         }
     }
 
@@ -406,11 +406,11 @@ function IssueLicence($db,$ApplicationID){
 
 		if($InsertIntoPermitResult && $ChangeStatusResult ){
 			$msg="Licence";
-			// sqlsrv_commit( $db );
+			sqlsrv_commit( $db );
 			//Upload Docs to SharePoint
-			UploadDocsToSharePoint($db, $ApplicationID, 1);
-			// createPermit($db, $ApplicationID);
-			// GenerateLicenceApplicationInvoice($db,$ApplicationID,$UserID);
+			// UploadDocsToSharePoint($db, $ApplicationID, 1);
+			createPermit($db, $ApplicationID);
+			GenerateLicenceApplicationInvoice($db,$ApplicationID,$UserID);
 		}
 		else{
 		

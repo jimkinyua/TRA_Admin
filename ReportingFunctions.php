@@ -297,6 +297,1750 @@ ini_set('memory_limit','5000M');
 		
 				
 	}
+
+	function facilitation_establishment($db,$cosmasRow,$rptName,$fromDate,$toDate,$cName)
+	{
+		$tablestr = '';
+		$ReportTitle="Application Details";
+		$sql="select sh.ServiceHeaderID,sh.ServiceStatusID,c.*,s.ServiceName,convert(date,sh.SubmissionDate) as DateApplied,st.ServiceStatusName
+		from ServiceHeader sh
+		join Customer c on sh.CustomerID = c.CustomerID
+		join Services s on sh.ServiceID = s.ServiceID
+		join ServiceStatus st on sh.ServiceStatusID = st.ServiceStatusID
+		join ServiceCategory sc on sh.ServiceCategoryId = sc.ServiceCategoryID
+		join ServiceGroup sg on sc.ServiceGroupID = sg.ServiceGroupID
+		where sc.ServiceGroupID = 12 and c.CustomerID = $cName";
+		// exit($sql);
+				$tblTotals=0;
+				$result=sqlsrv_query($db, $sql);
+				while($rw=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC))
+				{					
+					$ServiceHeaderID=$rw['ServiceHeaderID'];				
+					$CustomerName=$rw['CustomerName'];
+					$CustomerID=$rw['CustomerID'];
+					$ServiceStatusID=$rw['ServiceStatusID'];
+					$ServiceName = $rw['ServiceName'];
+					$ServiceStatusName = $rw['ServiceStatusName'];
+					$Mobile1 = $rw['Mobile1'];
+					$Email = $rw['Email'];
+					if($ServiceStatusID == 6 || $ServiceStatusID == 7 || $ServiceStatusID == 11 || $ServiceStatusID == 4){
+						$ServiceStatusName = $ServiceStatusName;
+					}else{
+						$ServiceStatusName = 'Under Review';
+					}
+					$tablestr.='<tr>
+					<td align="left">'.$CustomerName.'</td>
+					<td align="right">'.$ServiceName.'</td>
+					<td align="right">'.$ServiceStatusName.'</td>
+					<td align="right">'.$Mobile1.'</td>
+					<td align="right">'.$Email.'</td>
+					</tr>'; 
+				}
+				
+		// echo $tablestr;
+		$d_sql = "select * from Directors d left join Countries c on d.CountryId = c.Id where d.CompanyID = $CustomerID";
+		// exit($d_sql);
+		$d_result = sqlsrv_query($db, $d_sql);
+		while($omrow = sqlsrv_fetch_array($d_result, SQLSRV_FETCH_ASSOC)){
+			$FirstName = $omrow['FirstName'];
+			$LastName = $omrow['LastName'];
+			$IDNO = $omrow['IDNO'];
+			$PhoneNumber = $omrow['PhoneNumber'];
+			$Nationality = $omrow['Nationality'];
+			$tablestr1.='<tr>
+					<td align="left">'.$FirstName.'&nbsp;'.$LastName.'</td>
+					<td align="right">'.$IDNO.'</td>
+					<td align="right">'.$PhoneNumber.'</td>
+					<td align="right">'.$Nationality.'</td>
+					</tr>'; 
+		}
+
+		$a_sql = "select * from Attachments a 
+		join Documents d on a.DocumentID = d.DocumentID 
+		where a.ApplicationNo = $ServiceHeaderID";
+		// exit($d_sql);
+		$a_result = sqlsrv_query($db, $a_sql);
+		while($omrow = sqlsrv_fetch_array($a_result, SQLSRV_FETCH_ASSOC)){
+			$DocumentName = $omrow['DocumentName'];
+			
+			$tablestr2.='<tr>
+					<td align="left">'.$DocumentName.'</td>
+					</tr>'; 
+		}
+
+		$mpdf=new mPDF('win-1252','A4','','',20,15,48,25,10,10);
+		$mpdf->useOnlyCoreFonts = true;    // false is default
+		$mpdf->SetProtection(array('print'));
+		$mpdf->SetTitle("TRA");
+		$mpdf->SetAuthor("TRA");
+		$mpdf->SetWatermarkText("Tourism Regulatory Authority");
+		$mpdf->showWatermarkText = true;
+		$mpdf->watermark_font = 'DejaVuSansCondensed';
+		$mpdf->watermarkTextAlpha = 0.1;
+		$mpdf->SetDisplayMode('fullpage');
+
+		$html = '
+		<html>
+		<head>
+			<link rel="stylesheet" type="text/css" href="css/my_css.css"/>		
+		</head>
+		<body>
+
+		<!--mpdf
+		<htmlpageheader name="myheader">
+		<table width="100%">
+			<tr>
+				<td align="Center" colspan="2" style="font-size:10mm">
+					<b>'.$ReportTitle.'</b>
+				</td>
+			</tr>		
+			<tr>
+				<td align="Center" colspan="2">
+					<img src="images/logo.png" alt="TRA Logo">
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2" align="Center"><span style="font-weight: bold; font-size: 14pt;">'.$CountyName.'</span></td>
+			</tr>		
+		</table>
+		
+		</htmlpageheader>
+
+		<htmlpagefooter name="myfooter">
+		<div style="border-top: 1px solid #000000; font-size: 9pt; text-align: center; padding-top: 3mm; ">
+		powered by      <img src="images/attain_logo_2.png" alt="County Logo">
+		</div>
+		</htmlpagefooter>
+
+		<sethtmlpageheader name="myheader" value="on" show-this-page="1" />
+		<sethtmlpagefooter name="myfooter" value="on" />
+		mpdf-->
+		<br/><br/>
+		<style>
+		table {
+		  font-family: arial, sans-serif;
+		  border-collapse: collapse;
+		  width: 100%;
+		}
+
+		td, th {
+		  border: 1px solid #dddddd;
+		  text-align: left;
+		  padding: 8px;
+		}
+
+		tr:nth-child(even) {
+		  background-color: #dddddd;
+		}
+		table, th, td {
+		  border: 1px solid black;
+		  border-collapse: collapse;
+		}
+		</style>
+		<table class="items" width="100%" style="font-size: 9pt; border-collapse: collapse;" cellpadding="8">
+		<thead>
+		<tr>
+		<td width="30%">Applicant Name</td>
+		<td width="20%">Service Applied</td>
+		<td width="15%">Application Status</td>
+		<td width="15%">Phone Number</td>
+		<td width="30%">Email Address</td>
+		</tr>
+		</thead>
+		<tbody>
+		
+		<!-- ITEMS HERE -->'.
+		
+		
+		$tablestr.
+										
+		'<!-- END ITEMS HERE -->
+		
+		
+
+		</tbody>
+		</table>
+
+		<table width="100%">
+		<tr>
+			<td align="Center" colspan="2" style="font-size:3mm">
+				<b>Directors</b>
+			</td>
+		</tr>		
+				
+	</table>
+	
+	</htmlpageheader>
+
+	<htmlpagefooter name="myfooter">
+	<div style="border-top: 1px solid #000000; font-size: 9pt; text-align: center; padding-top: 3mm; ">
+	powered by      <img src="images/attain_logo_2.png" alt="County Logo">
+	</div>
+	</htmlpagefooter>
+
+	<sethtmlpageheader name="myheader" value="on" show-this-page="1" />
+	<sethtmlpagefooter name="myfooter" value="on" />
+	mpdf-->
+	<br/><br/>
+	<style>
+	table {
+	  font-family: arial, sans-serif;
+	  border-collapse: collapse;
+	  width: 100%;
+	}
+
+	td, th {
+	  border: 1px solid #dddddd;
+	  text-align: left;
+	  padding: 8px;
+	}
+
+	tr:nth-child(even) {
+	  background-color: #dddddd;
+	}
+	table, th, td {
+	  border: 1px solid black;
+	  border-collapse: collapse;
+	}
+	</style>
+	<table class="items" width="100%" style="font-size: 9pt; border-collapse: collapse;" cellpadding="8">
+	<thead>
+	<tr>
+	<td width="40%">Director Name</td>
+	<td width="20%">ID/Passport</td>
+	<td width="20%">Phone Number</td>
+	<td width="20%">Nationality</td>
+	</tr>
+	</thead>
+	<tbody>
+	
+	<!-- ITEMS HERE -->'.
+	
+	
+	$tablestr1.
+									
+	'<!-- END ITEMS HERE -->
+	
+	
+
+	</tbody>
+	</table>
+
+	<table width="100%">
+		<tr>
+			<td align="Center" colspan="2" style="font-size:3mm">
+				<b>Uploaded Docs</b>
+			</td>
+		</tr>		
+				
+	</table>
+	
+	</htmlpageheader>
+
+	<htmlpagefooter name="myfooter">
+	<div style="border-top: 1px solid #000000; font-size: 9pt; text-align: center; padding-top: 3mm; ">
+	powered by      <img src="images/attain_logo_2.png" alt="County Logo">
+	</div>
+	</htmlpagefooter>
+
+	<sethtmlpageheader name="myheader" value="on" show-this-page="1" />
+	<sethtmlpagefooter name="myfooter" value="on" />
+	mpdf-->
+	<br/><br/>
+	<style>
+	table {
+	  font-family: arial, sans-serif;
+	  border-collapse: collapse;
+	  width: 100%;
+	}
+
+	td, th {
+	  border: 1px solid #dddddd;
+	  text-align: left;
+	  padding: 8px;
+	}
+
+	tr:nth-child(even) {
+	  background-color: #dddddd;
+	}
+	table, th, td {
+	  border: 1px solid black;
+	  border-collapse: collapse;
+	}
+	</style>
+	<table class="items" width="100%" style="font-size: 9pt; border-collapse: collapse;" cellpadding="8">
+	<thead>
+	<tr>
+	<td width="40%">Document Name</td>
+	
+	</tr>
+	</thead>
+	<tbody>
+	
+	<!-- ITEMS HERE -->'.
+	
+	
+	$tablestr2.
+									
+	'<!-- END ITEMS HERE -->
+	
+	
+
+	</tbody>
+	</table>
+
+		</body>
+		</html>
+		';
+		$mpdf->WriteHTML($html);
+		
+ 		//$mpdf->Output();
+		//exit;
+		
+		$mpdf->Output('pdfdocs/reports/'.$rptName.'.pdf','F'); 
+		
+				
+	}
+
+	function facilitation_applications($db,$cosmasRow,$rptName,$fromDate,$toDate)
+	{
+
+		$row=$cosmasRow;	
+		$CountyName=$row['CountyName'];		
+		$CountyAddress=$row['PostalAddress'];
+		$CountyTown=$row['Town'];
+		$CountyTelephone=$row['Telephone1'];
+		$CountyMobile=$row['Mobile1'];
+		$CountyEmail=$row['Email'];
+		
+		
+
+		$tablestr = '';
+		$ReportTitle="Trade and Facilitation Applications<br> Between". $fromDate." and " .$toDate;
+
+			$sql="select sh.ServiceHeaderID,c.CustomerName,s.ServiceName,convert(date,sh.SubmissionDate) as DateApplied,st.ServiceStatusName
+			from ServiceHeader sh
+			join Customer c on sh.CustomerID = c.CustomerID
+			join Services s on sh.ServiceID = s.ServiceID
+			join ServiceStatus st on sh.ServiceStatusID = st.ServiceStatusID
+			join ServiceCategory sc on sh.ServiceCategoryId = sc.ServiceCategoryID
+			join ServiceGroup sg on sc.ServiceGroupID = sg.ServiceGroupID
+			where sc.ServiceGroupID = 12 and convert(date,sh.SubmissionDate)>='$fromDate' and convert(date,sh.SubmissionDate)<='$toDate'";
+
+		// echo $sql; exit;
+				// $tblTotals=0;
+				$result=sqlsrv_query($db, $sql);
+				while($rw=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC))
+				{					
+					$ServiceHeaderID = $rw['ServiceHeaderID'];
+					$CustomerName=$rw['CustomerName'];
+					$ServiceName=$rw['ServiceName'];
+					$DateApplied=$rw['DateApplied'];
+					$ServiceStatusName=$rw['ServiceStatusName'];
+					
+					$tablestr.='<tr>
+					<td align="left">'.$ServiceHeaderID.'</td>
+					<td align="left">'.$CustomerName.'</td>
+					<td align="left">'.$ServiceName.'</td>
+					<td align="left">'.$DateApplied.'</td>
+					<td align="left">'.$ServiceStatusName.'</td>
+					
+					</tr>'; 
+				}
+
+		
+		$mpdf=new mPDF('win-1252','A4','','',20,15,48,25,10,10);
+		$mpdf->useOnlyCoreFonts = true;    // false is default
+		$mpdf->SetProtection(array('print'));
+		$mpdf->SetTitle("Tourism Regulatory Authority");
+		$mpdf->SetAuthor("Tourism Regulatory Authority");
+		$mpdf->SetWatermarkText("Tourism Regulatory Authority");
+		$mpdf->showWatermarkText = true;
+		$mpdf->watermark_font = 'DejaVuSansCondensed';
+		$mpdf->watermarkTextAlpha = 0.1;
+		$mpdf->SetDisplayMode('fullpage');
+
+		$html = '
+		<html>
+		<head>
+			<link rel="stylesheet" type="text/css" href="css/my_css.css"/>		
+		</head>
+		<body>
+
+		<!--mpdf
+		<htmlpageheader name="myheader">
+		<table width="100%">
+			<tr>
+				<td align="Center" colspan="2" style="font-size:10mm">
+					<b>'.$ReportTitle.'</b>
+				</td>
+			</tr>		
+			<tr>
+				<td align="Center" colspan="2">
+				<img src="images/logo.png" alt="TRA Logo">
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2" align="Center"><span style="font-weight: bold; font-size: 14pt;">'.$CountyName.'</span></td>
+			</tr>		
+		</table>
+		
+		</htmlpageheader>
+
+		<htmlpagefooter name="myfooter">
+		<div style="border-top: 1px solid #000000; font-size: 9pt; text-align: center; padding-top: 3mm; ">
+		powered by      <img src="images/attain_logo_2.png" alt="County Logo">
+		</div>
+		</htmlpagefooter>
+
+		<sethtmlpageheader name="myheader" value="on" show-this-page="1" />
+		<sethtmlpagefooter name="myfooter" value="on" />
+		mpdf-->
+		<br/><br/><br/><br/><br/><br/><br/><br/>
+		
+		
+
+
+
+		<table class="items" width="100%" style="font-size: 9pt; border-collapse: collapse;" cellpadding="8">
+		<thead>
+		<tr>
+		<td width="5%">Application No.</td>
+		<td width="25%">Customer Name</td>
+		<td width="25%">Service Applied</td>
+		<td width="10%">Date Applied</td>
+		<td width="15%">Application Status</td>
+		
+		</tr>
+		</thead>
+		<tbody>
+		
+		<!-- ITEMS HERE -->'.
+		
+		
+		$tablestr.
+										
+		'<!-- END ITEMS HERE -->
+		
+	
+
+		</tbody>
+		</table>
+		</body>
+		</html>
+		';
+
+		$mpdf->WriteHTML($html);
+		
+ 		//$mpdf->Output();
+		//exit; 
+		
+		$mpdf->Output('pdfdocs/reports/'.$rptName.'.pdf','F'); 
+		
+				
+	}
+	function facilitation_approved($db,$cosmasRow,$rptName,$fromDate,$toDate)
+	{
+
+		$row=$cosmasRow;	
+		$CountyName=$row['CountyName'];		
+		$CountyAddress=$row['PostalAddress'];
+		$CountyTown=$row['Town'];
+		$CountyTelephone=$row['Telephone1'];
+		$CountyMobile=$row['Mobile1'];
+		$CountyEmail=$row['Email'];
+		
+		
+
+		$tablestr = '';
+		$ReportTitle="Trade and Facilitation Approved Applications<br> Between". $fromDate." and " .$toDate;
+
+			$sql="select sh.ServiceHeaderID,c.CustomerName,s.ServiceName,convert(date,sh.SubmissionDate) as DateApplied,st.ServiceStatusName
+			from ServiceHeader sh
+			join Customer c on sh.CustomerID = c.CustomerID
+			join Services s on sh.ServiceID = s.ServiceID
+			join ServiceStatus st on sh.ServiceStatusID = st.ServiceStatusID
+			join ServiceCategory sc on sh.ServiceCategoryId = sc.ServiceCategoryID
+			join ServiceGroup sg on sc.ServiceGroupID = sg.ServiceGroupID
+			where sc.ServiceGroupID = 12 and sh.ServiceStatusID = 4 and convert(date,sh.SubmissionDate)>='$fromDate' and convert(date,sh.SubmissionDate)<='$toDate'";
+
+		// echo $sql; exit;
+				// $tblTotals=0;
+				$result=sqlsrv_query($db, $sql);
+				while($rw=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC))
+				{					
+					$ServiceHeaderID = $rw['ServiceHeaderID'];
+					$CustomerName=$rw['CustomerName'];
+					$ServiceName=$rw['ServiceName'];
+					$DateApplied=$rw['DateApplied'];
+					$ServiceStatusName=$rw['ServiceStatusName'];
+					
+					$tablestr.='<tr>
+					<td align="left">'.$ServiceHeaderID.'</td>
+					<td align="left">'.$CustomerName.'</td>
+					<td align="left">'.$ServiceName.'</td>
+					<td align="left">'.$DateApplied.'</td>
+					<td align="left">'.$ServiceStatusName.'</td>
+					
+					</tr>'; 
+				}
+
+		
+		$mpdf=new mPDF('win-1252','A4','','',20,15,48,25,10,10);
+		$mpdf->useOnlyCoreFonts = true;    // false is default
+		$mpdf->SetProtection(array('print'));
+		$mpdf->SetTitle("Tourism Regulatory Authority");
+		$mpdf->SetAuthor("Tourism Regulatory Authority");
+		$mpdf->SetWatermarkText("Tourism Regulatory Authority");
+		$mpdf->showWatermarkText = true;
+		$mpdf->watermark_font = 'DejaVuSansCondensed';
+		$mpdf->watermarkTextAlpha = 0.1;
+		$mpdf->SetDisplayMode('fullpage');
+
+		$html = '
+		<html>
+		<head>
+			<link rel="stylesheet" type="text/css" href="css/my_css.css"/>		
+		</head>
+		<body>
+
+		<!--mpdf
+		<htmlpageheader name="myheader">
+		<table width="100%">
+			<tr>
+				<td align="Center" colspan="2" style="font-size:10mm">
+					<b>'.$ReportTitle.'</b>
+				</td>
+			</tr>		
+			<tr>
+				<td align="Center" colspan="2">
+				<img src="images/logo.png" alt="TRA Logo">
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2" align="Center"><span style="font-weight: bold; font-size: 14pt;">'.$CountyName.'</span></td>
+			</tr>		
+		</table>
+		
+		</htmlpageheader>
+
+		<htmlpagefooter name="myfooter">
+		<div style="border-top: 1px solid #000000; font-size: 9pt; text-align: center; padding-top: 3mm; ">
+		powered by      <img src="images/attain_logo_2.png" alt="County Logo">
+		</div>
+		</htmlpagefooter>
+
+		<sethtmlpageheader name="myheader" value="on" show-this-page="1" />
+		<sethtmlpagefooter name="myfooter" value="on" />
+		mpdf-->
+		<br/><br/><br/><br/><br/><br/><br/><br/>
+		
+		
+
+
+
+		<table class="items" width="100%" style="font-size: 9pt; border-collapse: collapse;" cellpadding="8">
+		<thead>
+		<tr>
+		<td width="5%">Application No.</td>
+		<td width="25%">Customer Name</td>
+		<td width="25%">Service Applied</td>
+		<td width="10%">Date Applied</td>
+		<td width="15%">Application Status</td>
+		
+		</tr>
+		</thead>
+		<tbody>
+		
+		<!-- ITEMS HERE -->'.
+		
+		
+		$tablestr.
+										
+		'<!-- END ITEMS HERE -->
+		
+	
+
+		</tbody>
+		</table>
+		</body>
+		</html>
+		';
+
+		$mpdf->WriteHTML($html);
+		
+ 		//$mpdf->Output();
+		//exit; 
+		
+		$mpdf->Output('pdfdocs/reports/'.$rptName.'.pdf','F'); 
+		
+				
+	}
+	function classification_applications($db,$cosmasRow,$rptName,$fromDate,$toDate)
+	{
+
+		$row=$cosmasRow;	
+		$CountyName=$row['CountyName'];		
+		$CountyAddress=$row['PostalAddress'];
+		$CountyTown=$row['Town'];
+		$CountyTelephone=$row['Telephone1'];
+		$CountyMobile=$row['Mobile1'];
+		$CountyEmail=$row['Email'];
+		
+		
+
+		$tablestr = '';
+		$ReportTitle="Classification and Grading Pending Applications<br> Between ". $fromDate." and " .$toDate;
+
+			$sql="select sh.ServiceHeaderID,c.CustomerName,s.ServiceName,convert(date,sh.SubmissionDate) as DateApplied,st.ServiceStatusName
+			from ServiceHeader sh
+			join Customer c on sh.CustomerID = c.CustomerID
+			join Services s on sh.ServiceID = s.ServiceID
+			join ServiceStatus st on sh.ServiceStatusID = st.ServiceStatusID
+			join ServiceCategory sc on sh.ServiceCategoryId = sc.ServiceCategoryID
+			join ServiceGroup sg on sc.ServiceGroupID = sg.ServiceGroupID
+			where sc.ServiceGroupID = 11 and convert(date,sh.SubmissionDate)>='$fromDate' and convert(date,sh.SubmissionDate)<='$toDate'";
+
+		// echo $sql; exit;
+				// $tblTotals=0;
+				$result=sqlsrv_query($db, $sql);
+				while($rw=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC))
+				{					
+					$ServiceHeaderID = $rw['ServiceHeaderID'];
+					$CustomerName=$rw['CustomerName'];
+					$ServiceName=$rw['ServiceName'];
+					$DateApplied=$rw['DateApplied'];
+					$ServiceStatusName=$rw['ServiceStatusName'];
+					if($ServiceStatusID == 6 || $ServiceStatusID == 7 || $ServiceStatusID == 11 || $ServiceStatusID == 4){
+						$ServiceStatusName = $ServiceStatusName;
+					}else{
+						$ServiceStatusName = 'Under Review';
+					}
+					$tablestr.='<tr>
+					<td align="left">'.$ServiceHeaderID.'</td>
+					<td align="left">'.$CustomerName.'</td>
+					<td align="left">'.$ServiceName.'</td>
+					<td align="left">'.$DateApplied.'</td>
+					<td align="left">'.$ServiceStatusName.'</td>
+					
+					</tr>'; 
+				}
+
+		
+		$mpdf=new mPDF('win-1252','A4','','',20,15,48,25,10,10);
+		$mpdf->useOnlyCoreFonts = true;    // false is default
+		$mpdf->SetProtection(array('print'));
+		$mpdf->SetTitle("Tourism Regulatory Authority");
+		$mpdf->SetAuthor("Tourism Regulatory Authority");
+		$mpdf->SetWatermarkText("Tourism Regulatory Authority");
+		$mpdf->showWatermarkText = true;
+		$mpdf->watermark_font = 'DejaVuSansCondensed';
+		$mpdf->watermarkTextAlpha = 0.1;
+		$mpdf->SetDisplayMode('fullpage');
+
+		$html = '
+		<html>
+		<head>
+			<link rel="stylesheet" type="text/css" href="css/my_css.css"/>		
+		</head>
+		<body>
+
+		<!--mpdf
+		<htmlpageheader name="myheader">
+		<table width="100%">
+			<tr>
+				<td align="Center" colspan="2" style="font-size:10mm">
+					<b>'.$ReportTitle.'</b>
+				</td>
+			</tr>		
+			<tr>
+				<td align="Center" colspan="2">
+				<img src="images/logo.png" alt="TRA Logo">
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2" align="Center"><span style="font-weight: bold; font-size: 14pt;">'.$CountyName.'</span></td>
+			</tr>		
+		</table>
+		
+		</htmlpageheader>
+
+		<htmlpagefooter name="myfooter">
+		<div style="border-top: 1px solid #000000; font-size: 9pt; text-align: center; padding-top: 3mm; ">
+		powered by      <img src="images/attain_logo_2.png" alt="County Logo">
+		</div>
+		</htmlpagefooter>
+
+		<sethtmlpageheader name="myheader" value="on" show-this-page="1" />
+		<sethtmlpagefooter name="myfooter" value="on" />
+		mpdf-->
+		<br/><br/><br/><br/><br/><br/><br/><br/>
+		
+		
+
+
+
+		<table class="items" width="100%" style="font-size: 9pt; border-collapse: collapse;" cellpadding="8">
+		<thead>
+		<tr>
+		<td width="5%">Application No.</td>
+		<td width="25%">Customer Name</td>
+		<td width="25%">Service Applied</td>
+		<td width="10%">Date Applied</td>
+		<td width="15%">Application Status</td>
+		
+		</tr>
+		</thead>
+		<tbody>
+		
+		<!-- ITEMS HERE -->'.
+		
+		
+		$tablestr.
+										
+		'<!-- END ITEMS HERE -->
+		
+	
+
+		</tbody>
+		</table>
+		</body>
+		</html>
+		';
+
+		$mpdf->WriteHTML($html);
+		
+ 		//$mpdf->Output();
+		//exit; 
+		
+		$mpdf->Output('pdfdocs/reports/'.$rptName.'.pdf','F'); 
+		
+				
+	}
+	function classification_applicant($db,$cosmasRow,$rptName,$fromDate,$toDate,$cName)
+	{
+		$tablestr = '';
+		$ReportTitle="Application Details";
+		$sql="select sh.ServiceHeaderID,sh.ServiceStatusID,c.*,s.ServiceName,convert(date,sh.SubmissionDate) as DateApplied,st.ServiceStatusName
+		from ServiceHeader sh
+		join Customer c on sh.CustomerID = c.CustomerID
+		join Services s on sh.ServiceID = s.ServiceID
+		join ServiceStatus st on sh.ServiceStatusID = st.ServiceStatusID
+		join ServiceCategory sc on sh.ServiceCategoryId = sc.ServiceCategoryID
+		join ServiceGroup sg on sc.ServiceGroupID = sg.ServiceGroupID
+		where sc.ServiceGroupID = 11 and c.CustomerID = $cName";
+		// exit($sql);
+				$tblTotals=0;
+				$result=sqlsrv_query($db, $sql);
+				while($rw=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC))
+				{					
+					$ServiceHeaderID=$rw['ServiceHeaderID'];				
+					$CustomerName=$rw['CustomerName'];
+					$CustomerID=$rw['CustomerID'];
+					$ServiceStatusID=$rw['ServiceStatusID'];
+					$ServiceName = $rw['ServiceName'];
+					$ServiceStatusName = $rw['ServiceStatusName'];
+					$Mobile1 = $rw['Mobile1'];
+					$Email = $rw['Email'];
+					if($ServiceStatusID == 6 || $ServiceStatusID == 7 || $ServiceStatusID == 11 || $ServiceStatusID == 4){
+						$ServiceStatusName = $ServiceStatusName;
+					}else{
+						$ServiceStatusName = 'Under Review';
+					}
+					$tablestr.='<tr>
+					<td align="left">'.$CustomerName.'</td>
+					<td align="right">'.$ServiceName.'</td>
+					<td align="right">'.$ServiceStatusName.'</td>
+					<td align="right">'.$Mobile1.'</td>
+					<td align="right">'.$Email.'</td>
+					</tr>'; 
+				}
+				
+		// echo $tablestr;
+		$d_sql = "select * from Directors d left join Countries c on d.CountryId = c.Id where d.CompanyID = $CustomerID";
+		// exit($d_sql);
+		$d_result = sqlsrv_query($db, $d_sql);
+		while($omrow = sqlsrv_fetch_array($d_result, SQLSRV_FETCH_ASSOC)){
+			$FirstName = $omrow['FirstName'];
+			$LastName = $omrow['LastName'];
+			$IDNO = $omrow['IDNO'];
+			$PhoneNumber = $omrow['PhoneNumber'];
+			$Nationality = $omrow['Nationality'];
+			$tablestr1.='<tr>
+					<td align="left">'.$FirstName.'&nbsp;'.$LastName.'</td>
+					<td align="right">'.$IDNO.'</td>
+					<td align="right">'.$PhoneNumber.'</td>
+					<td align="right">'.$Nationality.'</td>
+					</tr>'; 
+		}
+
+		$a_sql = "select * from Attachments a 
+		join Documents d on a.DocumentID = d.DocumentID 
+		where a.ApplicationNo = $ServiceHeaderID";
+		// exit($d_sql);
+		$a_result = sqlsrv_query($db, $a_sql);
+		while($omrow = sqlsrv_fetch_array($a_result, SQLSRV_FETCH_ASSOC)){
+			$DocumentName = $omrow['DocumentName'];
+			
+			$tablestr2.='<tr>
+					<td align="left">'.$DocumentName.'</td>
+					</tr>'; 
+		}
+
+		$mpdf=new mPDF('win-1252','A4','','',20,15,48,25,10,10);
+		$mpdf->useOnlyCoreFonts = true;    // false is default
+		$mpdf->SetProtection(array('print'));
+		$mpdf->SetTitle("TRA");
+		$mpdf->SetAuthor("TRA");
+		$mpdf->SetWatermarkText("Tourism Regulatory Authority");
+		$mpdf->showWatermarkText = true;
+		$mpdf->watermark_font = 'DejaVuSansCondensed';
+		$mpdf->watermarkTextAlpha = 0.1;
+		$mpdf->SetDisplayMode('fullpage');
+
+		$html = '
+		<html>
+		<head>
+			<link rel="stylesheet" type="text/css" href="css/my_css.css"/>		
+		</head>
+		<body>
+
+		<!--mpdf
+		<htmlpageheader name="myheader">
+		<table width="100%">
+			<tr>
+				<td align="Center" colspan="2" style="font-size:10mm">
+					<b>'.$ReportTitle.'</b>
+				</td>
+			</tr>		
+			<tr>
+				<td align="Center" colspan="2">
+					<img src="images/logo.png" alt="TRA Logo">
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2" align="Center"><span style="font-weight: bold; font-size: 14pt;">'.$CountyName.'</span></td>
+			</tr>		
+		</table>
+		
+		</htmlpageheader>
+
+		<htmlpagefooter name="myfooter">
+		<div style="border-top: 1px solid #000000; font-size: 9pt; text-align: center; padding-top: 3mm; ">
+		powered by      <img src="images/attain_logo_2.png" alt="County Logo">
+		</div>
+		</htmlpagefooter>
+
+		<sethtmlpageheader name="myheader" value="on" show-this-page="1" />
+		<sethtmlpagefooter name="myfooter" value="on" />
+		mpdf-->
+		<br/><br/>
+		<style>
+		table {
+		  font-family: arial, sans-serif;
+		  border-collapse: collapse;
+		  width: 100%;
+		}
+
+		td, th {
+		  border: 1px solid #dddddd;
+		  text-align: left;
+		  padding: 8px;
+		}
+
+		tr:nth-child(even) {
+		  background-color: #dddddd;
+		}
+		table, th, td {
+		  border: 1px solid black;
+		  border-collapse: collapse;
+		}
+		</style>
+		<table class="items" width="100%" style="font-size: 9pt; border-collapse: collapse;" cellpadding="8">
+		<thead>
+		<tr>
+		<td width="30%">Applicant Name</td>
+		<td width="20%">Service Applied</td>
+		<td width="15%">Application Status</td>
+		<td width="15%">Phone Number</td>
+		<td width="30%">Email Address</td>
+		</tr>
+		</thead>
+		<tbody>
+		
+		<!-- ITEMS HERE -->'.
+		
+		
+		$tablestr.
+										
+		'<!-- END ITEMS HERE -->
+		
+		
+
+		</tbody>
+		</table>
+
+		<table width="100%">
+		<tr>
+			<td align="Center" colspan="2" style="font-size:3mm">
+				<b>Directors</b>
+			</td>
+		</tr>		
+				
+	</table>
+	
+	</htmlpageheader>
+
+	<htmlpagefooter name="myfooter">
+	<div style="border-top: 1px solid #000000; font-size: 9pt; text-align: center; padding-top: 3mm; ">
+	powered by      <img src="images/attain_logo_2.png" alt="County Logo">
+	</div>
+	</htmlpagefooter>
+
+	<sethtmlpageheader name="myheader" value="on" show-this-page="1" />
+	<sethtmlpagefooter name="myfooter" value="on" />
+	mpdf-->
+	<br/><br/>
+	<style>
+	table {
+	  font-family: arial, sans-serif;
+	  border-collapse: collapse;
+	  width: 100%;
+	}
+
+	td, th {
+	  border: 1px solid #dddddd;
+	  text-align: left;
+	  padding: 8px;
+	}
+
+	tr:nth-child(even) {
+	  background-color: #dddddd;
+	}
+	table, th, td {
+	  border: 1px solid black;
+	  border-collapse: collapse;
+	}
+	</style>
+	<table class="items" width="100%" style="font-size: 9pt; border-collapse: collapse;" cellpadding="8">
+	<thead>
+	<tr>
+	<td width="40%">Director Name</td>
+	<td width="20%">ID/Passport</td>
+	<td width="20%">Phone Number</td>
+	<td width="20%">Nationality</td>
+	</tr>
+	</thead>
+	<tbody>
+	
+	<!-- ITEMS HERE -->'.
+	
+	
+	$tablestr1.
+									
+	'<!-- END ITEMS HERE -->
+	
+	
+
+	</tbody>
+	</table>
+
+	<table width="100%">
+		<tr>
+			<td align="Center" colspan="2" style="font-size:3mm">
+				<b>Uploaded Docs</b>
+			</td>
+		</tr>		
+				
+	</table>
+	
+	</htmlpageheader>
+
+	<htmlpagefooter name="myfooter">
+	<div style="border-top: 1px solid #000000; font-size: 9pt; text-align: center; padding-top: 3mm; ">
+	powered by      <img src="images/attain_logo_2.png" alt="County Logo">
+	</div>
+	</htmlpagefooter>
+
+	<sethtmlpageheader name="myheader" value="on" show-this-page="1" />
+	<sethtmlpagefooter name="myfooter" value="on" />
+	mpdf-->
+	<br/><br/>
+	<style>
+	table {
+	  font-family: arial, sans-serif;
+	  border-collapse: collapse;
+	  width: 100%;
+	}
+
+	td, th {
+	  border: 1px solid #dddddd;
+	  text-align: left;
+	  padding: 8px;
+	}
+
+	tr:nth-child(even) {
+	  background-color: #dddddd;
+	}
+	table, th, td {
+	  border: 1px solid black;
+	  border-collapse: collapse;
+	}
+	</style>
+	<table class="items" width="100%" style="font-size: 9pt; border-collapse: collapse;" cellpadding="8">
+	<thead>
+	<tr>
+	<td width="40%">Document Name</td>
+	
+	</tr>
+	</thead>
+	<tbody>
+	
+	<!-- ITEMS HERE -->'.
+	
+	
+	$tablestr2.
+									
+	'<!-- END ITEMS HERE -->
+	
+	
+
+	</tbody>
+	</table>
+
+		</body>
+		</html>
+		';
+		$mpdf->WriteHTML($html);
+		
+ 		//$mpdf->Output();
+		//exit;
+		
+		$mpdf->Output('pdfdocs/reports/'.$rptName.'.pdf','F'); 
+		
+				
+	}
+
+	function licence_applicant($db,$cosmasRow,$rptName,$fromDate,$toDate,$cName)
+	{
+		$tablestr = '';
+		$ReportTitle="Application Details";
+		$sql="select sh.ServiceHeaderID,sh.ServiceStatusID,c.*,s.ServiceName,convert(date,sh.SubmissionDate) as DateApplied,st.ServiceStatusName
+		from ServiceHeader sh
+		join Customer c on sh.CustomerID = c.CustomerID
+		join Services s on sh.ServiceID = s.ServiceID
+		join ServiceStatus st on sh.ServiceStatusID = st.ServiceStatusID
+		join ServiceCategory sc on sh.ServiceCategoryId = sc.ServiceCategoryID
+		join ServiceGroup sg on sc.ServiceGroupID = sg.ServiceGroupID
+		where c.CustomerID = $cName";
+		// exit($sql);
+				$tblTotals=0;
+				$result=sqlsrv_query($db, $sql);
+				while($rw=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC))
+				{					
+					$ServiceHeaderID=$rw['ServiceHeaderID'];				
+					$CustomerName=$rw['CustomerName'];
+					$CustomerID=$rw['CustomerID'];
+					$ServiceStatusID=$rw['ServiceStatusID'];
+					$ServiceName = $rw['ServiceName'];
+					$ServiceStatusName = $rw['ServiceStatusName'];
+					$Mobile1 = $rw['Mobile1'];
+					$Email = $rw['Email'];
+					if($ServiceStatusID == 6 || $ServiceStatusID == 7 || $ServiceStatusID == 11 || $ServiceStatusID == 4){
+						$ServiceStatusName = $ServiceStatusName;
+					}else{
+						$ServiceStatusName = 'Under Review';
+					}
+					$tablestr.='<tr>
+					<td align="left">'.$CustomerName.'</td>
+					<td align="right">'.$ServiceName.'</td>
+					<td align="right">'.$ServiceStatusName.'</td>
+					<td align="right">'.$Mobile1.'</td>
+					<td align="right">'.$Email.'</td>
+					</tr>'; 
+				}
+				
+		// echo $tablestr;
+		$d_sql = "select * from Directors d left join Countries c on d.CountryId = c.Id where d.CompanyID = $CustomerID";
+		// exit($d_sql);
+		$d_result = sqlsrv_query($db, $d_sql);
+		while($omrow = sqlsrv_fetch_array($d_result, SQLSRV_FETCH_ASSOC)){
+			$FirstName = $omrow['FirstName'];
+			$LastName = $omrow['LastName'];
+			$IDNO = $omrow['IDNO'];
+			$PhoneNumber = $omrow['PhoneNumber'];
+			$Nationality = $omrow['Nationality'];
+			$tablestr1.='<tr>
+					<td align="left">'.$FirstName.'&nbsp;'.$LastName.'</td>
+					<td align="right">'.$IDNO.'</td>
+					<td align="right">'.$PhoneNumber.'</td>
+					<td align="right">'.$Nationality.'</td>
+					</tr>'; 
+		}
+
+		$a_sql = "select * from Attachments a 
+		join Documents d on a.DocumentID = d.DocumentID 
+		where a.ApplicationNo = $ServiceHeaderID";
+		// exit($d_sql);
+		$a_result = sqlsrv_query($db, $a_sql);
+		while($omrow = sqlsrv_fetch_array($a_result, SQLSRV_FETCH_ASSOC)){
+			$DocumentName = $omrow['DocumentName'];
+			
+			$tablestr2.='<tr>
+					<td align="left">'.$DocumentName.'</td>
+					</tr>'; 
+		}
+
+		$mpdf=new mPDF('win-1252','A4','','',20,15,48,25,10,10);
+		$mpdf->useOnlyCoreFonts = true;    // false is default
+		$mpdf->SetProtection(array('print'));
+		$mpdf->SetTitle("TRA");
+		$mpdf->SetAuthor("TRA");
+		$mpdf->SetWatermarkText("Tourism Regulatory Authority");
+		$mpdf->showWatermarkText = true;
+		$mpdf->watermark_font = 'DejaVuSansCondensed';
+		$mpdf->watermarkTextAlpha = 0.1;
+		$mpdf->SetDisplayMode('fullpage');
+
+		$html = '
+		<html>
+		<head>
+			<link rel="stylesheet" type="text/css" href="css/my_css.css"/>		
+		</head>
+		<body>
+
+		<!--mpdf
+		<htmlpageheader name="myheader">
+		<table width="100%">
+			<tr>
+				<td align="Center" colspan="2" style="font-size:10mm">
+					<b>'.$ReportTitle.'</b>
+				</td>
+			</tr>		
+			<tr>
+				<td align="Center" colspan="2">
+					<img src="images/logo.png" alt="TRA Logo">
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2" align="Center"><span style="font-weight: bold; font-size: 14pt;">'.$CountyName.'</span></td>
+			</tr>		
+		</table>
+		
+		</htmlpageheader>
+
+		<htmlpagefooter name="myfooter">
+		<div style="border-top: 1px solid #000000; font-size: 9pt; text-align: center; padding-top: 3mm; ">
+		powered by      <img src="images/attain_logo_2.png" alt="County Logo">
+		</div>
+		</htmlpagefooter>
+
+		<sethtmlpageheader name="myheader" value="on" show-this-page="1" />
+		<sethtmlpagefooter name="myfooter" value="on" />
+		mpdf-->
+		<br/><br/>
+		<style>
+		table {
+		  font-family: arial, sans-serif;
+		  border-collapse: collapse;
+		  width: 100%;
+		}
+
+		td, th {
+		  border: 1px solid #dddddd;
+		  text-align: left;
+		  padding: 8px;
+		}
+
+		tr:nth-child(even) {
+		  background-color: #dddddd;
+		}
+		table, th, td {
+		  border: 1px solid black;
+		  border-collapse: collapse;
+		}
+		</style>
+		<table class="items" width="100%" style="font-size: 9pt; border-collapse: collapse;" cellpadding="8">
+		<thead>
+		<tr>
+		<td width="30%">Applicant Name</td>
+		<td width="20%">Service Applied</td>
+		<td width="15%">Application Status</td>
+		<td width="15%">Phone Number</td>
+		<td width="30%">Email Address</td>
+		</tr>
+		</thead>
+		<tbody>
+		
+		<!-- ITEMS HERE -->'.
+		
+		
+		$tablestr.
+										
+		'<!-- END ITEMS HERE -->
+		
+		
+
+		</tbody>
+		</table>
+
+		<table width="100%">
+		<tr>
+			<td align="Center" colspan="2" style="font-size:3mm">
+				<b>Directors</b>
+			</td>
+		</tr>		
+				
+	</table>
+	
+	</htmlpageheader>
+
+	<htmlpagefooter name="myfooter">
+	<div style="border-top: 1px solid #000000; font-size: 9pt; text-align: center; padding-top: 3mm; ">
+	powered by      <img src="images/attain_logo_2.png" alt="County Logo">
+	</div>
+	</htmlpagefooter>
+
+	<sethtmlpageheader name="myheader" value="on" show-this-page="1" />
+	<sethtmlpagefooter name="myfooter" value="on" />
+	mpdf-->
+	<br/><br/>
+	<style>
+	table {
+	  font-family: arial, sans-serif;
+	  border-collapse: collapse;
+	  width: 100%;
+	}
+
+	td, th {
+	  border: 1px solid #dddddd;
+	  text-align: left;
+	  padding: 8px;
+	}
+
+	tr:nth-child(even) {
+	  background-color: #dddddd;
+	}
+	table, th, td {
+	  border: 1px solid black;
+	  border-collapse: collapse;
+	}
+	</style>
+	<table class="items" width="100%" style="font-size: 9pt; border-collapse: collapse;" cellpadding="8">
+	<thead>
+	<tr>
+	<td width="40%">Director Name</td>
+	<td width="20%">ID/Passport</td>
+	<td width="20%">Phone Number</td>
+	<td width="20%">Nationality</td>
+	</tr>
+	</thead>
+	<tbody>
+	
+	<!-- ITEMS HERE -->'.
+	
+	
+	$tablestr1.
+									
+	'<!-- END ITEMS HERE -->
+	
+	
+
+	</tbody>
+	</table>
+
+	<table width="100%">
+		<tr>
+			<td align="Center" colspan="2" style="font-size:3mm">
+				<b>Uploaded Docs</b>
+			</td>
+		</tr>		
+				
+	</table>
+	
+	</htmlpageheader>
+
+	<htmlpagefooter name="myfooter">
+	<div style="border-top: 1px solid #000000; font-size: 9pt; text-align: center; padding-top: 3mm; ">
+	powered by      <img src="images/attain_logo_2.png" alt="County Logo">
+	</div>
+	</htmlpagefooter>
+
+	<sethtmlpageheader name="myheader" value="on" show-this-page="1" />
+	<sethtmlpagefooter name="myfooter" value="on" />
+	mpdf-->
+	<br/><br/>
+	<style>
+	table {
+	  font-family: arial, sans-serif;
+	  border-collapse: collapse;
+	  width: 100%;
+	}
+
+	td, th {
+	  border: 1px solid #dddddd;
+	  text-align: left;
+	  padding: 8px;
+	}
+
+	tr:nth-child(even) {
+	  background-color: #dddddd;
+	}
+	table, th, td {
+	  border: 1px solid black;
+	  border-collapse: collapse;
+	}
+	</style>
+	<table class="items" width="100%" style="font-size: 9pt; border-collapse: collapse;" cellpadding="8">
+	<thead>
+	<tr>
+	<td width="40%">Document Name</td>
+	
+	</tr>
+	</thead>
+	<tbody>
+	
+	<!-- ITEMS HERE -->'.
+	
+	
+	$tablestr2.
+									
+	'<!-- END ITEMS HERE -->
+	
+	
+
+	</tbody>
+	</table>
+
+		</body>
+		</html>
+		';
+		$mpdf->WriteHTML($html);
+		
+ 		//$mpdf->Output();
+		//exit;
+		
+		$mpdf->Output('pdfdocs/reports/'.$rptName.'.pdf','F'); 
+		
+				
+	}
+
+
+	function licence_applications($db,$cosmasRow,$rptName,$fromDate,$toDate)
+	{
+
+		$row=$cosmasRow;	
+		$CountyName=$row['CountyName'];		
+		$CountyAddress=$row['PostalAddress'];
+		$CountyTown=$row['Town'];
+		$CountyTelephone=$row['Telephone1'];
+		$CountyMobile=$row['Mobile1'];
+		$CountyEmail=$row['Email'];
+		
+		
+
+		$tablestr = '';
+		$ReportTitle="Licence Applications<br> Between <br>". $fromDate." and " .$toDate;
+
+			$sql="select sh.ServiceHeaderID,c.CustomerName,s.ServiceName,convert(date,sh.SubmissionDate) as DateApplied,st.ServiceStatusName
+			from ServiceHeader sh
+			join Customer c on sh.CustomerID = c.CustomerID
+			join Services s on sh.ServiceID = s.ServiceID
+			join ServiceStatus st on sh.ServiceStatusID = st.ServiceStatusID
+			join ServiceCategory sc on sh.ServiceCategoryId = sc.ServiceCategoryID
+			join ServiceGroup sg on sc.ServiceGroupID = sg.ServiceGroupID
+			where convert(date,sh.SubmissionDate)>='$fromDate' and convert(date,sh.SubmissionDate)<='$toDate' and sh.ServiceStatusID !=4 and (sc.ServiceGroupID != 12 and sc.ServiceGroupID != 11)";
+
+		// echo $sql; exit;
+				// $tblTotals=0;
+				$result=sqlsrv_query($db, $sql);
+				while($rw=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC))
+				{					
+					$ServiceHeaderID = $rw['ServiceHeaderID'];
+					$CustomerName=$rw['CustomerName'];
+					$ServiceName=$rw['ServiceName'];
+					$DateApplied=$rw['DateApplied'];
+					$ServiceStatusName=$rw['ServiceStatusName'];
+					
+					$tablestr.='<tr>
+					<td align="left">'.$ServiceHeaderID.'</td>
+					<td align="left">'.$CustomerName.'</td>
+					<td align="left">'.$ServiceName.'</td>
+					<td align="left">'.$DateApplied.'</td>
+					<td align="left">'.$ServiceStatusName.'</td>
+					
+					</tr>'; 
+				}
+
+		
+		$mpdf=new mPDF('win-1252','A4','','',20,15,48,25,10,10);
+		$mpdf->useOnlyCoreFonts = true;    // false is default
+		$mpdf->SetProtection(array('print'));
+		$mpdf->SetTitle("Tourism Regulatory Authority");
+		$mpdf->SetAuthor("Tourism Regulatory Authority");
+		$mpdf->SetWatermarkText("Tourism Regulatory Authority");
+		$mpdf->showWatermarkText = true;
+		$mpdf->watermark_font = 'DejaVuSansCondensed';
+		$mpdf->watermarkTextAlpha = 0.1;
+		$mpdf->SetDisplayMode('fullpage');
+
+		$html = '
+		<html>
+		<head>
+			<link rel="stylesheet" type="text/css" href="css/my_css.css"/>		
+		</head>
+		<body>
+
+		<!--mpdf
+		<htmlpageheader name="myheader">
+		<table width="100%">
+			<tr>
+				<td align="Center" colspan="2" style="font-size:10mm">
+					<b>'.$ReportTitle.'</b>
+				</td>
+			</tr>		
+			<tr>
+				<td align="Center" colspan="2">
+				<img src="images/logo.png" alt="TRA Logo">
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2" align="Center"><span style="font-weight: bold; font-size: 14pt;">'.$CountyName.'</span></td>
+			</tr>		
+		</table>
+		
+		</htmlpageheader>
+
+		<htmlpagefooter name="myfooter">
+		<div style="border-top: 1px solid #000000; font-size: 9pt; text-align: center; padding-top: 3mm; ">
+		powered by      <img src="images/attain_logo_2.png" alt="County Logo">
+		</div>
+		</htmlpagefooter>
+
+		<sethtmlpageheader name="myheader" value="on" show-this-page="1" />
+		<sethtmlpagefooter name="myfooter" value="on" />
+		mpdf-->
+		<br/><br/><br/><br/><br/><br/><br/><br/>
+		
+		
+
+
+
+		<table class="items" width="100%" style="font-size: 9pt; border-collapse: collapse;" cellpadding="8">
+		<thead>
+		<tr>
+		<td width="5%">Application No.</td>
+		<td width="25%">Customer Name</td>
+		<td width="25%">Service Applied</td>
+		<td width="10%">Date Applied</td>
+		<td width="15%">Application Status</td>
+		
+		</tr>
+		</thead>
+		<tbody>
+		
+		<!-- ITEMS HERE -->'.
+		
+		
+		$tablestr.
+										
+		'<!-- END ITEMS HERE -->
+		
+	
+
+		</tbody>
+		</table>
+		</body>
+		</html>
+		';
+
+		$mpdf->WriteHTML($html);
+		
+ 		//$mpdf->Output();
+		//exit; 
+		
+		$mpdf->Output('pdfdocs/reports/'.$rptName.'.pdf','F'); 
+		
+				
+	}
+
+	function licenced($db,$cosmasRow,$rptName,$fromDate,$toDate)
+	{
+
+		$row=$cosmasRow;	
+		$CountyName=$row['CountyName'];		
+		$CountyAddress=$row['PostalAddress'];
+		$CountyTown=$row['Town'];
+		$CountyTelephone=$row['Telephone1'];
+		$CountyMobile=$row['Mobile1'];
+		$CountyEmail=$row['Email'];
+		
+		
+
+		$tablestr = '';
+		$ReportTitle="Licenced Applications<br> Between <br>". $fromDate." and " .$toDate;
+
+			$sql="select sh.ServiceHeaderID,c.CustomerName,s.ServiceName,convert(date,sh.SubmissionDate) as DateApplied,st.ServiceStatusName
+			from ServiceHeader sh
+			join Customer c on sh.CustomerID = c.CustomerID
+			join Services s on sh.ServiceID = s.ServiceID
+			join ServiceStatus st on sh.ServiceStatusID = st.ServiceStatusID
+			join ServiceCategory sc on sh.ServiceCategoryId = sc.ServiceCategoryID
+			join ServiceGroup sg on sc.ServiceGroupID = sg.ServiceGroupID
+			where convert(date,sh.SubmissionDate)>='$fromDate' and convert(date,sh.SubmissionDate)<='$toDate' and sh.ServiceStatusID =4 and (sc.ServiceGroupID != 12 and sc.ServiceGroupID != 11)";
+
+		// echo $sql; exit;
+				// $tblTotals=0;
+				$result=sqlsrv_query($db, $sql);
+				while($rw=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC))
+				{					
+					$ServiceHeaderID = $rw['ServiceHeaderID'];
+					$CustomerName=$rw['CustomerName'];
+					$ServiceName=$rw['ServiceName'];
+					$DateApplied=$rw['DateApplied'];
+					$ServiceStatusName=$rw['ServiceStatusName'];
+					
+					$tablestr.='<tr>
+					<td align="left">'.$ServiceHeaderID.'</td>
+					<td align="left">'.$CustomerName.'</td>
+					<td align="left">'.$ServiceName.'</td>
+					<td align="left">'.$DateApplied.'</td>
+					<td align="left">'.$ServiceStatusName.'</td>
+					
+					</tr>'; 
+				}
+
+		
+		$mpdf=new mPDF('win-1252','A4','','',20,15,48,25,10,10);
+		$mpdf->useOnlyCoreFonts = true;    // false is default
+		$mpdf->SetProtection(array('print'));
+		$mpdf->SetTitle("Tourism Regulatory Authority");
+		$mpdf->SetAuthor("Tourism Regulatory Authority");
+		$mpdf->SetWatermarkText("Tourism Regulatory Authority");
+		$mpdf->showWatermarkText = true;
+		$mpdf->watermark_font = 'DejaVuSansCondensed';
+		$mpdf->watermarkTextAlpha = 0.1;
+		$mpdf->SetDisplayMode('fullpage');
+
+		$html = '
+		<html>
+		<head>
+			<link rel="stylesheet" type="text/css" href="css/my_css.css"/>		
+		</head>
+		<body>
+
+		<!--mpdf
+		<htmlpageheader name="myheader">
+		<table width="100%">
+			<tr>
+				<td align="Center" colspan="2" style="font-size:10mm">
+					<b>'.$ReportTitle.'</b>
+				</td>
+			</tr>		
+			<tr>
+				<td align="Center" colspan="2">
+				<img src="images/logo.png" alt="TRA Logo">
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2" align="Center"><span style="font-weight: bold; font-size: 14pt;">'.$CountyName.'</span></td>
+			</tr>		
+		</table>
+		
+		</htmlpageheader>
+
+		<htmlpagefooter name="myfooter">
+		<div style="border-top: 1px solid #000000; font-size: 9pt; text-align: center; padding-top: 3mm; ">
+		powered by      <img src="images/attain_logo_2.png" alt="County Logo">
+		</div>
+		</htmlpagefooter>
+
+		<sethtmlpageheader name="myheader" value="on" show-this-page="1" />
+		<sethtmlpagefooter name="myfooter" value="on" />
+		mpdf-->
+		<br/><br/><br/><br/><br/><br/><br/><br/>
+		
+		
+
+
+
+		<table class="items" width="100%" style="font-size: 9pt; border-collapse: collapse;" cellpadding="8">
+		<thead>
+		<tr>
+		<td width="5%">Application No.</td>
+		<td width="25%">Customer Name</td>
+		<td width="25%">Service Applied</td>
+		<td width="10%">Date Applied</td>
+		<td width="15%">Application Status</td>
+		
+		</tr>
+		</thead>
+		<tbody>
+		
+		<!-- ITEMS HERE -->'.
+		
+		
+		$tablestr.
+										
+		'<!-- END ITEMS HERE -->
+		
+	
+
+		</tbody>
+		</table>
+		</body>
+		</html>
+		';
+
+		$mpdf->WriteHTML($html);
+		
+ 		//$mpdf->Output();
+		//exit; 
+		
+		$mpdf->Output('pdfdocs/reports/'.$rptName.'.pdf','F'); 
+		
+				
+	}
+
+	function all_licenced($db,$cosmasRow,$rptName,$fromDate,$toDate)
+	{
+
+		$row=$cosmasRow;	
+		$CountyName=$row['CountyName'];		
+		$CountyAddress=$row['PostalAddress'];
+		$CountyTown=$row['Town'];
+		$CountyTelephone=$row['Telephone1'];
+		$CountyMobile=$row['Mobile1'];
+		$CountyEmail=$row['Email'];
+		
+		
+
+		$tablestr = '';
+		$ReportTitle="All Licenced Establishments";
+
+			$sql="select sh.ServiceHeaderID,c.CustomerName,s.ServiceName,convert(date,sh.SubmissionDate) as DateApplied,st.ServiceStatusName
+			from ServiceHeader sh
+			join Customer c on sh.CustomerID = c.CustomerID
+			join Services s on sh.ServiceID = s.ServiceID
+			join ServiceStatus st on sh.ServiceStatusID = st.ServiceStatusID
+			join ServiceCategory sc on sh.ServiceCategoryId = sc.ServiceCategoryID
+			join ServiceGroup sg on sc.ServiceGroupID = sg.ServiceGroupID
+			where sh.ServiceStatusID =4 and (sc.ServiceGroupID != 12 and sc.ServiceGroupID != 11)";
+
+		// echo $sql; exit;
+				// $tblTotals=0;
+				$result=sqlsrv_query($db, $sql);
+				while($rw=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC))
+				{					
+					$ServiceHeaderID = $rw['ServiceHeaderID'];
+					$CustomerName=$rw['CustomerName'];
+					$ServiceName=$rw['ServiceName'];
+					$DateApplied=$rw['DateApplied'];
+					$ServiceStatusName=$rw['ServiceStatusName'];
+					
+					$tablestr.='<tr>
+					<td align="left">'.$ServiceHeaderID.'</td>
+					<td align="left">'.$CustomerName.'</td>
+					<td align="left">'.$ServiceName.'</td>
+					<td align="left">'.$DateApplied.'</td>
+					<td align="left">'.$ServiceStatusName.'</td>
+					
+					</tr>'; 
+				}
+
+		
+		$mpdf=new mPDF('win-1252','A4','','',20,15,48,25,10,10);
+		$mpdf->useOnlyCoreFonts = true;    // false is default
+		$mpdf->SetProtection(array('print'));
+		$mpdf->SetTitle("Tourism Regulatory Authority");
+		$mpdf->SetAuthor("Tourism Regulatory Authority");
+		$mpdf->SetWatermarkText("Tourism Regulatory Authority");
+		$mpdf->showWatermarkText = true;
+		$mpdf->watermark_font = 'DejaVuSansCondensed';
+		$mpdf->watermarkTextAlpha = 0.1;
+		$mpdf->SetDisplayMode('fullpage');
+
+		$html = '
+		<html>
+		<head>
+			<link rel="stylesheet" type="text/css" href="css/my_css.css"/>		
+		</head>
+		<body>
+
+		<!--mpdf
+		<htmlpageheader name="myheader">
+		<table width="100%">
+			<tr>
+				<td align="Center" colspan="2" style="font-size:10mm">
+					<b>'.$ReportTitle.'</b>
+				</td>
+			</tr>		
+			<tr>
+				<td align="Center" colspan="2">
+				<img src="images/logo.png" alt="TRA Logo">
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2" align="Center"><span style="font-weight: bold; font-size: 14pt;">'.$CountyName.'</span></td>
+			</tr>		
+		</table>
+		
+		</htmlpageheader>
+
+		<htmlpagefooter name="myfooter">
+		<div style="border-top: 1px solid #000000; font-size: 9pt; text-align: center; padding-top: 3mm; ">
+		powered by      <img src="images/attain_logo_2.png" alt="County Logo">
+		</div>
+		</htmlpagefooter>
+
+		<sethtmlpageheader name="myheader" value="on" show-this-page="1" />
+		<sethtmlpagefooter name="myfooter" value="on" />
+		mpdf-->
+		<br/><br/><br/><br/><br/><br/><br/><br/>
+		
+		
+
+
+
+		<table class="items" width="100%" style="font-size: 9pt; border-collapse: collapse;" cellpadding="8">
+		<thead>
+		<tr>
+		<td width="5%">Application No.</td>
+		<td width="25%">Customer Name</td>
+		<td width="25%">Service Applied</td>
+		<td width="10%">Date Applied</td>
+		<td width="15%">Application Status</td>
+		
+		</tr>
+		</thead>
+		<tbody>
+		
+		<!-- ITEMS HERE -->'.
+		
+		
+		$tablestr.
+										
+		'<!-- END ITEMS HERE -->
+		
+	
+
+		</tbody>
+		</table>
+		</body>
+		</html>
+		';
+
+		$mpdf->WriteHTML($html);
+		
+ 		//$mpdf->Output();
+		//exit; 
+		
+		$mpdf->Output('pdfdocs/reports/'.$rptName.'.pdf','F'); 
+		
+				
+	}
+	
+
 	function mpesaTransactions($db,$cosmasRow,$rptName,$fromDate,$toDate)
 	{
 
@@ -1675,17 +3419,17 @@ function LicenceExpiryNotification($db,$cosmasRow,$rptName,$fromDate,$toDate)
 	function graded($db,$cosmasRow,$rptName,$fromDate,$toDate)
 	{
 		$tablestr = '';
-		$ReportTitle="Graded Establishments";
+		$ReportTitle="Graded Establishments <br>Between $fromDate and $toDate";
 		$sql="select c.CustomerName,c.CustomerID, c.Website, c.PhysicalAddress, c.Email, c.Mobile1, sh.ServiceID,
-          s.ServiceName 
+          s.ServiceName,sh.SubmissionDate 
           from ServiceHeader sh 
           join Inspections ins on sh.ServiceHeaderID = ins.ServiceHeaderID 
           join ChecklistResults cr on cr.InspectionID = ins.InspectionID 
           join Customer c on c.CustomerID = sh.CustomerID 
           join InspectionComments ic on ic.InspectionID = ins.InspectionID 
           join Services s on s.ServiceID = sh.ServiceID
-          where sh.ServiceCategoryID = 2033 and ServiceStatusID = 4 Group By c.CustomerName,c.CustomerID,
-          c.Website,c.PhysicalAddress,c.Email,c.Mobile1,sh.ServiceID,s.ServiceName";
+          where convert(date,sh.SubmissionDate)>='$fromDate' and convert(date,sh.SubmissionDate)<='$toDate' and sh.ServiceCategoryID = 2033 and ServiceStatusID = 4 Group By c.CustomerName,c.CustomerID,
+          c.Website,c.PhysicalAddress,c.Email,c.Mobile1,sh.ServiceID,s.ServiceName,sh.SubmissionDate";
 		// exit($sql);
 				$tblTotals=0;
 				$result=sqlsrv_query($db, $sql);
@@ -1848,7 +3592,7 @@ function LicenceExpiryNotification($db,$cosmasRow,$rptName,$fromDate,$toDate)
 		  border-collapse: collapse;
 		}
 		</style>
-
+		<br><br><br><br><br>
 		<table class="items" width="100%" style="font-size: 9pt; border-collapse: collapse;" cellpadding="8">
 		<thead>
 		<tr>
@@ -1884,6 +3628,221 @@ function LicenceExpiryNotification($db,$cosmasRow,$rptName,$fromDate,$toDate)
 		
 				
 	}
+
+	function all_graded($db,$cosmasRow,$rptName,$fromDate,$toDate)
+	{
+		$tablestr = '';
+		$ReportTitle="Graded Establishments";
+		$sql="select c.CustomerName,c.CustomerID, c.Website, c.PhysicalAddress, c.Email, c.Mobile1, sh.ServiceID,
+          s.ServiceName,sh.SubmissionDate 
+          from ServiceHeader sh 
+          join Inspections ins on sh.ServiceHeaderID = ins.ServiceHeaderID 
+          join ChecklistResults cr on cr.InspectionID = ins.InspectionID 
+          join Customer c on c.CustomerID = sh.CustomerID 
+          join InspectionComments ic on ic.InspectionID = ins.InspectionID 
+          join Services s on s.ServiceID = sh.ServiceID
+          where sh.ServiceCategoryID = 2033 and ServiceStatusID = 4 Group By c.CustomerName,c.CustomerID,
+          c.Website,c.PhysicalAddress,c.Email,c.Mobile1,sh.ServiceID,s.ServiceName,sh.SubmissionDate";
+		// exit($sql);
+				$tblTotals=0;
+				$result=sqlsrv_query($db, $sql);
+				while($rw=sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC))
+				{					
+									
+					$CustomerName=$rw['CustomerName'];
+					$Website = $rw['Website'];
+					$PhysicalAddress = $rw['PhysicalAddress'];
+					$ServiceName = $rw['ServiceName'];
+					$CustomerID = $rw['CustomerID'];
+					$ServiceID = $rw['ServiceID'];
+
+
+
+                    $ratingsql = "select distinct top 1 ic.AverageScore,ins.InspectionID
+                      from ServiceHeader sh 
+                      join Inspections ins on sh.ServiceHeaderID = ins.ServiceHeaderID 
+                      join ChecklistResults cr on cr.InspectionID = ins.InspectionID 
+                      join Customer c on c.CustomerID = sh.CustomerID 
+                      join InspectionComments ic on ic.InspectionID = ins.InspectionID 
+                      left join Services s on s.ServiceID = sh.ServiceID
+                      where sh.ServiceCategoryID = 2033 and ServiceStatusID = 4 and c.CustomerID = $CustomerID order by InspectionID desc";
+                      // exit($ratingsql);
+                      $rating_result = sqlsrv_query($db, $ratingsql);
+
+                      while($ratingrow=sqlsrv_fetch_array($rating_result,SQLSRV_FETCH_ASSOC)){
+                        $Rating = $ratingrow['AverageScore'];
+                      }
+
+                if($Rating == ''){
+                  
+                  $Rating = 'Missing Scores';
+                  
+                }else{
+
+              $tr_sql = "select * from Rating where ServiceID = $ServiceID";
+             // exit($tr_sql);
+             $tr_result = sqlsrv_query($db, $tr_sql);
+
+            while($omrow=sqlsrv_fetch_array($tr_result,SQLSRV_FETCH_ASSOC)){
+              $trServiceID = $omrow['ServiceID'];
+            }
+                    if($ServiceID == $trServiceID){
+              
+             $r_sql = "select * from Rating where ServiceID=$trServiceID and MinRatingScore<=$Rating and MaxRatingScore>=$Rating";
+             // exit($r_sql);
+             $r_result = sqlsrv_query($db, $r_sql);
+
+            while($omrow=sqlsrv_fetch_array($r_result,SQLSRV_FETCH_ASSOC)){
+              $rServiceID = $omrow['ServiceID'];
+              $MinRatingScore = $omrow['MinRatingScore'];
+              $MaxRatingScore = $omrow['MaxRatingScore'];
+              $RatingName = $omrow['RatingName'];
+
+            }
+            $omrow=sqlsrv_has_rows($r_result);
+            if($omrow == false){
+                  $Rating = 'Techinal Issue';      
+            }else{
+                                $StarRate1 = '1 Star'; 
+                                $StarRate2 = '2 Star';
+                                $StarRate3 = '3 Star';
+                                $StarRate4 = '4 Star';
+                                $StarRate5 = '5 Star';
+
+                                if($StarRate1 == trim($RatingName)){
+                                	$Rating = $RatingName;
+                                }elseif($StarRate2 == trim($RatingName)){
+                                	$Rating = $RatingName; 
+                                }elseif($StarRate3 == trim($RatingName)){
+                                	$Rating = $RatingName;
+                                }elseif($StarRate4 == trim($RatingName)){
+                                	$Rating = $RatingName;
+                                }elseif($StarRate5 == trim($RatingName)){
+                                	$Rating = $RatingName;
+                                }
+                               } 
+                  }else{
+                  } 
+                  }  
+                  $tablestr.='<tr>
+					<td align="left">'.$CustomerName.'</td>
+					<td align="right">'.$PhysicalAddress.'</td>
+					<td align="right">'.$Website.'</td>
+					<td align="right">'.$ServiceName.'</td>
+					<td align="right">'.$Rating.'</td>
+					</tr>'; 
+				}
+				
+		// echo $tablestr;
+
+		$mpdf=new mPDF('win-1252','A4','','',20,15,48,25,10,10);
+		$mpdf->useOnlyCoreFonts = true;    // false is default
+		$mpdf->SetProtection(array('print'));
+		$mpdf->SetTitle("TRA");
+		$mpdf->SetAuthor("TRA");
+		$mpdf->SetWatermarkText("Tourism Regulatory Authority");
+		$mpdf->showWatermarkText = true;
+		$mpdf->watermark_font = 'DejaVuSansCondensed';
+		$mpdf->watermarkTextAlpha = 0.1;
+		$mpdf->SetDisplayMode('fullpage');
+
+		$html = '
+		<html>
+		<head>
+			<link rel="stylesheet" type="text/css" href="css/my_css.css"/>		
+		</head>
+		<body>
+
+		<!--mpdf
+		<htmlpageheader name="myheader">
+		<table width="100%">
+			<tr>
+				<td align="Center" colspan="2" style="font-size:10mm">
+					<b>'.$ReportTitle.'</b>
+				</td>
+			</tr>		
+			<tr>
+				<td align="Center" colspan="2">
+					<img src="images/logo.png" alt="TRA Logo">
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2" align="Center"><span style="font-weight: bold; font-size: 14pt;">'.$CountyName.'</span></td>
+			</tr>		
+		</table>
+		
+		</htmlpageheader>
+
+		<htmlpagefooter name="myfooter">
+		<div style="border-top: 1px solid #000000; font-size: 9pt; text-align: center; padding-top: 3mm; ">
+		powered by      <img src="images/attain_logo_2.png" alt="County Logo">
+		</div>
+		</htmlpagefooter>
+
+		<sethtmlpageheader name="myheader" value="on" show-this-page="1" />
+		<sethtmlpagefooter name="myfooter" value="on" />
+		mpdf-->
+		<br/><br/>
+		
+		<style>
+		table {
+		  font-family: arial, sans-serif;
+		  border-collapse: collapse;
+		  width: 100%;
+		}
+
+		td, th {
+		  border: 1px solid #dddddd;
+		  text-align: left;
+		  padding: 8px;
+		}
+
+		tr:nth-child(even) {
+		  background-color: #dddddd;
+		}
+		table, th, td {
+		  border: 1px solid black;
+		  border-collapse: collapse;
+		}
+		</style>
+		
+		<table class="items" width="100%" style="font-size: 9pt; border-collapse: collapse;" cellpadding="8">
+		<thead>
+		<tr>
+		<td width="40%">Establishment Name</td>
+		<td width="20%">Branch</td>
+		<td width="20%">Website</td>
+		<td width="20%">Classification</td>
+		<td width="20%">Rating</td>
+		</tr>
+		</thead>
+		<tbody>
+		
+		<!-- ITEMS HERE -->'.
+		
+		
+		$tablestr.
+										
+		'<!-- END ITEMS HERE -->
+		
+		
+
+		</tbody>
+		</table>
+		</body>
+		</html>
+		';
+		$mpdf->WriteHTML($html);
+		
+ 		//$mpdf->Output();
+		//exit;
+		
+		$mpdf->Output('pdfdocs/reports/'.$rptName.'.pdf','F'); 
+		
+				
+	}
+
+
 
 
 

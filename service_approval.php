@@ -78,6 +78,7 @@ if($today>$FirstDec){
 if (isset($_REQUEST['save']) && $_REQUEST['NextStatus']!='')
 {
 	// echo '<pre>'; print_r($_REQUEST);exit;
+	// exit($RoleCenter);
 	$ApplicationID=$_REQUEST['ApplicationID'];
 	$CustomerID=$_REQUEST['CustomerID'];
 	$CurrentStatus=$_REQUEST['CurrentStatus'];
@@ -106,7 +107,7 @@ if (isset($_REQUEST['save']) && $_REQUEST['NextStatus']!='')
 
 	// if($RoleCenter == 2014 &&  $NextStatusID ==11 ){ //TRA Officer has Rejected
 	// }
-	if($RoleCenter == 2014){ 
+	if($RoleCenter == 2014 || $RoleCenter == 2025 || $RoleCenter == 3026){ 
 		$UpdateServiceHeaderSQL="Update ServiceHeader set ServiceStatusID=$NextStatus where ServiceHeaderID=$ApplicationID";	
 		$UpdateServiceHeaderSQLResult = sqlsrv_query($db, $UpdateServiceHeaderSQL);
 		if($UpdateServiceHeaderSQLResult){
@@ -1695,7 +1696,7 @@ if ($myrow = sqlsrv_fetch_array( $dresult, SQLSRV_FETCH_ASSOC))
           <span class="table_text">
           <input name="ApplicationID" type="hidden" id="ApplicationID" value="<?php echo $ApplicationID;?>" />
   <input name="edit" type="hidden" id="edit" value="<?php echo $edit;?>" />
-  <input name="edit" type="" id="CurrentStatus" value="<?php echo $CurrentStatus;?>" />
+  <input name="edit" type="hidden" id="CurrentStatus" value="<?php echo $CurrentStatus;?>" />
                   </span>
           <div style="margin-top: 20px">
   </div>

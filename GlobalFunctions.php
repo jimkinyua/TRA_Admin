@@ -4520,7 +4520,7 @@ function NewUpload(){
 
 
 			// uploadFileAlt($VerifiedContextTest, $TestPath, urlencode('http://tra-edms/home/Sample/Test'));
-			exit;
+			// exit;
 
 			$DocumentMetadata = array(
 				'Name' => 'SampleName',
@@ -4577,7 +4577,7 @@ function NewUpload(){
 			// exit;
 			print 'SharePoint Upload failed Because : ' .  $e->getMessage(). "\n";
 		}
-		exit;
+		// exit;
 
 	
 

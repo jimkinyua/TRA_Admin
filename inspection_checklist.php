@@ -261,3 +261,6 @@ $row = sqlsrv_has_rows( $s_result );
 <br/>
 
 </div>
+<script>
+
+</script>
